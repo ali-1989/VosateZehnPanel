@@ -23,7 +23,7 @@ class AppHttpDio {
 
 	static HttpRequester send(HttpItem item, {BaseOptions? options}){
 		if(item.debugMode) {
-			AppManager.logger.logToAll(StackTrace.current.toString());
+			AppManager.logger.logToAll('==== Stack Trace : ${StackTrace.current.toString()}');
 		}
 
 		item.prepareMultiParts();
@@ -120,7 +120,7 @@ class AppHttpDio {
 
 	static HttpRequester download(HttpItem item, String savePath, {BaseOptions? options}){
 		if(item.debugMode) {
-			AppManager.logger.logToAll(StackTrace.current.toString());
+			AppManager.logger.logToAll('==== Stack Trace : ${StackTrace.current.toString()}');
 		}
 
 		final itemRes = HttpRequester();

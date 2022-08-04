@@ -89,6 +89,10 @@ class AppDirectories {
   }
 
   static String getAppFolderInExternalStorage() {
+    if(System.isWeb()) {
+      return '/$_appName';
+    }
+
     return _externalStorage + PathHelper.getSeparator() + _appName;
   }
 

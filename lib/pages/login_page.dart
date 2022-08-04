@@ -141,7 +141,7 @@ class _LoginPageState extends StateBase<LoginPage> {
     requester.debug = true;
 
     requester.httpRequestEvents.onAnyState = (req) async {
-      //hideLoading();
+      hideLoading();
     };
 
     requester.httpRequestEvents.onStatusOk = (req, data) async {
@@ -155,7 +155,7 @@ class _LoginPageState extends StateBase<LoginPage> {
       }
     };
 
-    //showLoading();
+    showLoading();
     requester.request(context);
   }
 }

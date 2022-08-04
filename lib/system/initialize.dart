@@ -46,9 +46,7 @@ class InitialApplication {
 		}
 
 		isCallInit = true;
-		if(!kIsWeb) {
-			AppManager.logger = Logger('${AppDirectories.getTempDir$ex()}/events.txt');
-		}
+		AppManager.logger = Logger('${AppDirectories.getTempDir$ex()}/events.txt');
 
 		AppRoute.init();
 		await AppLocale.localeDelegate().getLocalization().setFallbackByLocale(const Locale('en', 'EE'));
