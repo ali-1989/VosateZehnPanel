@@ -9,13 +9,11 @@ import 'package:vosate_zehn_panel/system/keys.dart';
 import 'package:vosate_zehn_panel/system/requester.dart';
 import 'package:vosate_zehn_panel/system/session.dart';
 import 'package:vosate_zehn_panel/system/stateBase.dart';
-import 'package:vosate_zehn_panel/tools/app/appDb.dart';
 import 'package:vosate_zehn_panel/tools/app/appImages.dart';
 import 'package:vosate_zehn_panel/tools/app/appMessages.dart';
 import 'package:vosate_zehn_panel/tools/app/appRoute.dart';
 import 'package:vosate_zehn_panel/tools/app/appSheet.dart';
 import 'package:vosate_zehn_panel/tools/app/appThemes.dart';
-import 'package:vosate_zehn_panel/tools/app/appToast.dart';
 
 class LoginPage extends StatefulWidget {
   static final route = GoRoute(
@@ -148,7 +146,7 @@ class _LoginPageState extends StateBase<LoginPage> {
 
     requester.httpRequestEvents.onStatusOk = (req, data) async {
       final userModel = await Session.login$newProfileData(data);
-      AppToast.showToast('yeeeesss');
+
       if(userModel != null) {
         AppRoute.push(context, HomePage.route.path);
       }

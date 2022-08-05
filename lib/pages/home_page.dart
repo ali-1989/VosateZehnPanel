@@ -10,11 +10,11 @@ class HomePage extends StatefulWidget {
   static final route = GoRoute(
     path: '/',
     name: (HomePage).toString().toLowerCase(),
-    builder: (BuildContext context, GoRouterState state) => HomePage(),
+    builder: (BuildContext context, GoRouterState state) => const HomePage(),
     routes: homeRouter
   );
 
-  HomePage({super.key});
+  const HomePage({super.key});
 
   @override
   State<HomePage> createState() => _HomePageState();
