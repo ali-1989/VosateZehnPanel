@@ -92,7 +92,8 @@ bool checkFreeRoute(GoRoute route, GoRouterState state){
   }
 
   if(!routeIsTop){
-    return '${HomePage.route.path}/${route.path}' == state.subloc;
+    //return '${HomePage.route.path}/${route.path}' == state.subloc;  if homePage has name, like:/admin
+    return '/${route.path}' == state.subloc;
   }
 
   return false;
@@ -110,13 +111,11 @@ String? _mainRedirect(GoRouterState state){
     }
     else {
       final from = state.subloc == '/' ? '' : '?gt=${state.location}';
-      return '${HomePage.route.path}/${LoginPage.route.path}$from';
+      return '/${LoginPage.route.path}$from';
     }
   }
 
-  final fromPageQp = state.queryParams['gt'];
-  state.queryParams.remove('gt');
-  return fromPageQp;
+  return state.queryParams['gt'];
 }
 ///============================================================================================
 class MyPageRoute extends PageRouteBuilder {

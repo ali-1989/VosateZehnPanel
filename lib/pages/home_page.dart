@@ -8,13 +8,13 @@ import 'package:vosate_zehn_panel/tools/app/appRoute.dart';
 
 class HomePage extends StatefulWidget {
   static final route = GoRoute(
-    path: '/admin',
+    path: '/',
     name: (HomePage).toString().toLowerCase(),
-    builder: (BuildContext context, GoRouterState state) => const HomePage(),
+    builder: (BuildContext context, GoRouterState state) => HomePage(),
     routes: homeRouter
   );
 
-  const HomePage({super.key});
+  HomePage({super.key});
 
   @override
   State<HomePage> createState() => _HomePageState();

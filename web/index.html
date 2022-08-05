@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="fa">
 <head>
   <!--
     If you are serving your web app in a path other than the root, change the
@@ -14,7 +14,7 @@
     This is a placeholder for base href that will be replaced by the value of
     the `--base-href` argument provided to `flutter build`.
   -->
-  <base href="$FLUTTER_BASE_HREF">
+  <base href="/admin/">
 
   <meta charset="UTF-8">
   <meta content="IE=Edge" http-equiv="X-UA-Compatible">
@@ -29,9 +29,24 @@
   <!-- Favicon -->
   <link rel="icon" type="image/png" href="favicon.png"/>
 
-  <title>vosate_zehn_panel</title>
+  <title>وسعت ذهن - مدیریت</title>
   <link rel="manifest" href="manifest.json">
 
+  <style>
+		body {
+		height: 100%;
+		width: 100%;
+		background-color: #eeeeee;
+		}
+  
+		.centered {
+		top: 50%;
+		left: 50%;
+		transform: translate(-50% , -50%);
+		position: absolute;
+	}
+  </style>
+  
   <script>
     // The value below is injected by flutter build, do not touch.
     var serviceWorkerVersion = null;
@@ -40,6 +55,11 @@
   <script src="flutter.js" defer></script>
 </head>
 <body>
+
+	<div class='centered'>
+        <img src="loading.gif" alt="loading-image">
+    </div>
+	
   <script>
     window.addEventListener('load', function(ev) {
       // Download main.dart.js

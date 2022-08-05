@@ -1,9 +1,11 @@
 import 'dart:io';
+import 'dart:math';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
 import 'package:device_info_plus/device_info_plus.dart';
+import 'package:iris_tools/api/generator.dart';
 import 'package:iris_tools/api/system.dart';
 import 'package:platform_device_id/platform_device_id.dart';
 
@@ -39,10 +41,18 @@ class DeviceInfoTools {
     }
 
     try {
-      deviceId = await PlatformDeviceId.getDeviceId;
+      if(kIsWeb){
+        deviceId = 'web_${Generator.hashMd5(webDeviceInfo?.vendor?? '')}';
+      }
+      /*else if() {
+        deviceId = '${androidDeviceInfo?.brand}:${androidDeviceInfo?.id}';
+      }*/
+      else {
+        deviceId = await PlatformDeviceId.getDeviceId;
+      }
     }
     on PlatformException {
-      deviceId = 'Failed to get deviceId.';
+      deviceId = 'Failed:${Generator.generateDateIsoId(4)}';
     }
 
     return SynchronousFuture<String>(deviceId!);
@@ -52,9 +62,11 @@ class DeviceInfoTools {
     final js = <String, dynamic>{};
 
     if(kIsWeb){
+      final br = webDeviceInfo?.userAgent;
+
       js['device_type'] = 'Web';
       js['model'] = webDeviceInfo?.appName;
-      js['brand'] = webDeviceInfo?.userAgent;
+      js['brand'] = br?.substring(0, min(50, br.length));
       js['api'] = webDeviceInfo?.appVersion;
 
       return js;
