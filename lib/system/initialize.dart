@@ -5,16 +5,19 @@ import 'package:iris_download_manager/downloadManager/downloadManager.dart';
 import 'package:iris_download_manager/uploadManager/uploadManager.dart';
 import 'package:iris_tools/api/appEventListener.dart';
 import 'package:iris_tools/api/logger/logger.dart';
+import 'package:iris_tools/api/system.dart';
 
 import 'package:vosate_zehn_panel/constants.dart';
 import 'package:vosate_zehn_panel/managers/settingsManager.dart';
 import 'package:vosate_zehn_panel/system/lifeCycleApplication.dart';
 import 'package:vosate_zehn_panel/tools/app/appCache.dart';
+import 'package:vosate_zehn_panel/tools/app/appDialogIris.dart';
 import 'package:vosate_zehn_panel/tools/app/appDirectories.dart';
 import 'package:vosate_zehn_panel/tools/app/appImages.dart';
 import 'package:vosate_zehn_panel/tools/app/appLocale.dart';
 import 'package:vosate_zehn_panel/tools/app/appManager.dart';
 import 'package:vosate_zehn_panel/tools/app/appRoute.dart';
+import 'package:vosate_zehn_panel/tools/app/appSizes.dart';
 import 'package:vosate_zehn_panel/tools/app/appWebsocket.dart';
 import 'package:vosate_zehn_panel/tools/app/downloadUpload.dart';
 import 'package:vosate_zehn_panel/tools/deviceInfoTools.dart';
@@ -79,5 +82,13 @@ class InitialApplication {
 
 		DownloadUpload.downloadManager.addListener(DownloadUpload.commonDownloadListener);
 		DownloadUpload.uploadManager.addListener(DownloadUpload.commonUploadListener);
+
+		if(System.isWeb()){
+			void onSizeCheng(oldW, oldH, newW, newH){
+				AppDialogIris.prepareDialogDecoration();
+			}
+
+			AppSizes.instance.addMetricListener(onSizeCheng);
+		}
 	}
 }

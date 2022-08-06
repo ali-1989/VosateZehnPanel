@@ -6,6 +6,7 @@ import 'package:iris_tools/widgets/text/autoDirection.dart';
 
 import 'package:vosate_zehn_panel/tools/app/appIcons.dart';
 import 'package:vosate_zehn_panel/tools/app/appMessages.dart';
+import 'package:vosate_zehn_panel/tools/app/appSizes.dart';
 import '/tools/app/appThemes.dart';
 
 class AppDialogIris {
@@ -23,7 +24,7 @@ class AppDialogIris {
 
 	static void _init(){
 		if(!_isInit){
-			_prepareDialogDecoration();
+			prepareDialogDecoration();
 			_isInit = true;
 		}
 	}
@@ -36,7 +37,7 @@ class AppDialogIris {
 		return _instance;
 	}
 
-	static void _prepareDialogDecoration(){
+	static void prepareDialogDecoration(){
 		_dialogDecoration = IrisDialogDecoration();
 
 		Color textColor(){
@@ -56,6 +57,18 @@ class AppDialogIris {
 		_dialogDecoration.negativeButtonTextColor = AppThemes.instance.currentTheme.buttonTextColor;
 		_dialogDecoration.positiveButtonBackColor = AppThemes.buttonBackgroundColor();
 		_dialogDecoration.negativeButtonBackColor = AppThemes.buttonBackgroundColor();
+
+		if(AppSizes.isBigWidth()) {
+			double factor = 0.8;
+			double wid = AppSizes.instance.appWidth! * factor;
+
+			while(wid > (AppSizes.webMaxDialogSize - 50)){
+				factor -= 0.05;
+				wid = AppSizes.instance.appWidth! * factor;
+			}
+
+			_dialogDecoration.widthFactor = factor;
+		}
 	}
 	///============================================================================================================
 	Future showIrisDialog(

@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
-import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:iris_tools/api/helpers/databaseHelper.dart';
 import 'package:iris_tools/api/logger/reporter.dart';
 import 'package:iris_tools/net/trustSsl.dart';
@@ -21,6 +20,7 @@ import 'package:vosate_zehn_panel/tools/app/appLocale.dart';
 import 'package:vosate_zehn_panel/tools/app/appManager.dart';
 import 'package:vosate_zehn_panel/tools/app/appRoute.dart';
 import 'package:vosate_zehn_panel/tools/app/appThemes.dart';
+import 'package:vosate_zehn_panel/tools/app/appToast.dart';
 
 bool _isInit = false;
 bool _isInLoadingSettings = true;
@@ -107,35 +107,33 @@ class SplashScreenState extends State<SplashPage> {
         return SettingsManager.settingsModel.appLocale;
       },*/
         //home: const HomePage(),
-        builder: EasyLoading.init(
-          builder: (context, home) {
-            AppRoute.materialContext = context;
-            final mediaQueryData = MediaQuery.of(context);
+        builder: (context, home) {
+          AppRoute.materialContext = context;
+          final mediaQueryData = MediaQuery.of(context);
 
-            /// detect orientation change and rotate screen
-            return MediaQuery(
-              data: mediaQueryData.copyWith(textScaleFactor: 1.0),
-              child: OrientationBuilder(builder: (context, orientation) {
-                //AppLocale.detectLocaleDirection(SettingsManager.settingsModel.appLocale); //Localizations.localeOf(context)
-                testCodes(context);
+          /// detect orientation change and rotate screen
+          return MediaQuery(
+            data: mediaQueryData.copyWith(textScaleFactor: 1.0),
+            child: OrientationBuilder(builder: (context, orientation) {
+              //AppLocale.detectLocaleDirection(SettingsManager.settingsModel.appLocale); //Localizations.localeOf(context)
+              testCodes(context);
 
-                return Directionality(
-                    textDirection: AppThemes.instance.textDirection,
-                    child: ResponsiveWrapper.builder(
-                      home!,
-                        defaultScale: true,
+              return Directionality(
+                  textDirection: AppThemes.instance.textDirection,
+                  child: ResponsiveWrapper.builder(
+                      Toaster(child: home!),
+                      defaultScale: true,
                       breakpoints: [
                         const ResponsiveBreakpoint.resize(480, name: MOBILE),
                         const ResponsiveBreakpoint.autoScale(800, name: TABLET),
                         const ResponsiveBreakpoint.autoScale(1000, name: TABLET),
                         const ResponsiveBreakpoint.resize(1200, name: DESKTOP),
                       ]
-                    )
-                );
-              }),
-            );
-          },
-        )
+                  )
+              );
+            }),
+          );
+        },
     );
   }
 
