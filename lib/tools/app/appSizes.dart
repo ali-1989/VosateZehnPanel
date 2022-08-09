@@ -15,6 +15,18 @@ class AppSizes {
   static double sizeOfBigScreen = 700;
   static double webMaxDialogSize = 700;
 
+  double? realPixelWidth;
+  double? realPixelHeight;
+  double? pixelRatio;
+  double appWidth = 0;    //Tecno: 360.0  Web: 1200
+  double appHeight = 0;  //Tecno: 640.0  Web: 620
+  double textMultiplier = 6; // Tecno: ~6.4
+  double imageMultiplier = 1;
+  double heightMultiplier = 1;
+  ui.WindowPadding? rootPadding;
+  List<Function> onMetricListeners = [];
+  Function? _systemMetricFunc;
+
   static AppSizes get instance {
     if(!_initialState){
       _initialState = true;
@@ -26,17 +38,7 @@ class AppSizes {
     return _instance;
   }
 
-  double? realPixelWidth;
-  double? realPixelHeight;
-  double? pixelRatio;
-  double? appWidth;    //Tecno: 360.0  Web: 1200
-  double? appHeight;  //Tecno: 640.0  Web: 620
-  double textMultiplier = 6; // Tecno: ~6.4
-  double imageMultiplier = 1;
-  double heightMultiplier = 1;
-  ui.WindowPadding? rootPadding;
-  List<Function> onMetricListeners = [];
-  Function? _systemMetricFunc;
+
 
   void _prepareSizes() {
     realPixelWidth = ui.window.physicalSize.width;
@@ -55,9 +57,9 @@ class AppSizes {
     else {
       appWidth = (isLandscape ? realPixelHeight : realPixelWidth)! / pixelRatio!;
       appHeight = (isLandscape ? realPixelWidth : realPixelHeight)! / pixelRatio!;
-      imageMultiplier = appWidth! / 100;
-      textMultiplier = appHeight! / 100; // ~6.3
-      heightMultiplier = appHeight! / 100;
+      imageMultiplier = appWidth / 100;
+      textMultiplier = appHeight / 100; // ~6.3
+      heightMultiplier = appHeight / 100;
     }
   }
 
@@ -124,11 +126,11 @@ class AppSizes {
   }
 
   static bool isBigWidth(){
-    return instance.appWidth! > sizeOfBigScreen;
+    return instance.appWidth > sizeOfBigScreen;
   }
 
   static double getWebPadding(){
-    final over = instance.appWidth! - webMaxDialogSize;
+    final over = instance.appWidth - webMaxDialogSize;
 
     if(over < 1){
       return 0;

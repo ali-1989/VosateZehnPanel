@@ -46,7 +46,7 @@ dependencies:
   toggle_switch: ^2.0.1
   numberpicker: ^2.1.1
   flutter_html: ^2.2.1
-  html_editor_enhanced: ^2.5.0
+  webviewx: ^0.2.1
   responsive_framework: ^0.2.0
 
   iris_tools:

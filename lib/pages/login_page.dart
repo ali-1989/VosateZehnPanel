@@ -13,7 +13,6 @@ import 'package:vosate_zehn_panel/tools/app/appImages.dart';
 import 'package:vosate_zehn_panel/tools/app/appMessages.dart';
 import 'package:vosate_zehn_panel/tools/app/appRoute.dart';
 import 'package:vosate_zehn_panel/tools/app/appSheet.dart';
-import 'package:vosate_zehn_panel/tools/app/appThemes.dart';
 
 class LoginPage extends StatefulWidget {
   static final route = GoRoute(
@@ -51,20 +50,20 @@ class _LoginPageState extends StateBase<LoginPage> {
   void dispose() {
     userNameCtr.dispose();
     passwordCtr.dispose();
+    requester.dispose();
 
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-
     return Assist(
       controller: assistCtr,
       builder: (context, ctr, data) {
         return MaxWidth(
-          maxWidth: 350,
+          maxWidth: 400,
           child: Scaffold(
-            backgroundColor: AppThemes.instance.currentTheme.primaryColor,
+            //backgroundColor: AppThemes.instance.currentTheme.primaryColor,
             body: SafeArea(
                 child: buildBody()
             ),
@@ -107,12 +106,13 @@ class _LoginPageState extends StateBase<LoginPage> {
                 ),
               ),
 
-              const SizedBox(height: 10,),
+              const SizedBox(height: 50,),
 
               SizedBox(
+                width: double.infinity,
                 child: ElevatedButton(
                     onPressed: loginCall,
-                    child: const Text('ورود')
+                    child: Text(AppMessages.loginBtn)
                 ),
               ),
             ],
@@ -138,7 +138,6 @@ class _LoginPageState extends StateBase<LoginPage> {
 
     requester.prepareUrl();
     requester.bodyJson = js;
-    requester.debug = false;
 
     requester.httpRequestEvents.onAnyState = (req) async {
       hideLoading();

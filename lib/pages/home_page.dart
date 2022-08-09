@@ -2,16 +2,12 @@ import 'package:flutter/material.dart';
 
 import 'package:go_router/go_router.dart';
 import 'package:iris_tools/modules/stateManagers/assist.dart';
-import 'package:vosate_zehn_panel/pages/login_page.dart';
+import 'package:vosate_zehn_panel/pages/aboutUsPage.dart';
 
 import 'package:vosate_zehn_panel/system/stateBase.dart';
-import 'package:vosate_zehn_panel/tools/app/appDialogIris.dart';
-import 'package:vosate_zehn_panel/tools/app/appLoading.dart';
-import 'package:vosate_zehn_panel/tools/app/appOverlay.dart';
+import 'package:vosate_zehn_panel/tools/app/appIcons.dart';
+import 'package:vosate_zehn_panel/tools/app/appMessages.dart';
 import 'package:vosate_zehn_panel/tools/app/appRoute.dart';
-import 'package:vosate_zehn_panel/tools/app/appSheet.dart';
-import 'package:vosate_zehn_panel/tools/app/appSnack.dart';
-import 'package:vosate_zehn_panel/tools/app/appToast.dart';
 
 class HomePage extends StatefulWidget {
   static final route = GoRoute(
@@ -28,8 +24,11 @@ class HomePage extends StatefulWidget {
 }
 ///=================================================================================================
 class _HomePageState extends StateBase<HomePage> {
-  int selectedItem = 0;
-  var tt = 'hi ali isjl ghgh gghgh gghgh 555555 ghghgh ghgg gghgh 555555 ghghgh ghgg g ghghh ghghgh ghgh sdsds dds';
+
+  @override
+  initState(){
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +36,9 @@ class _HomePageState extends StateBase<HomePage> {
       controller: assistCtr,
       builder: (context, ctr, data) {
         return Scaffold(
-          appBar: AppBar(),
+          appBar: AppBar(
+            title: Text(AppMessages.adminPageTitle),
+          ),
           body: SafeArea(
               child: buildBody()
           ),
@@ -53,65 +54,43 @@ class _HomePageState extends StateBase<HomePage> {
 
           }*/
 
-          return PageView(
+          return GridView(
+            gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+                maxCrossAxisExtent: 170,
+                mainAxisExtent: 120,
+              //childAspectRatio: 1
+            ),
             children: [
-              buildP1(),
-              Text('p2'),
+              buildItem('مدیریت "درباره ما"', AppIcons.lightBulb, gotoAboutUs),
+              buildItem('مدیریت "حمایت از ما"', AppIcons.cashMultiple, gotoAboutUs),
             ],
           );
         }
     );
   }
 
-  Widget buildP1(){
-    return Column(
-      children: [
-        ElevatedButton(onPressed: showLoad,
-            child: Text('loading')
+  Widget buildItem(String title, IconData icon, VoidCallback onTap){
+    return InkWell(
+      onTap: onTap,
+      child: Card(
+        margin: EdgeInsets.all(10),
+        child: Padding(
+          padding: const EdgeInsets.all(12.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Icon(icon),
+              Expanded(child: SizedBox(),),
+              Text(title),
+            ],
+          ),
         ),
-
-        ElevatedButton(onPressed: showDialog,
-            child: Text('dialog')
-        ),
-
-        ElevatedButton(onPressed: showSheet,
-            child: Text('sheet')
-        ),
-
-        ElevatedButton(onPressed: showToast,
-            child: Text('toast')
-        ),
-
-        ElevatedButton(onPressed: showSnack,
-            child: Text('snack')
-        ),
-      ],
+      ),
     );
   }
 
-  void showLoad(){
-    //AppLoading.instance.showWaiting(context);
-    showLoading();
-
-    Future.delayed(Duration(seconds: 3), (){
-      AppOverlay.hideScreen(context);
-    });
-  }
-
-  void showToast(){
-    AppRoute.pushNamed(context, LoginPage.route.path);
-  }
-
-  void showSheet(){
-    AppSheet.showSheetOk(context, tt);
-    //AppSheet.showSheetDialog(context, message: tt);
-  }
-
-  void showSnack(){
-    AppSnack.showInfo(context, tt);
-  }
-
-  void showDialog(){
-    AppDialogIris.instance.showInfoDialog(context, null, tt);
+  void gotoAboutUs(){
+    AppRoute.pushNamed(context, AboutUsPage.route.name!);
   }
 }

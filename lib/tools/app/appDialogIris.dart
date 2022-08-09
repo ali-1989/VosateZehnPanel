@@ -60,11 +60,11 @@ class AppDialogIris {
 
 		if(AppSizes.isBigWidth()) {
 			double factor = 0.8;
-			double wid = AppSizes.instance.appWidth! * factor;
+			double wid = AppSizes.instance.appWidth * factor;
 
 			while(wid > (AppSizes.webMaxDialogSize - 50)){
 				factor -= 0.05;
-				wid = AppSizes.instance.appWidth! * factor;
+				wid = AppSizes.instance.appWidth * factor;
 			}
 
 			_dialogDecoration.widthFactor = factor;

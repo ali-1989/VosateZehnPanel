@@ -114,8 +114,16 @@ class AppMessages {
     return AppRoute.getContext().t('mobileNumber')?? _noText;
   }
 
+  static String get loginBtn {
+    return AppRoute.getContext().t('login')?? _noText;
+  }
+
   static String get loginWithGoogle {
     return 'ورود با گوگل';
+  }
+
+  static String get adminPageTitle {
+    return 'صفحه ی مدیریت وسعت ذهن';
   }
 
   static String get changeNumber {
@@ -140,6 +148,10 @@ class AppMessages {
 
   static String get e404 {
     return AppRoute.getContext().tC('thisPageNotFound')?? _noText;
+  }
+
+  static String get tryAgain {
+    return AppRoute.getContext().t('tryAgain')?? _noText;
   }
 
   static String get requestKeyNotExist {

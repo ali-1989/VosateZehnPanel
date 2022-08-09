@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import 'package:go_router/go_router.dart';
+import 'package:vosate_zehn_panel/pages/aboutUsPage.dart';
 
 import 'package:vosate_zehn_panel/pages/e404_page.dart';
 import 'package:vosate_zehn_panel/pages/home_page.dart';
@@ -81,6 +82,7 @@ final mainRouter = GoRouter(
 final homeRouter = <GoRoute>[
   //E404Page.route,
   LoginPage.route,
+  AboutUsPage.route,
   ];
 
 bool checkFreeRoute(GoRoute route, GoRouterState state){
