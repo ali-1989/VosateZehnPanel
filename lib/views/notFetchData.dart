@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:vosate_zehn_panel/tools/app/appMessages.dart';
 
@@ -26,11 +25,10 @@ class NotFetchData extends StatelessWidget {
           if(tryClick != null)
             TextButton(
                 onPressed: (){
-                  print('yesss');
                   tryClick?.call();
                 },
                 child: Text(AppMessages.tryAgain)
-            )
+            ),
         ],
       ),
     );

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:iris_tools/modules/stateManagers/assist.dart';
 import 'package:vosate_zehn_panel/pages/aboutUsPage.dart';
+import 'package:vosate_zehn_panel/pages/aidPage.dart';
 
 import 'package:vosate_zehn_panel/system/stateBase.dart';
 import 'package:vosate_zehn_panel/tools/app/appIcons.dart';
@@ -61,8 +62,8 @@ class _HomePageState extends StateBase<HomePage> {
               //childAspectRatio: 1
             ),
             children: [
-              buildItem('مدیریت "درباره ما"', AppIcons.lightBulb, gotoAboutUs),
-              buildItem('مدیریت "حمایت از ما"', AppIcons.cashMultiple, gotoAboutUs),
+              buildItem('مدیریت "درباره ما"', AppIcons.lightBulb, gotoAboutUsPage),
+              buildItem('مدیریت "حمایت از ما"', AppIcons.cashMultiple, gotoAidPage),
             ],
           );
         }
@@ -90,7 +91,11 @@ class _HomePageState extends StateBase<HomePage> {
     );
   }
 
-  void gotoAboutUs(){
+  void gotoAboutUsPage(){
     AppRoute.pushNamed(context, AboutUsPage.route.name!);
+  }
+
+  void gotoAidPage(){
+    AppRoute.pushNamed(context, AidPage.route.name!);
   }
 }
