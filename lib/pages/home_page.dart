@@ -4,8 +4,10 @@ import 'package:go_router/go_router.dart';
 import 'package:iris_tools/modules/stateManagers/assist.dart';
 
 import 'package:vosate_zehn_panel/pages/aboutUsPage.dart';
+import 'package:vosate_zehn_panel/pages/aidDialogPage.dart';
 import 'package:vosate_zehn_panel/pages/aidPage.dart';
 import 'package:vosate_zehn_panel/pages/termPage.dart';
+import 'package:vosate_zehn_panel/pages/videoManagerPage.dart';
 import 'package:vosate_zehn_panel/system/stateBase.dart';
 import 'package:vosate_zehn_panel/tools/app/appIcons.dart';
 import 'package:vosate_zehn_panel/tools/app/appMessages.dart';
@@ -64,8 +66,10 @@ class _HomePageState extends StateBase<HomePage> {
             ),
             children: [
               buildItem('مدیریت "درباره ما"', AppIcons.lightBulb, gotoAboutUsPage),
-              buildItem('مدیریت "حمایت از ما"', AppIcons.cashMultiple, gotoAidPage),
               buildItem('مدیریت "حفظ حریم"', AppIcons.lock, gotoTermPage),
+              buildItem('مدیریت "حمایت از ما"', AppIcons.cashMultiple, gotoAidPage),
+              buildItem('متن "دیالوگ حمایت"', AppIcons.cashMultiple, gotoAidDialogPage),
+              buildItem('مدیریت فیلم ها', AppIcons.cashMultiple, gotoVideoManagerPage),
             ],
           );
         }
@@ -103,5 +107,13 @@ class _HomePageState extends StateBase<HomePage> {
 
   void gotoTermPage(){
     AppRoute.pushNamed(context, TermPage.route.name!);
+  }
+
+  void gotoAidDialogPage(){
+    AppRoute.pushNamed(context, AidDialogPage.route.name!);
+  }
+
+  void gotoVideoManagerPage(){
+    AppRoute.pushNamed(context, VideoManagerPage.route.name!);
   }
 }

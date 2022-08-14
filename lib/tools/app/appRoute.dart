@@ -4,11 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:vosate_zehn_panel/pages/aboutUsPage.dart';
+import 'package:vosate_zehn_panel/pages/aidDialogPage.dart';
 import 'package:vosate_zehn_panel/pages/aidPage.dart';
 import 'package:vosate_zehn_panel/pages/e404_page.dart';
 import 'package:vosate_zehn_panel/pages/home_page.dart';
 import 'package:vosate_zehn_panel/pages/login_page.dart';
 import 'package:vosate_zehn_panel/pages/termPage.dart';
+import 'package:vosate_zehn_panel/pages/videoAddPage.dart';
+import 'package:vosate_zehn_panel/pages/videoManagerPage.dart';
 import 'package:vosate_zehn_panel/system/session.dart';
 import 'package:vosate_zehn_panel/tools/app/appDb.dart';
 import '/system/keys.dart';
@@ -104,6 +107,9 @@ final homeRouter = <GoRoute>[
   AboutUsPage.route,
   AidPage.route,
   TermPage.route,
+  AidDialogPage.route,
+  VideoManagerPage.route,
+  VideoAddPage.route,
   ];
 
 bool checkFreeRoute(GoRoute route, GoRouterState state){

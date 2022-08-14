@@ -14,6 +14,7 @@ import 'package:vosate_zehn_panel/tools/app/appImages.dart';
 import 'package:vosate_zehn_panel/tools/app/appMessages.dart';
 import 'package:vosate_zehn_panel/tools/app/appRoute.dart';
 import 'package:vosate_zehn_panel/tools/app/appSheet.dart';
+import 'package:vosate_zehn_panel/tools/deviceInfoTools.dart';
 
 class LoginPage extends StatefulWidget {
   static final route = GoRoute(
@@ -136,6 +137,7 @@ class _LoginPageState extends StateBase<LoginPage> {
     js[Keys.requestZone] = 'login_admin';
     js[Keys.userName] = userName;
     js[Keys.password] = password;
+    js.addAll(DeviceInfoTools.getDeviceInfo());
 
     requester.prepareUrl();
     requester.bodyJson = js;

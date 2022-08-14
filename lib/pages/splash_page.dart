@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
 import 'package:iris_tools/api/helpers/databaseHelper.dart';
@@ -107,6 +108,12 @@ class SplashScreenState extends State<SplashPage> {
         return SettingsManager.settingsModel.appLocale;
       },*/
         //home: const HomePage(),
+      scrollBehavior: ScrollConfiguration.of(context).copyWith(
+        dragDevices: {
+          PointerDeviceKind.mouse,
+          PointerDeviceKind.touch,
+        },
+      ),
         builder: (context, home) {
           AppRoute.materialContext = context;
           final mediaQueryData = MediaQuery.of(context);
