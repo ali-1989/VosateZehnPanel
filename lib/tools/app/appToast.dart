@@ -1,6 +1,7 @@
 // ignore_for_file: file_names
 
 import 'package:flutter/material.dart';
+
 import 'package:vosate_zehn_panel/tools/app/appSizes.dart';
 
 class AppToast {
@@ -76,4 +77,3 @@ class ToasterState extends State<Toaster> {
     setState(() {});
   }
 }
-

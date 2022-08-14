@@ -35,6 +35,7 @@ class AppIcons {
   static const IconData lock = Icons.lock;
   static const IconData lockClock = Icons.lock_clock;
   static const IconData enter = Icons.login;
+  static const IconData logout = Icons.logout;
   static const IconData menu = Icons.view_list_rounded;
   static const IconData list = Icons.view_headline;
   static const IconData grid = Icons.view_module;
@@ -85,7 +86,8 @@ class AppIcons {
   static const IconData share = Icons.share;
   static const IconData history = Icons.history;
   static const IconData lastSeenClock = CommunityMaterialIcons.history;
-  static const IconData heart = CommunityMaterialIcons.heart;
+  static const IconData heartSolid = CommunityMaterialIcons.heart;
+  static const IconData heart = CommunityMaterialIcons.heart_outline;
   static const IconData infoCircle = CommunityMaterialIcons.alert_circle_outline;
   static const IconData meditation = CommunityMaterialIcons.meditation;
   static const IconData cashMultiple = CommunityMaterialIcons.cash_multiple;

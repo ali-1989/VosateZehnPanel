@@ -82,6 +82,14 @@ class AppMessages {
     return AppRoute.getContext().t('password')?? _noText;
   }
 
+  static String get pay {
+    return AppRoute.getContext().t('pay')?? _noText;
+  }
+
+  static String get logout {
+    return AppRoute.getContext().t('logout')?? _noText;
+  }
+
   static String get validation {
     return AppRoute.getContext().tInMap('loginSection', 'validation')?? _noText;
   }
@@ -104,6 +112,10 @@ class AppMessages {
 
   static String get countrySelection {
     return AppRoute.getContext().tInMap('countrySection', 'countrySelection')?? _noText;
+  }
+
+  static String get doYouWantLogoutYourAccount {
+    return AppRoute.getContext().tInMap('loginSection', 'doYouWantLogoutYourAccount')?? _noText;
   }
 
   static String get terms {
@@ -242,12 +254,20 @@ class AppMessages {
     return 'وسعت ذهن';
   }
 
+  static String get profileTitle {
+    return AppRoute.getContext().tC('profile')?? _noText;
+  }
+
   static String get loginTitle {
     return 'ورود';
   }
 
   static String get registerTitle {
     return 'ثبت نام';
+  }
+
+  static String get aboutUsTitle {
+    return 'درباره ما';
   }
 
   static String get termTitle {
@@ -278,7 +298,7 @@ class AppMessages {
     return 'مدیتیشن';
   }
 
-  static String get tamarkoz {
+  static String get focus {
     return 'تمرکز';
   }
 
@@ -290,11 +310,11 @@ class AppMessages {
     return 'فیلم';
   }
 
-  static String get hematat {
+  static String get aid {
     return 'حمایت';
   }
 
-  static String get hematatUs {
+  static String get aidUs {
     return 'حمایت از ما';
   }
 
@@ -306,7 +326,31 @@ class AppMessages {
     return 'آخرین بازدیدها';
   }
 
+  static String get sentencesTitle {
+    return 'جملات روز';
+  }
+
   static String get shareApp {
     return 'اشتراک اپلیکیشن';
+  }
+
+  static String get contactUsDescription {
+    return 'سوال ، انتقاد و یا پیشنهاد خود را برای ما بنویسید';
+  }
+
+  static String get contactUsEmptyPrompt {
+    return 'لطفا متن خود را بنویسید';
+  }
+
+  static String get isAddToFavorite {
+    return 'به منتخب ها اضافه شد';
+  }
+
+  static String get email {
+    return 'ایمیل';
+  }
+
+  static String get mobile {
+    return 'موبایل';
   }
 }

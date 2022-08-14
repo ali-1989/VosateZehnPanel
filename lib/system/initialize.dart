@@ -10,6 +10,7 @@ import 'package:iris_tools/api/system.dart';
 import 'package:vosate_zehn_panel/constants.dart';
 import 'package:vosate_zehn_panel/managers/settingsManager.dart';
 import 'package:vosate_zehn_panel/system/lifeCycleApplication.dart';
+import 'package:vosate_zehn_panel/system/session.dart';
 import 'package:vosate_zehn_panel/tools/app/appCache.dart';
 import 'package:vosate_zehn_panel/tools/app/appDialogIris.dart';
 import 'package:vosate_zehn_panel/tools/app/appDirectories.dart';
@@ -21,6 +22,7 @@ import 'package:vosate_zehn_panel/tools/app/appSizes.dart';
 import 'package:vosate_zehn_panel/tools/app/appWebsocket.dart';
 import 'package:vosate_zehn_panel/tools/app/downloadUpload.dart';
 import 'package:vosate_zehn_panel/tools/deviceInfoTools.dart';
+import 'package:vosate_zehn_panel/tools/userLoginTools.dart';
 
 class InitialApplication {
 	InitialApplication._();
@@ -76,6 +78,7 @@ class InitialApplication {
 		WidgetsBinding.instance.addObserver(eventListener);
 
 		AppWebsocket.prepareWebSocket(SettingsManager.settingsModel.wsAddress);
+		//NetManager.addChangeListener(NetListenerTools.onNetListener);
 
 		DownloadUpload.downloadManager = DownloadManager('${Constants.appName}DownloadManager');
 		DownloadUpload.uploadManager = UploadManager('${Constants.appName}UploadManager');
@@ -90,5 +93,9 @@ class InitialApplication {
 
 			AppSizes.instance.addMetricListener(onSizeCheng);
 		}
+
+		Session.addLoginListener(UserLoginTools.onLogin);
+		Session.addLogoffListener(UserLoginTools.onLogoff);
+		Session.addProfileChangeListener(UserLoginTools.onProfileChange);
 	}
 }

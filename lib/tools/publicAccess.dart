@@ -11,6 +11,42 @@ class PublicAccess {
   PublicAccess._();
 
   static String graphApi = '${SettingsManager.settingsModel.httpAddress}/graph-v1';
+  /*static ClassicFooter classicFooter = ClassicFooter(
+    loadingText: '',
+    idleText: '',
+    noDataText: '',
+    failedText: '',
+    loadStyle: LoadStyle.ShowWhenLoading,
+  );*/
+
+  /*static List<DateTime> findUpperLower(List<DateFieldMixin> list, bool isAsc){
+    final res = <DateTime>[];
+
+    if(list.isEmpty){
+      return res;
+    }
+
+    DateTime lower = list[0].date!;
+    DateTime upper = list[0].date!;
+
+    for(final x in list){
+      var c = DateHelper.compareDates(x.date, lower, asc: isAsc);
+
+      if(c < 0){
+        lower = x.date!;
+      }
+
+      c = DateHelper.compareDates(x.date, upper, asc: isAsc);
+
+      if(c > 0){
+        upper = x.date!;
+      }
+    }
+
+    res.add(lower);
+    res.add(upper);
+    return res;
+  }*/
 
   ///----------- HowIs ----------------------------------------------------
   static Map<String, dynamic> getHowIsMap() {

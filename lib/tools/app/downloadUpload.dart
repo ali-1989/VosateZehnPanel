@@ -1,6 +1,7 @@
 import 'package:iris_download_manager/downloadManager/downloadManager.dart';
 import 'package:iris_download_manager/uploadManager/uploadManager.dart';
 import 'package:iris_tools/api/helpers/jsonHelper.dart';
+import 'package:vosate_zehn_panel/tools/app/appBroadcast.dart';
 
 class DownloadUpload {
   DownloadUpload._();
@@ -12,6 +13,7 @@ class DownloadUpload {
 
     if(di.isComplete()) {
       if(di.isInCategory(DownloadCategory.userProfile)){
+        AppBroadcast.avatarNotifier.notifyAll(null);
       }
 
     }

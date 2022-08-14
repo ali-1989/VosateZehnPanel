@@ -2,12 +2,13 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import 'package:go_router/go_router.dart';
+
 import 'package:vosate_zehn_panel/pages/aboutUsPage.dart';
 import 'package:vosate_zehn_panel/pages/aidPage.dart';
-
 import 'package:vosate_zehn_panel/pages/e404_page.dart';
 import 'package:vosate_zehn_panel/pages/home_page.dart';
 import 'package:vosate_zehn_panel/pages/login_page.dart';
+import 'package:vosate_zehn_panel/pages/termPage.dart';
 import 'package:vosate_zehn_panel/system/session.dart';
 import 'package:vosate_zehn_panel/tools/app/appDb.dart';
 import '/system/keys.dart';
@@ -43,6 +44,18 @@ class AppRoute {
     AppNavigator.backRoute(mustLastCtx);
   }
 
+  static void backToRoot(BuildContext context) {
+    //AppNavigator.popRoutesUntilRoot(AppRoute.getContext());
+
+    while(canPop(context)){
+      pop(context);
+    }
+  }
+
+  static bool canPop(BuildContext context) {
+    return GoRouter.of(context).canPop();
+  }
+
   static void pop(BuildContext context) {
     GoRouter.of(context).pop();
   }
@@ -65,6 +78,10 @@ class AppRoute {
     }
   }
 
+  static void replaceNamed(BuildContext context, String name, {dynamic extra}) {
+    GoRouter.of(context).replaceNamed(name, params: {}, extra: extra);
+  }
+
   static void init(){
     freeRoutes.add(LoginPage.route);
   }
@@ -76,6 +93,7 @@ final mainRouter = GoRouter(
       //LoginPage.route,
     ],
     initialLocation: HomePage.route.path,
+    routerNeglect: true,//In browser 'back' button not work
     errorBuilder: (BuildContext context, GoRouterState state) => const E404Page(),
     redirect: _mainRedirect,
 );
@@ -85,6 +103,7 @@ final homeRouter = <GoRoute>[
   LoginPage.route,
   AboutUsPage.route,
   AidPage.route,
+  TermPage.route,
   ];
 
 bool checkFreeRoute(GoRoute route, GoRouterState state){
@@ -115,7 +134,7 @@ String? _mainRedirect(GoRouterState state){
     }
     else {
       final from = state.subloc == '/' ? '' : '?gt=${state.location}';
-      return '/${LoginPage.route.path}$from';
+      return '/${LoginPage.route.path}$from'.replaceFirst('//', '/');
     }
   }
 

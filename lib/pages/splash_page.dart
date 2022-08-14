@@ -210,8 +210,6 @@ class SplashScreenState extends State<SplashPage> {
     await AppDB.db.openTable(AppDB.tbLanguages);
     await AppDB.db.openTable(AppDB.tbUserModel);
 
-    //await AppDB.db.clearTable(AppDB.tbUserModel);
-
     return AppDB.db;
   }
 

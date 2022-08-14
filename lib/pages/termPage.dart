@@ -12,22 +12,22 @@ import 'package:vosate_zehn_panel/system/stateBase.dart';
 import 'package:vosate_zehn_panel/tools/app/appSheet.dart';
 import 'package:vosate_zehn_panel/views/notFetchData.dart';
 
-class AboutUsPage extends StatefulWidget {
+class TermPage extends StatefulWidget {
   static final route = GoRoute(
-      path: 'about_us',
-      name: (AboutUsPage).toString().toLowerCase(),
-      builder: (BuildContext context, GoRouterState state) => const AboutUsPage(),
+      path: 'term',
+      name: (TermPage).toString().toLowerCase(),
+      builder: (BuildContext context, GoRouterState state) => const TermPage(),
   );
 
-  const AboutUsPage({Key? key}) : super(key: key);
+  const TermPage({Key? key}) : super(key: key);
 
   @override
-  State<AboutUsPage> createState() => _AboutUsPageState();
+  State<TermPage> createState() => _TermPageState();
 }
 ///============================================================================================
-class _AboutUsPageState extends StateBase<AboutUsPage> {
+class _TermPageState extends StateBase<TermPage> {
   WebViewXController? webviewController;
-  late Requester requester;
+  Requester requester = Requester();
   bool isInLoadWebView = true;
   bool isInLoadData = false;
   String? htmlData;
@@ -38,8 +38,7 @@ class _AboutUsPageState extends StateBase<AboutUsPage> {
   void initState(){
     super.initState();
 
-    requester = Requester();
-    requestGetAboutUs();
+    requestGetAid();
   }
 
   @override
@@ -56,7 +55,7 @@ class _AboutUsPageState extends StateBase<AboutUsPage> {
       builder: (context, controller, sendData) {
         return Scaffold(
           appBar: AppBar(
-            title: Text('درباره ی ما'),
+            title: Text('قوانین و حفظ حریم'),
           ),
           body: SafeArea(
               child: buildBody()
@@ -76,7 +75,7 @@ class _AboutUsPageState extends StateBase<AboutUsPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('متن درباره ی ما').bold(),
+                Text('متن قوانین و سیاست حفظ حریم').bold(),
 
                 SizedBox(height: 20),
 
@@ -89,13 +88,15 @@ class _AboutUsPageState extends StateBase<AboutUsPage> {
                         onWebViewCreated: (ctr) async {
                           if(webviewController == null) {
                             webviewController = ctr;
-                            await ctr.loadContent('html/editor.html', SourceType.html, fromAssets: true);
-                            isInLoadWebView = false;
+                            ctr.loadContent('html/editor.html', SourceType.html, fromAssets: true);
+                          }
+                        },
+                        onPageFinished: (s){
+                          isInLoadWebView = false;
 
-                            if(assistCtr.hasState(state$fetchData)){
-                              injectDataToEditor(htmlData!);
-                              callState();
-                            }
+                          if(assistCtr.hasState(state$fetchData)){
+                            injectDataToEditor(htmlData!);
+                            callState();
                           }
                         },
                       );
@@ -167,7 +168,7 @@ class _AboutUsPageState extends StateBase<AboutUsPage> {
     final res = await getEditorData();
 
     if(res != null) {
-      requestSetAboutUs(res);
+      requestSetAid(res);
     }
     else {
       AppSheet.showSheet$OperationCannotBePerformed(context);
@@ -175,13 +176,13 @@ class _AboutUsPageState extends StateBase<AboutUsPage> {
   }
 
   void tryClick(){
-    requestGetAboutUs();
+    requestGetAid();
     assistCtr.updateMain();
   }
 
-  void requestGetAboutUs(){
+  void requestGetAid(){
     final js = <String, dynamic>{};
-    js[Keys.requestZone] = 'get_about_us_data';
+    js[Keys.requestZone] = 'get_term_data';
     js[Keys.requesterId] = Session.getLastLoginUser()?.userId;
 
     requester.prepareUrl();
@@ -211,9 +212,9 @@ class _AboutUsPageState extends StateBase<AboutUsPage> {
     requester.request(context);
   }
 
-  void requestSetAboutUs(String data){
+  void requestSetAid(String data){
     final js = <String, dynamic>{};
-    js[Keys.requestZone] = 'set_about_us_data';
+    js[Keys.requestZone] = 'set_term_data';
     js[Keys.requesterId] = Session.getLastLoginUser()?.userId;
     js[Keys.data] = data;
 

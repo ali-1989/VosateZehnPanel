@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 
 import 'package:go_router/go_router.dart';
 import 'package:iris_tools/modules/stateManagers/assist.dart';
+
 import 'package:vosate_zehn_panel/pages/aboutUsPage.dart';
 import 'package:vosate_zehn_panel/pages/aidPage.dart';
-
+import 'package:vosate_zehn_panel/pages/termPage.dart';
 import 'package:vosate_zehn_panel/system/stateBase.dart';
 import 'package:vosate_zehn_panel/tools/app/appIcons.dart';
 import 'package:vosate_zehn_panel/tools/app/appMessages.dart';
@@ -64,6 +65,7 @@ class _HomePageState extends StateBase<HomePage> {
             children: [
               buildItem('مدیریت "درباره ما"', AppIcons.lightBulb, gotoAboutUsPage),
               buildItem('مدیریت "حمایت از ما"', AppIcons.cashMultiple, gotoAidPage),
+              buildItem('مدیریت "حفظ حریم"', AppIcons.lock, gotoTermPage),
             ],
           );
         }
@@ -97,5 +99,9 @@ class _HomePageState extends StateBase<HomePage> {
 
   void gotoAidPage(){
     AppRoute.pushNamed(context, AidPage.route.name!);
+  }
+
+  void gotoTermPage(){
+    AppRoute.pushNamed(context, TermPage.route.name!);
   }
 }
