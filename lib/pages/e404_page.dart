@@ -9,7 +9,7 @@ import 'package:vosate_zehn_panel/tools/app/appThemes.dart';
 
 class E404Page extends StatefulWidget {
   static final route = GoRoute(
-  path: '/e404page',
+  path: '/404page',
   name: (E404Page).toString().toLowerCase(),
   builder: (BuildContext context, GoRouterState state) => const E404Page(),
   );

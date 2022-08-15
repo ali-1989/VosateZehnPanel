@@ -3,15 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:go_router/go_router.dart';
 import 'package:iris_tools/api/generator.dart';
-import 'package:iris_tools/api/helpers/colorHelper.dart';
 import 'package:iris_tools/api/helpers/jsonHelper.dart';
 import 'package:iris_tools/modules/stateManagers/assist.dart';
 import 'package:iris_tools/widgets/maxWidth.dart';
 
 import 'package:vosate_zehn_panel/models/BucketModel.dart';
 import 'package:vosate_zehn_panel/models/enums.dart';
-import 'package:vosate_zehn_panel/models/subBuketModel.dart';
-import 'package:vosate_zehn_panel/pages/addMediaPage.dart';
 import 'package:vosate_zehn_panel/pages/contentManagerPage.dart';
 import 'package:vosate_zehn_panel/services/pagesEventBus.dart';
 import 'package:vosate_zehn_panel/system/extensions.dart';
@@ -25,19 +22,19 @@ import 'package:vosate_zehn_panel/tools/app/appRoute.dart';
 import 'package:vosate_zehn_panel/tools/app/appSheet.dart';
 import 'package:vosate_zehn_panel/tools/app/appThemes.dart';
 
-class MediaManagerPageInjectData {
+class BuketEditPageInjectData {
   late BucketTypes bucketType;
   BucketModel? bucket;
 }
 ///----------------------------------------------------------------
 class BuketEditPage extends StatefulWidget {
   static final route = GoRoute(
-    path: 'MediaManager',
+    path: 'BuketEditPage',
     name: (BuketEditPage).toString().toLowerCase(),
-    builder: (BuildContext context, GoRouterState state) => BuketEditPage(injectData: state.extra as MediaManagerPageInjectData?),
+    builder: (BuildContext context, GoRouterState state) => BuketEditPage(injectData: state.extra as BuketEditPageInjectData?),
   );
 
-  final MediaManagerPageInjectData? injectData;
+  final BuketEditPageInjectData? injectData;
 
   const BuketEditPage({
     Key? key,
@@ -53,9 +50,7 @@ class _BuketEditPageState extends StateBase<BuketEditPage> {
   TextEditingController descriptionCtr = TextEditingController();
   late Requester requester = Requester();
   late InputDecoration inputDecoration;
-  late BucketModel bucketModel;
   PlatformFile? pickedImage;
-  List<SubBucketModel> mediaList = [];
   bool editMode = false;
 
   @override
@@ -75,11 +70,10 @@ class _BuketEditPageState extends StateBase<BuketEditPage> {
     }
     else {
       editMode = widget.injectData!.bucket != null;
-      bucketModel = widget.injectData!.bucket?? BucketModel();
 
       if(editMode){
-        titleCtr.text = bucketModel.title;
-        descriptionCtr.text = bucketModel.description?? '';
+        titleCtr.text = widget.injectData!.bucket!.title;
+        descriptionCtr.text = widget.injectData!.bucket!.description?? '';
       }
     }
   }
@@ -105,7 +99,7 @@ class _BuketEditPageState extends StateBase<BuketEditPage> {
         return Scaffold(
           backgroundColor: Colors.grey[200],
           appBar: AppBar(
-            title: Text(widget.injectData?.bucket == null? 'ایجاد محتوا' : 'مدیریت محتوا'),
+            title: Text(editMode? 'ویرایش محتوا': 'ایجاد محتوا'),
           ),
           body: SafeArea(
               child: buildBody()
@@ -116,6 +110,8 @@ class _BuketEditPageState extends StateBase<BuketEditPage> {
   }
 
   Widget buildBody(){
+    BucketModel bucketModel = widget.injectData!.bucket?? BucketModel();
+
     return Scrollbar(
       thumbVisibility: true,
       trackVisibility: true,
@@ -228,39 +224,6 @@ class _BuketEditPageState extends StateBase<BuketEditPage> {
                     maxLines: 4,
                     decoration: inputDecoration,
                   ),
-
-                  Visibility(
-                    visible: editMode,
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        SizedBox(height: 10,),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text('محتوا'),
-
-                            ElevatedButton(
-                                onPressed: onAddMedia,
-                                child: Text('اضافه کردن')
-                            ),
-                          ],
-                        ),
-
-                        SizedBox(height: 10,),
-                        Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 10),
-                            child: ListView.builder(
-                                shrinkWrap: true,
-                                itemCount: mediaList.length,
-                                itemBuilder: (ctx, idx){
-                                  return buildListItem(idx);
-                                }
-                            )
-                        ).wrapBoxBorder(),
-                      ],
-                    ),
-                  ),
                 ],
               ),
             ),
@@ -268,13 +231,6 @@ class _BuketEditPageState extends StateBase<BuketEditPage> {
         ),
       ),
     );
-  }
-
-  Widget buildListItem(int idx) {
-    //final itm = mediaList[idx];
-
-    return ColoredBox(color: ColorHelper.getRandomRGB(),
-        child: SizedBox(height: 20,));
   }
 
   void removeImage() async {
@@ -314,7 +270,7 @@ class _BuketEditPageState extends StateBase<BuketEditPage> {
       return;
     }
 
-    bucketModel = BucketModel();
+    BucketModel bucketModel = BucketModel();
     bucketModel.bucketType = widget.injectData!.bucketType.id();
     bucketModel.title = title;
     bucketModel.description = descriptionCtr.text;
@@ -323,33 +279,14 @@ class _BuketEditPageState extends StateBase<BuketEditPage> {
       bucketModel.id =  widget.injectData!.bucket!.id;
     }
 
-    requestUpsertBucket();
-  }
-
-  void onAddMedia() async {
-    final inject = AddMediaPageInjectData();
-    inject.level2model = SubBucketModel();
-
-    await showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (ctx){
-          return AddMediaPage(injectData: inject);
-        }
-    );
-
-    if(inject.level2model.contentList.isNotEmpty){
-      bucketModel.level2List.add(inject.level2model);
-
-      assistCtr.updateMain();
-    }
+    requestUpsertBucket(bucketModel);
   }
 
   void requestDeleteImage(){
     final js = <String, dynamic>{};
     js[Keys.requestZone] = 'delete_bucket_image';
     js[Keys.requesterId] = Session.getLastLoginUser()?.userId;
-    js[Keys.id] = bucketModel.id;
+    js[Keys.id] = widget.injectData!.bucket!.id;
 
     requester.prepareUrl();
     requester.bodyJson = js;
@@ -363,7 +300,7 @@ class _BuketEditPageState extends StateBase<BuketEditPage> {
     };
 
     requester.httpRequestEvents.onStatusOk = (req, data) async {
-      bucketModel.imageModel = null;
+      widget.injectData!.bucket!.imageModel = null;
 
       assistCtr.updateMain();
       PagesEventBus.getEventBus((ContentManagerPage).toString()).callEvent('update', null);
@@ -373,7 +310,7 @@ class _BuketEditPageState extends StateBase<BuketEditPage> {
     requester.request(context);
   }
 
-  void requestUpsertBucket(){
+  void requestUpsertBucket(BucketModel bucketModel){
     final js = <String, dynamic>{};
     js[Keys.requestZone] = 'upsert_bucket';
     js[Keys.requesterId] = Session.getLastLoginUser()?.userId;

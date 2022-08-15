@@ -10,7 +10,7 @@ import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:vosate_zehn_panel/managers/mediaManager.dart';
 import 'package:vosate_zehn_panel/models/BucketModel.dart';
 import 'package:vosate_zehn_panel/models/enums.dart';
-import 'package:vosate_zehn_panel/pages/mediaManagerPage.dart';
+import 'package:vosate_zehn_panel/pages/bucketEditPage.dart';
 import 'package:vosate_zehn_panel/services/pagesEventBus.dart';
 import 'package:vosate_zehn_panel/system/extensions.dart';
 import 'package:vosate_zehn_panel/system/keys.dart';
@@ -18,6 +18,8 @@ import 'package:vosate_zehn_panel/system/requester.dart';
 import 'package:vosate_zehn_panel/system/session.dart';
 import 'package:vosate_zehn_panel/system/stateBase.dart';
 import 'package:vosate_zehn_panel/tools/app/appDb.dart';
+import 'package:vosate_zehn_panel/tools/app/appIcons.dart';
+import 'package:vosate_zehn_panel/tools/app/appImages.dart';
 import 'package:vosate_zehn_panel/tools/app/appRoute.dart';
 import 'package:vosate_zehn_panel/tools/publicAccess.dart';
 import 'package:vosate_zehn_panel/tools/searchFilterTool.dart';
@@ -29,7 +31,7 @@ class ContentManagerPage extends StatefulWidget {
       path: 'ContentManager',
       name: (ContentManagerPage).toString().toLowerCase(),
       routes: [
-        MediaManagerPage.route,
+        BuketEditPage.route,
       ],
       builder: (BuildContext context, GoRouterState state) => const ContentManagerPage(),
   );
@@ -55,7 +57,8 @@ class _ContentManagerPageState extends StateBase<ContentManagerPage> {
   void initState(){
     super.initState();
 
-    searchFilter.limit = 30;
+    searchFilter.limit = 12;
+    searchFilter.addFilter('is_hide', true);
     final type = AppDB.fetchKv(Keys.setting$bucketType);
 
     if(type != null){
@@ -136,9 +139,10 @@ class _ContentManagerPageState extends StateBase<ContentManagerPage> {
                       isTriangle: false,
                       iconSize: 10,
                       dropdownItemGap: 0,
-                      dropdownItemBottomGap: 5,
+                      dropdownItemBottomGap: 0,
                       gap: 10,
                       dropdownItemTopGap: 5,
+                      dropdownHeight: 230,
                       resultTS: TextStyle(
                         fontSize: 14,
                         color: Colors.black,
@@ -148,12 +152,20 @@ class _ContentManagerPageState extends StateBase<ContentManagerPage> {
                         color: Colors.black,
                       ),
                       onChange: (v){
-                        levelType = BucketTypes.fromId(v['value']);
-                        assistCtr.updateMain();
-
-                        AppDB.setReplaceKv(Keys.setting$bucketType, levelType.id());
                         /// this hack need for correct address bar after open dropdown
                         AppRoute.pushNamed(context, ContentManagerPage.route.name!);
+
+                        if(levelType.id() == v['value']){
+                          return;
+                        }
+
+                        levelType = BucketTypes.fromId(v['value']);
+                        AppDB.setReplaceKv(Keys.setting$bucketType, levelType.id());
+
+                        assistCtr.updateMain();
+
+                        bucketList.clear();
+                        requestData();
                       },
                     ),
                   ],
@@ -225,17 +237,81 @@ class _ContentManagerPageState extends StateBase<ContentManagerPage> {
   Widget buildListItem(int idx){
     final itm = bucketList[idx];
 
-    return InkWell(
-      onTap: (){},
-      child: Card(
-        child: Text(itm.title),
+    return SizedBox(
+      key: ValueKey(itm.id),
+      height: 80,
+      child: InkWell(
+        onTap: (){
+          gotoEditePage(itm);
+        },
+        child: Card(
+          child: Padding(
+            padding: const EdgeInsets.all(6.0),
+            child: Row(
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(10),
+                  child: Builder(
+                    builder: (ctx){
+                      if(itm.imageModel != null){
+                        return Image.network(itm.imageModel!.url!, width: 85, fit: BoxFit.fill,);
+                      }
+
+                      return Image.asset(AppImages.appIcon, width: 85, fit: BoxFit.fill);
+                    },
+                  ),
+                ),
+
+                SizedBox(width: 20,),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(itm.title).bold(),
+
+                      SizedBox(height: 5),
+                      Text(itm.description?? '').alpha(),
+                    ],
+                  ),
+                ),
+
+                Builder(
+                    builder: (ctx) {
+                      if(itm.isHide){
+                        return Row(
+                          children: [
+                            SizedBox(width: 10,),
+                            Icon(AppIcons.eyeOff, size: 18,),
+                          ],
+                        );
+                      }
+
+                      return SizedBox();
+                    }),
+
+                SizedBox(width: 12,),
+                IconButton(
+                    visualDensity: VisualDensity.compact,
+                    constraints: BoxConstraints.tightFor(),
+                    padding: EdgeInsets.zero,
+                    splashRadius: 18,
+                    onPressed: (){},
+                    icon: Icon(AppIcons.apps2, color: Colors.lightBlue,)
+                )
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }
 
   void onSearchCall(String txt){
     bucketList.clear();
-    searchFilter.searchText = txt;
+
+    if(txt.isNotEmpty) {
+      searchFilter.searchText = txt;
+    }
 
     requestData();
   }
@@ -252,14 +328,27 @@ class _ContentManagerPageState extends StateBase<ContentManagerPage> {
   }
 
   void gotoAddPage() async {
-    final inject = MediaManagerPageInjectData();
+    final inject = BuketEditPageInjectData();
     inject.bucketType = levelType;
 
-    AppRoute.pushNamed(context, MediaManagerPage.route.name!, extra: inject);
+    AppRoute.pushNamed(context, BuketEditPage.route.name!, extra: inject);
     final event = PagesEventBus.getEventBus((ContentManagerPage).toString());
     event.addEvent('update', (param) {
-      print('================================= up');
+      print('@@@@@@@@@@@@@@ 1');
+      bucketList.clear();
       requestData();
+    });
+  }
+
+  void gotoEditePage(BucketModel bucketModel) async {
+    final inject = BuketEditPageInjectData();
+    inject.bucket = bucketModel;
+
+    AppRoute.pushNamed(context, BuketEditPage.route.name!, extra: inject);
+    final event = PagesEventBus.getEventBus((ContentManagerPage).toString());
+    event.addEvent('update', (param) {
+      print('@@@@@@@@@@@@@@ 2');
+      assistCtr.updateMain();
     });
   }
 
@@ -275,13 +364,13 @@ class _ContentManagerPageState extends StateBase<ContentManagerPage> {
 
   void requestData(){
     final ul = PublicAccess.findUpperLower(bucketList, searchFilter.ascOrder);
-    searchFilter.lower = ul.lower;
-    searchFilter.upper = ul.upper;
+    searchFilter.lower = ul.lowerAsTS;
+    searchFilter.upper = ul.upperAsTS;
 
     final js = <String, dynamic>{};
     js[Keys.requestZone] = 'get_bucket_data';
     js[Keys.requesterId] = Session.getLastLoginUser()?.userId;
-    js[Keys.key] = levelType.bucketName();
+    js[Keys.key] = levelType.id();
     js[Keys.searchFilter] = searchFilter.toMap();
 
     requester.prepareUrl();

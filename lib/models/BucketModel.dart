@@ -1,4 +1,5 @@
 import 'package:iris_tools/api/helpers/jsonHelper.dart';
+import 'package:iris_tools/dateSection/dateHelper.dart';
 import 'package:iris_tools/models/dataModels/mediaModel.dart';
 
 import 'package:vosate_zehn_panel/models/dateFieldMixin.dart';
@@ -11,6 +12,7 @@ class BucketModel with DateFieldMixin {
   String? description;
   int? mediaId;
   int bucketType = 0;
+  bool isHide = false;
   //--------------- local
   MediaModel? imageModel;
   List<SubBucketModel> level2List = [];
@@ -27,7 +29,8 @@ class BucketModel with DateFieldMixin {
     description = map[Keys.description];
     bucketType = map['bucket_type']?? 0;
     mediaId = map['media_id'];
-    date = map[Keys.date];
+    isHide = map['is_hide'];
+    date = DateHelper.tsToSystemDate(map[Keys.date]);
 
     /*if(map[Keys.dataList] is List){
       for(final i in map[Keys.dataList]) {
@@ -42,9 +45,13 @@ class BucketModel with DateFieldMixin {
     map[Keys.id] = id;
     map[Keys.title] = title;
     map[Keys.description] = description;
-    map[Keys.date] = date;
     map['bucket_type'] = bucketType;
     map['media_id'] = mediaId;
+    map['is_hide'] = isHide;
+
+    if(date != null){
+      map[Keys.date] = DateHelper.toTimestampNullable(date);
+    }
 
     return map;
   }

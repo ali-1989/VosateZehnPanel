@@ -11,7 +11,10 @@ class PagesEventBus {
       return _events[idx];
     }
 
-    return EventBus._()..id = id;
+    final e = EventBus._()..id = id;
+    _events.add(e);
+
+    return e;
   }
 
   static void removeFor(String id){

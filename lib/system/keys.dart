@@ -41,7 +41,7 @@ class Keys {
   static const state = 'state';
   static const options = 'options';
   static const filtering = 'filtering';
-  static const jsonHttpPart = 'json';
+  static const jsonPart = 'json_part';
   static const mobileNumber = 'mobile_number';
   static const phoneCode = 'phone_code';
   static const languageIso = 'language_iso';

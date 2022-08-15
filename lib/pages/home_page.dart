@@ -69,7 +69,11 @@ class _HomePageState extends StateBase<HomePage> {
               buildItem('مدیریت "حفظ حریم"', AppIcons.lock, gotoTermPage),
               buildItem('مدیریت "حمایت از ما"', AppIcons.cashMultiple, gotoAidPage),
               buildItem('متن "دیالوگ حمایت"', AppIcons.cashMultiple, gotoAidDialogPage),
-              buildItem('مدیریت محتوا', AppIcons.videoCamera, gotoContentManagerPage),
+              buildItem('مدیریت محتوا', AppIcons.apps, gotoContentManagerPage),
+              buildItem('گویندگان', AppIcons.accountDoubleCircle, gotoAidDialogPage),
+              buildItem('نمایش ارتباط باما', AppIcons.email, gotoAidDialogPage),
+              buildItem('مدیریت تبلیغات', AppIcons.picture, gotoAidDialogPage),
+              buildItem('مدیریت جملات روز', AppIcons.message, gotoAidDialogPage),
             ],
           );
         }

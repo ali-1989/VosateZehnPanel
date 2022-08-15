@@ -154,7 +154,7 @@ Widget routeErrorHandler(BuildContext context, GoRouterState state) {
     return SizedBox();
   }*/
 
- return E404Page();
+ return const E404Page();
 }
 ///============================================================================================
 class MyPageRoute extends PageRouteBuilder {

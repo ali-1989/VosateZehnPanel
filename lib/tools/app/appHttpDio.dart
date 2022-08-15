@@ -571,7 +571,6 @@ class HttpItem {
 				final m = MultipartFile(fd.stream!, fd.streamSize!, filename: fd.fileName, contentType: fd.contentType);
 				newBody.files.add(MapEntry(fd.partName, m));
 			}
-
 		}
 
 		body = newBody;
