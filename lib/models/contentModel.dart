@@ -1,13 +1,17 @@
-
 import 'package:iris_tools/models/dataModels/mediaModel.dart';
+
+import 'package:vosate_zehn_panel/models/dateFieldMixin.dart';
 import 'package:vosate_zehn_panel/models/speakerModel.dart';
 import 'package:vosate_zehn_panel/system/keys.dart';
 
-class ContentModel {
+class ContentModel with DateFieldMixin {
   int? id;
-  late SpeakerModel speakerModel;
+  //int? type;
+  int? speakerId;
+  List<int> mediaIds = [];
+  //------------- local
+  SpeakerModel? speakerModel;
   List<MediaModel> mediaList = [];
-  int? type;
 
   ContentModel();
 
@@ -17,22 +21,15 @@ class ContentModel {
     }
 
     id = map[Keys.id];
-    type = map[Keys.type];
-    speakerModel = SpeakerModel.fromMap(map['speaker']);
-
-    final List mList = map[Keys.dataList]?? [];
-
-    for(final m in mList){
-      mediaList.add(MediaModel.fromMap(m));
-    }
+    speakerId = map['speaker_id'];
+    mediaList = map['media_ids'];
   }
 
   Map<String, dynamic> toMap(){
     final map = <String, dynamic>{};
     map[Keys.id] = id;
-    map[Keys.type] = type;
-    map['speaker'] = speakerModel.toMap();
-    map[Keys.dataList] = mediaList;
+    map['speaker_id'] = speakerId;
+    map['media_ids'] = mediaList;
 
     return map;
   }

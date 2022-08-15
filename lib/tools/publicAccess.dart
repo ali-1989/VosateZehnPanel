@@ -1,7 +1,10 @@
 import 'package:iris_tools/api/system.dart';
+import 'package:iris_tools/dateSection/dateHelper.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 import 'package:vosate_zehn_panel/constants.dart';
 import 'package:vosate_zehn_panel/managers/settingsManager.dart';
+import 'package:vosate_zehn_panel/models/dateFieldMixin.dart';
 import 'package:vosate_zehn_panel/system/keys.dart';
 import 'package:vosate_zehn_panel/system/session.dart';
 import 'package:vosate_zehn_panel/tools/app/appRoute.dart';
@@ -11,16 +14,16 @@ class PublicAccess {
   PublicAccess._();
 
   static String graphApi = '${SettingsManager.settingsModel.httpAddress}/graph-v1';
-  /*static ClassicFooter classicFooter = ClassicFooter(
+  static ClassicFooter classicFooter = ClassicFooter(
     loadingText: '',
     idleText: '',
     noDataText: '',
     failedText: '',
     loadStyle: LoadStyle.ShowWhenLoading,
-  );*/
+  );
 
-  /*static List<DateTime> findUpperLower(List<DateFieldMixin> list, bool isAsc){
-    final res = <DateTime>[];
+  static UpperLower findUpperLower(List<DateFieldMixin> list, bool isAsc){
+    final res = UpperLower();
 
     if(list.isEmpty){
       return res;
@@ -43,10 +46,8 @@ class PublicAccess {
       }
     }
 
-    res.add(lower);
-    res.add(upper);
-    return res;
-  }*/
+    return UpperLower()..lower = lower..upper = upper;
+  }
 
   ///----------- HowIs ----------------------------------------------------
   static Map<String, dynamic> getHowIsMap() {
@@ -90,4 +91,10 @@ class PublicAccess {
 
     return heart;
   }
+}
+
+///===================================================================================
+class UpperLower {
+  DateTime? upper;
+  DateTime? lower;
 }

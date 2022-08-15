@@ -6,12 +6,11 @@ import 'package:go_router/go_router.dart';
 import 'package:vosate_zehn_panel/pages/aboutUsPage.dart';
 import 'package:vosate_zehn_panel/pages/aidDialogPage.dart';
 import 'package:vosate_zehn_panel/pages/aidPage.dart';
+import 'package:vosate_zehn_panel/pages/contentManagerPage.dart';
 import 'package:vosate_zehn_panel/pages/e404_page.dart';
 import 'package:vosate_zehn_panel/pages/home_page.dart';
 import 'package:vosate_zehn_panel/pages/login_page.dart';
 import 'package:vosate_zehn_panel/pages/termPage.dart';
-import 'package:vosate_zehn_panel/pages/videoAddPage.dart';
-import 'package:vosate_zehn_panel/pages/videoManagerPage.dart';
 import 'package:vosate_zehn_panel/system/session.dart';
 import 'package:vosate_zehn_panel/tools/app/appDb.dart';
 import '/system/keys.dart';
@@ -97,7 +96,7 @@ final mainRouter = GoRouter(
     ],
     initialLocation: HomePage.route.path,
     routerNeglect: true,//In browser 'back' button not work
-    errorBuilder: (BuildContext context, GoRouterState state) => const E404Page(),
+    errorBuilder: routeErrorHandler,
     redirect: _mainRedirect,
 );
 
@@ -108,8 +107,7 @@ final homeRouter = <GoRoute>[
   AidPage.route,
   TermPage.route,
   AidDialogPage.route,
-  VideoManagerPage.route,
-  VideoAddPage.route,
+  ContentManagerPage.route,
   ];
 
 bool checkFreeRoute(GoRoute route, GoRouterState state){
@@ -121,7 +119,7 @@ bool checkFreeRoute(GoRoute route, GoRouterState state){
   }
 
   if(!routeIsTop){
-    //return '${HomePage.route.path}/${route.path}' == state.subloc;  if homePage has name, like:/admin
+    //return '${HomePage.route.path}/${route.path}' == state.subloc;  if homePage is not backSlash, like:/admin
     return '/${route.path}' == state.subloc;
   }
 
@@ -145,6 +143,18 @@ String? _mainRedirect(GoRouterState state){
   }
 
   return state.queryParams['gt'];
+}
+
+Widget routeErrorHandler(BuildContext context, GoRouterState state) {
+  /*final split = state.subloc.split('/');
+  final count = state.subloc.startsWith('/')? 1 : 0;
+
+  if(split.length > count){
+    AppRoute.pushNamed(AppRoute.getContext(), state.subloc.substring(0, state.subloc.lastIndexOf('/')));
+    return SizedBox();
+  }*/
+
+ return E404Page();
 }
 ///============================================================================================
 class MyPageRoute extends PageRouteBuilder {

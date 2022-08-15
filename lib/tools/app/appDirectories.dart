@@ -8,6 +8,7 @@ import 'package:iris_tools/api/helpers/pathHelper.dart';
 import 'package:iris_tools/api/helpers/storageHelper.dart';
 import 'package:iris_tools/api/system.dart';
 import 'package:iris_tools/models/dataModels/mediaModel.dart';
+
 import 'package:vosate_zehn_panel/models/enums.dart';
 
 class AppDirectories {
@@ -55,14 +56,14 @@ class AppDirectories {
 
     if(fName == null) {
       if (media.id != null) {
-        fName = media.id;
+        fName = '${media.id}';
       }
       else {
         fName = PathHelper.getFileName(media.url!);
       }
     }
 
-    return PathHelper.resolvePath(pat + PathHelper.getSeparator() + fName!);
+    return PathHelper.resolvePath(pat + PathHelper.getSeparator() + fName);
   }
 
   static String? getSavePathByPath(SavePathType type, String? filepath){
