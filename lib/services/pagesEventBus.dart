@@ -60,7 +60,10 @@ class EventBus {
   }
 
   void callEvent(String name, dynamic data){
-    _get(name)?.event.call(data);
+    try {
+      _get(name)?.event.call(data);
+    }
+    catch (e){/**/}
   }
 }
 ///===============================================================================

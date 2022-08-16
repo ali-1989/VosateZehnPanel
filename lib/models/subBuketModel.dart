@@ -19,8 +19,8 @@ class SubBucketModel with DateFieldMixin {
   //-------- local
   MediaModel? imageModel;
   List<ContentModel> contentList = [];
-  PlatformFile? pickedFile;
-  List<PlatformFile> pickedFiles = [];
+  //PlatformFile? pickedFile;
+  //List<PlatformFile> pickedFiles = [];
 
   SubBucketModel();
 

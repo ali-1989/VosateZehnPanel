@@ -36,13 +36,13 @@ class PublicAccess {
       var c = DateHelper.compareDates(x.date, lower, asc: isAsc);
 
       if(c < 0){
-        lower = x.date!;
+        upper = x.date!;
       }
 
       c = DateHelper.compareDates(x.date, upper, asc: isAsc);
 
       if(c > 0){
-        upper = x.date!;
+        lower = x.date!;
       }
     }
 

@@ -2,22 +2,20 @@ import 'package:flutter/material.dart';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:iris_tools/api/helpers/colorHelper.dart';
-import 'package:iris_tools/api/helpers/mediaHelper.dart';
-import 'package:iris_tools/api/helpers/pathHelper.dart';
 import 'package:iris_tools/modules/stateManagers/assist.dart';
 import 'package:iris_tools/widgets/maxWidth.dart';
 import 'package:iris_tools/widgets/optionsRow/checkRow.dart';
-import 'package:vosate_zehn_panel/models/BucketModel.dart';
 
+import 'package:vosate_zehn_panel/models/contentModel.dart';
 import 'package:vosate_zehn_panel/models/subBuketModel.dart';
 import 'package:vosate_zehn_panel/system/extensions.dart';
 import 'package:vosate_zehn_panel/system/stateBase.dart';
 import 'package:vosate_zehn_panel/tools/app/appDialogIris.dart';
 import 'package:vosate_zehn_panel/tools/app/appIcons.dart';
-import 'package:vosate_zehn_panel/tools/app/appSheet.dart';
+import 'package:vosate_zehn_panel/tools/app/appToast.dart';
 
 class AddMediaPageInjectData {
-  late final BucketModel bucketModel;
+  late final SubBucketModel level2model;
 }
 ///----------------------------------------------------------------
 class AddMediaPage extends StatefulWidget {
@@ -36,8 +34,8 @@ class _AddMediaPageState extends StateBase<AddMediaPage> {
   TextEditingController titleCtr = TextEditingController();
   TextEditingController descriptionCtr = TextEditingController();
   late InputDecoration inputDecoration;
-  PlatformFile? pickedImage;
-  PlatformFile? pickedMedia;
+  FilePickerResult? imagePickerResult;
+  bool multiMedia = false;
 
   @override
   void initState(){
@@ -63,7 +61,7 @@ class _AddMediaPageState extends StateBase<AddMediaPage> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 15.0),
+      padding: const EdgeInsets.symmetric(vertical: 10.0),
       child: MaxWidth(
         maxWidth: 480,
         child: Assist(
@@ -97,25 +95,12 @@ class _AddMediaPageState extends StateBase<AddMediaPage> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              SizedBox(
-                                width: 110,
-                                child: ElevatedButton(
-                                  style: ElevatedButton.styleFrom(
-                                    primary: Colors.lightBlue
-                                  ),
-                                    onPressed: onUploadCall,
-                                    child: Text('آپلود')
-                                ),
-                              ),
-
-                              ElevatedButton(
-                                  onPressed: onBackPress,
-                                  child: Text('برگشت')
-                              )
-                            ],
+                          SizedBox(
+                            width: 200,
+                            child: ElevatedButton(
+                                onPressed: onBackPress,
+                                child: Text('برگشت')
+                            ),
                           ),
 
                           SizedBox(height: 15,),
@@ -141,7 +126,7 @@ class _AddMediaPageState extends StateBase<AddMediaPage> {
 
                       Builder(
                           builder: (context) {
-                            if(pickedImage == null){
+                            if(imagePickerResult == null){
                               return SizedBox(
                                 width: 90,
                                 height: 90,
@@ -156,7 +141,7 @@ class _AddMediaPageState extends StateBase<AddMediaPage> {
 
                             return Stack(
                               children: [
-                                Image.memory(pickedImage!.bytes!,
+                                Image.memory(imagePickerResult!.files.first.bytes!,
                                   width: 100, height: 100, fit: BoxFit.cover,),
 
                                 Icon(
@@ -186,34 +171,40 @@ class _AddMediaPageState extends StateBase<AddMediaPage> {
                 decoration: inputDecoration,
               ),
 
-              SizedBox(height: 20,),
-              ElevatedButton(
-                  onPressed: pickMedia,
-                  child: Text('انتخاب فایل')
+              SizedBox(height: 10,),
+              CheckBoxRow(
+                  value: multiMedia,
+                  description: Text('چند محتوایی'),
+                  onChanged: (v){
+                    multiMedia = !multiMedia;
+                    assistCtr.updateMain();
+                  }
               ),
 
               SizedBox(height: 10,),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text('محتوا'),
 
-              Center(
-                child: Builder(
-                    builder: (ctx){
-                      if(pickedMedia != null){
-                        bool isVideo = PathHelper.getDotExtension(pickedMedia!.name?? '') == '.mp4';
-
-                        return Column(
-                          children: [
-                            Text('${pickedMedia!.name?? ''}  |  ${pickedMedia!.size}'),
-                            SizedBox(height: 10,),
-                            //Text('$isVideo'),
-                          ],
-                        );
-                      }
-
-                      return SizedBox();
-                    }
-                ),
+                  ElevatedButton(
+                      onPressed: pickMedia,
+                      child: Text('اضافه کردن')
+                  ),
+                ],
               ),
 
+              SizedBox(height: 10,),
+              Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 10),
+                  child: ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: 0,//mediaList.length,
+                      itemBuilder: (ctx, idx){
+                        return buildListItem(idx);
+                      }
+                  )
+              ).wrapBoxBorder(),
             ],
           ),
         ),
@@ -221,37 +212,59 @@ class _AddMediaPageState extends StateBase<AddMediaPage> {
     );
   }
 
+  Widget buildListItem(int idx) {
+    //final itm = mediaList[idx];
+
+    return ColoredBox(color: ColorHelper.getRandomRGB(),
+        child: SizedBox(height: 20,));
+  }
+
   void removeImage() async {
-    pickedImage = null;
+    imagePickerResult = null;
     assistCtr.updateMain();
   }
 
   void pickImage() async {
-    final p = await FilePicker.platform.pickFiles(
+    imagePickerResult = await FilePicker.platform.pickFiles(
       allowedExtensions: ['jpg', 'png'],
       allowMultiple: false,
       type: FileType.custom,
     );
 
-    if(p != null) {
-      pickedImage = p.files.first;
-      assistCtr.updateMain();
-    }
+    assistCtr.updateMain();
   }
 
   void pickMedia() async {
-    final p = await FilePicker.platform.pickFiles(
+    final mediaPickerResult = await FilePicker.platform.pickFiles(
       allowedExtensions: ['mp3', 'mp4'],
-      allowMultiple: false,
-      withData: false,
-      withReadStream: true,
+      allowMultiple: multiMedia,
       type: FileType.custom,
     );
 
-    if(p != null) {
-      pickedMedia = p.files.first;
+    /*if(mediaPickerResult != null){
+      if(!multiMedia){
+        widget.injectData.level2model.pickedFile = mediaPickerResult.files.first;
+      }
+      else {
+        for (final k in mediaPickerResult.files) {
+          bool exist = false;
+
+          for (final k2 in widget.injectData.level2model.pickedFiles){
+            if(k.name == k2.name && k.size == k2.size){
+              exist = true;
+              AppToast.showToast(context, 'موارد تکراری اضافه نمی شود');
+              break;
+            }
+          }
+
+          if(!exist){
+            widget.injectData.level2model.pickedFiles.add(k);
+          }
+        }
+      }
+
       assistCtr.updateMain();
-    }
+    }*/
   }
 
   @override
@@ -260,18 +273,14 @@ class _AddMediaPageState extends StateBase<AddMediaPage> {
   }
 
   void onBackPress(){
-    Navigator.of(context).pop();
-  }
-
-  void onUploadCall(){
-    if(false){
+    if(widget.injectData.level2model.contentList.isEmpty){
       AppDialogIris.instance.showYesNoDialog(
           context,
           desc: 'لیست رسانه ها خالی می باشد. در صورت خروج محتوا حذف می شود',
           yesText: 'خروج',
           noText: 'اصلاح',
           yesFn: (){
-
+            Navigator.of(context).pop();
             Navigator.of(context).pop();
           },
           noFn: (){}
@@ -282,9 +291,19 @@ class _AddMediaPageState extends StateBase<AddMediaPage> {
 
     final title = titleCtr.text.trim();
 
-    if(title.isEmpty){
-      AppSheet.showSheetOk(context, 'لطفا عنوان را وارد کنید');
+    if(title.isEmpty && widget.injectData.level2model.contentList.isNotEmpty){
+      AppDialogIris.instance.showInfoDialog(
+          context,
+        null,
+           'عنوان محتوا ذکر نشده.',
+      );
+
       return;
     }
+
+    widget.injectData.level2model.title = title;
+    widget.injectData.level2model.description = descriptionCtr.text;
+
+    Navigator.of(context).pop();
   }
 }

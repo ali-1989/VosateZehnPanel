@@ -12,7 +12,7 @@ class BucketModel with DateFieldMixin {
   String? description;
   int? mediaId;
   int bucketType = 0;
-  bool isHide = false;
+  bool isHide = true;
   //--------------- local
   MediaModel? imageModel;
   List<SubBucketModel> level2List = [];
@@ -29,7 +29,7 @@ class BucketModel with DateFieldMixin {
     description = map[Keys.description];
     bucketType = map['bucket_type']?? 0;
     mediaId = map['media_id'];
-    isHide = map['is_hide'];
+    isHide = map['is_hide']?? true;
     date = DateHelper.tsToSystemDate(map[Keys.date]);
 
     /*if(map[Keys.dataList] is List){

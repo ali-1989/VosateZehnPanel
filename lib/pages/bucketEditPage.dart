@@ -6,6 +6,7 @@ import 'package:iris_tools/api/generator.dart';
 import 'package:iris_tools/api/helpers/jsonHelper.dart';
 import 'package:iris_tools/modules/stateManagers/assist.dart';
 import 'package:iris_tools/widgets/maxWidth.dart';
+import 'package:iris_tools/widgets/optionsRow/checkRow.dart';
 
 import 'package:vosate_zehn_panel/models/BucketModel.dart';
 import 'package:vosate_zehn_panel/models/enums.dart';
@@ -52,6 +53,7 @@ class _BuketEditPageState extends StateBase<BuketEditPage> {
   late InputDecoration inputDecoration;
   PlatformFile? pickedImage;
   bool editMode = false;
+  int? deletedImageId;
 
   @override
   void initState(){
@@ -224,6 +226,34 @@ class _BuketEditPageState extends StateBase<BuketEditPage> {
                     maxLines: 4,
                     decoration: inputDecoration,
                   ),
+
+                  SizedBox(height: 10,),
+                  Builder(
+                    builder: (ctx){
+                      if(editMode){
+                        return Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            CheckBoxRow(
+                                value: bucketModel.isHide,
+                                description: Text('حالت مخفی'),
+                                onChanged: (v){
+                                  bucketModel.isHide = !bucketModel.isHide;
+                                  assistCtr.updateMain();
+                                }
+                            ),
+
+                            ElevatedButton(
+                                onPressed: deleteBucketCall,
+                                child: Text('حذف آیتم')
+                            )
+                          ],
+                        );
+                      }
+
+                      return SizedBox();
+                    },
+                  ),
                 ],
               ),
             ),
@@ -233,9 +263,13 @@ class _BuketEditPageState extends StateBase<BuketEditPage> {
     );
   }
 
+  void deleteBucketCall() async {
+    AppSheet.showSheetYesNo(context, Text('آیا از حذف اطمینان دارید؟'), () {requestDeleteBucket();}, () {});
+  }
+
   void removeImage() async {
     if(editMode){
-      AppSheet.showSheetYesNo(context, Text('آیا عکس حذف شود؟'), () {requestDeleteImage();}, () {});
+      AppSheet.showSheetYesNo(context, Text('آیا عکس حذف شود؟'), () {deleteImageInEditMode();}, () {});
       return;
     }
 
@@ -270,44 +304,29 @@ class _BuketEditPageState extends StateBase<BuketEditPage> {
       return;
     }
 
-    BucketModel bucketModel = BucketModel();
-    bucketModel.bucketType = widget.injectData!.bucketType.id();
-    bucketModel.title = title;
-    bucketModel.description = descriptionCtr.text;
+    BucketModel bucketModel;
 
     if(editMode){
-      bucketModel.id =  widget.injectData!.bucket!.id;
+      bucketModel = widget.injectData!.bucket!;
     }
+    else {
+      bucketModel = BucketModel();
+      bucketModel.bucketType = widget.injectData!.bucketType.id();
+    }
+
+    bucketModel.title = title;
+    bucketModel.description = descriptionCtr.text;
 
     requestUpsertBucket(bucketModel);
   }
 
-  void requestDeleteImage(){
-    final js = <String, dynamic>{};
-    js[Keys.requestZone] = 'delete_bucket_image';
-    js[Keys.requesterId] = Session.getLastLoginUser()?.userId;
-    js[Keys.id] = widget.injectData!.bucket!.id;
+  void deleteImageInEditMode(){
+    if(editMode){
+      deletedImageId ??= widget.injectData!.bucket!.imageModel!.id;
 
-    requester.prepareUrl();
-    requester.bodyJson = js;
-
-    requester.httpRequestEvents.onAnyState = (req) async {
-      hideLoading();
-    };
-
-    requester.httpRequestEvents.onFailState = (req) async {
-      AppSheet.showSheet$OperationFailed(context);
-    };
-
-    requester.httpRequestEvents.onStatusOk = (req, data) async {
       widget.injectData!.bucket!.imageModel = null;
-
       assistCtr.updateMain();
-      PagesEventBus.getEventBus((ContentManagerPage).toString()).callEvent('update', null);
-    };
-
-    showLoading();
-    requester.request(context);
+    }
   }
 
   void requestUpsertBucket(BucketModel bucketModel){
@@ -323,7 +342,13 @@ class _BuketEditPageState extends StateBase<BuketEditPage> {
       requester.httpItem.addBodyBytes('image', '${Generator.generateDateMillWith6Digit()}.jpg', pickedImage!.bytes!);
     }
     else {
-      js['image'] = false;//todo in edit mode
+      if (editMode && deletedImageId != null) {
+        js['image'] = false;
+      }
+    }
+
+    if(deletedImageId != null){
+      js['delete_media_id'] = deletedImageId;
     }
 
     requester.httpItem.addBodyField(Keys.jsonPart, JsonHelper.mapToJson(js));
@@ -337,11 +362,40 @@ class _BuketEditPageState extends StateBase<BuketEditPage> {
     };
 
     requester.httpRequestEvents.onStatusOk = (req, data) async {
-      editMode = true;
-      AppSheet.showSheet$SuccessOperation(context);
-
-      assistCtr.updateMain();
       PagesEventBus.getEventBus((ContentManagerPage).toString()).callEvent('update', null);
+
+      AppSheet.showSheet$SuccessOperation(context, onBtn: (){
+        AppRoute.pop(context);
+      });
+    };
+
+    showLoading();
+    requester.prepareUrl();
+    requester.request(context);
+  }
+
+  void requestDeleteBucket(){
+    final js = <String, dynamic>{};
+    js[Keys.requestZone] = 'delete_bucket';
+    js[Keys.requesterId] = Session.getLastLoginUser()?.userId;
+    js[Keys.id] = widget.injectData!.bucket!.id;
+
+    requester.bodyJson = js;
+
+    requester.httpRequestEvents.onAnyState = (req) async {
+      hideLoading();
+    };
+
+    requester.httpRequestEvents.onFailState = (req) async {
+      AppSheet.showSheet$OperationFailed(context);
+    };
+
+    requester.httpRequestEvents.onStatusOk = (req, data) async {
+      PagesEventBus.getEventBus((ContentManagerPage).toString()).callEvent('update', null);
+
+      AppSheet.showSheet$SuccessOperation(context, onBtn: (){
+        AppRoute.pop(context);
+      });
     };
 
     showLoading();

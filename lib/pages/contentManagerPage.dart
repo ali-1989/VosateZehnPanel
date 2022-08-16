@@ -11,6 +11,7 @@ import 'package:vosate_zehn_panel/managers/mediaManager.dart';
 import 'package:vosate_zehn_panel/models/BucketModel.dart';
 import 'package:vosate_zehn_panel/models/enums.dart';
 import 'package:vosate_zehn_panel/pages/bucketEditPage.dart';
+import 'package:vosate_zehn_panel/pages/bucketMediaManagerPage.dart';
 import 'package:vosate_zehn_panel/services/pagesEventBus.dart';
 import 'package:vosate_zehn_panel/system/extensions.dart';
 import 'package:vosate_zehn_panel/system/keys.dart';
@@ -47,10 +48,10 @@ class _ContentManagerPageState extends StateBase<ContentManagerPage> {
   BucketTypes levelType = BucketTypes.video;
   List<Map> typesDropdownList = [];
   List<BucketModel> bucketList = [];
-  bool isInLoadData = false;
   SearchFilterTool searchFilter = SearchFilterTool();
   RefreshController refreshController = RefreshController(initialRefresh: false);
   int allCount = 0;
+  bool isInLoadData = false;
   String state$fetchData = 'state_fetchData';
 
   @override
@@ -164,7 +165,7 @@ class _ContentManagerPageState extends StateBase<ContentManagerPage> {
 
                         assistCtr.updateMain();
 
-                        bucketList.clear();
+                        reset();
                         requestData();
                       },
                     ),
@@ -199,7 +200,7 @@ class _ContentManagerPageState extends StateBase<ContentManagerPage> {
                     }
 
                     return SizedBox(
-                      height: 250,
+                      height: 340,
                       child: RefreshConfiguration(
                         headerBuilder: () => MaterialClassicHeader(),
                         footerBuilder:  () => PublicAccess.classicFooter,
@@ -295,7 +296,9 @@ class _ContentManagerPageState extends StateBase<ContentManagerPage> {
                     constraints: BoxConstraints.tightFor(),
                     padding: EdgeInsets.zero,
                     splashRadius: 18,
-                    onPressed: (){},
+                    onPressed: (){
+                      gotoMediaManagerPage(itm);
+                    },
                     icon: Icon(AppIcons.apps2, color: Colors.lightBlue,)
                 )
               ],
@@ -307,7 +310,7 @@ class _ContentManagerPageState extends StateBase<ContentManagerPage> {
   }
 
   void onSearchCall(String txt){
-    bucketList.clear();
+    reset();
 
     if(txt.isNotEmpty) {
       searchFilter.searchText = txt;
@@ -317,7 +320,7 @@ class _ContentManagerPageState extends StateBase<ContentManagerPage> {
   }
 
   void onClearSearchCall(){
-    bucketList.clear();
+    reset();
     searchFilter.searchText = null;
 
     requestData();
@@ -327,6 +330,13 @@ class _ContentManagerPageState extends StateBase<ContentManagerPage> {
     requestData();
   }
 
+  void gotoMediaManagerPage(BucketModel bucketModel) async {
+    final inject = BuketMediaManagerPageInjectData();
+    inject.bucket = bucketModel;
+
+    AppRoute.pushNamed(context, BuketMediaManagerPage.route.name!, extra: inject);
+  }
+
   void gotoAddPage() async {
     final inject = BuketEditPageInjectData();
     inject.bucketType = levelType;
@@ -334,21 +344,21 @@ class _ContentManagerPageState extends StateBase<ContentManagerPage> {
     AppRoute.pushNamed(context, BuketEditPage.route.name!, extra: inject);
     final event = PagesEventBus.getEventBus((ContentManagerPage).toString());
     event.addEvent('update', (param) {
-      print('@@@@@@@@@@@@@@ 1');
-      bucketList.clear();
+      reset();
       requestData();
     });
   }
 
   void gotoEditePage(BucketModel bucketModel) async {
     final inject = BuketEditPageInjectData();
+    inject.bucketType = levelType;
     inject.bucket = bucketModel;
 
     AppRoute.pushNamed(context, BuketEditPage.route.name!, extra: inject);
     final event = PagesEventBus.getEventBus((ContentManagerPage).toString());
     event.addEvent('update', (param) {
-      print('@@@@@@@@@@@@@@ 2');
-      assistCtr.updateMain();
+      reset();
+      requestData();
     });
   }
 
@@ -360,6 +370,11 @@ class _ContentManagerPageState extends StateBase<ContentManagerPage> {
   @override
   void onResize(oldW, oldH, newW, newH) async {
     //callState();
+  }
+
+  void reset(){
+    refreshController.resetNoData();
+    bucketList.clear();
   }
 
   void requestData(){

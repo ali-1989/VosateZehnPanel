@@ -6,8 +6,10 @@ import 'package:go_router/go_router.dart';
 import 'package:vosate_zehn_panel/pages/aboutUsPage.dart';
 import 'package:vosate_zehn_panel/pages/aidDialogPage.dart';
 import 'package:vosate_zehn_panel/pages/aidPage.dart';
+import 'package:vosate_zehn_panel/pages/bucketMediaManagerPage.dart';
 import 'package:vosate_zehn_panel/pages/contentManagerPage.dart';
 import 'package:vosate_zehn_panel/pages/e404_page.dart';
+import 'package:vosate_zehn_panel/pages/empty.dart';
 import 'package:vosate_zehn_panel/pages/home_page.dart';
 import 'package:vosate_zehn_panel/pages/login_page.dart';
 import 'package:vosate_zehn_panel/pages/termPage.dart';
@@ -92,7 +94,6 @@ class AppRoute {
 final mainRouter = GoRouter(
     routes: <GoRoute>[
       HomePage.route,
-      //LoginPage.route,
     ],
     initialLocation: HomePage.route.path,
     routerNeglect: true,//In browser 'back' button not work
@@ -101,13 +102,14 @@ final mainRouter = GoRouter(
 );
 
 final homeRouter = <GoRoute>[
-  //E404Page.route,
   LoginPage.route,
   AboutUsPage.route,
   AidPage.route,
   TermPage.route,
   AidDialogPage.route,
   ContentManagerPage.route,
+  BuketMediaManagerPage.route,
+  Empty.route,
   ];
 
 bool checkFreeRoute(GoRoute route, GoRouterState state){

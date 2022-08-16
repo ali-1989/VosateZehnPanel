@@ -7,6 +7,7 @@ import 'package:vosate_zehn_panel/pages/aboutUsPage.dart';
 import 'package:vosate_zehn_panel/pages/aidDialogPage.dart';
 import 'package:vosate_zehn_panel/pages/aidPage.dart';
 import 'package:vosate_zehn_panel/pages/contentManagerPage.dart';
+import 'package:vosate_zehn_panel/pages/empty.dart';
 import 'package:vosate_zehn_panel/pages/termPage.dart';
 import 'package:vosate_zehn_panel/system/stateBase.dart';
 import 'package:vosate_zehn_panel/tools/app/appIcons.dart';
@@ -70,10 +71,10 @@ class _HomePageState extends StateBase<HomePage> {
               buildItem('مدیریت "حمایت از ما"', AppIcons.cashMultiple, gotoAidPage),
               buildItem('متن "دیالوگ حمایت"', AppIcons.cashMultiple, gotoAidDialogPage),
               buildItem('مدیریت محتوا', AppIcons.apps, gotoContentManagerPage),
-              buildItem('گویندگان', AppIcons.accountDoubleCircle, gotoAidDialogPage),
-              buildItem('نمایش ارتباط باما', AppIcons.email, gotoAidDialogPage),
-              buildItem('مدیریت تبلیغات', AppIcons.picture, gotoAidDialogPage),
-              buildItem('مدیریت جملات روز', AppIcons.message, gotoAidDialogPage),
+              buildItem('گویندگان', AppIcons.accountDoubleCircle, gotoEmptyPage),
+              buildItem('نمایش ارتباط باما', AppIcons.email, gotoEmptyPage),
+              buildItem('مدیریت تبلیغات', AppIcons.picture, gotoEmptyPage),
+              buildItem('مدیریت جملات روز', AppIcons.message, gotoEmptyPage),
             ],
           );
         }
@@ -119,5 +120,9 @@ class _HomePageState extends StateBase<HomePage> {
 
   void gotoContentManagerPage(){
     AppRoute.pushNamed(context, ContentManagerPage.route.name!);
+  }
+
+  void gotoEmptyPage(){
+    AppRoute.pushNamed(context, Empty.route.name!);
   }
 }
