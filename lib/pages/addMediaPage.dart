@@ -1,19 +1,23 @@
+import 'package:file_sizes/file_sizes.dart';
 import 'package:flutter/material.dart';
 
 import 'package:file_picker/file_picker.dart';
-import 'package:iris_tools/api/helpers/colorHelper.dart';
+import 'package:iris_tools/api/generator.dart';
+import 'package:iris_tools/api/helpers/jsonHelper.dart';
 import 'package:iris_tools/api/helpers/mediaHelper.dart';
 import 'package:iris_tools/api/helpers/pathHelper.dart';
 import 'package:iris_tools/modules/stateManagers/assist.dart';
 import 'package:iris_tools/widgets/maxWidth.dart';
-import 'package:iris_tools/widgets/optionsRow/checkRow.dart';
 import 'package:vosate_zehn_panel/models/BucketModel.dart';
-
 import 'package:vosate_zehn_panel/models/subBuketModel.dart';
+
 import 'package:vosate_zehn_panel/system/extensions.dart';
+import 'package:vosate_zehn_panel/system/keys.dart';
+import 'package:vosate_zehn_panel/system/requester.dart';
+import 'package:vosate_zehn_panel/system/session.dart';
 import 'package:vosate_zehn_panel/system/stateBase.dart';
-import 'package:vosate_zehn_panel/tools/app/appDialogIris.dart';
 import 'package:vosate_zehn_panel/tools/app/appIcons.dart';
+import 'package:vosate_zehn_panel/tools/app/appManager.dart';
 import 'package:vosate_zehn_panel/tools/app/appSheet.dart';
 
 class AddMediaPageInjectData {
@@ -35,9 +39,12 @@ class AddMediaPage extends StatefulWidget {
 class _AddMediaPageState extends StateBase<AddMediaPage> {
   TextEditingController titleCtr = TextEditingController();
   TextEditingController descriptionCtr = TextEditingController();
+  Requester requester = Requester();
   late InputDecoration inputDecoration;
   PlatformFile? pickedImage;
   PlatformFile? pickedMedia;
+  bool editMode = false;
+  int? deletedImageId;
 
   @override
   void initState(){
@@ -54,6 +61,7 @@ class _AddMediaPageState extends StateBase<AddMediaPage> {
 
   @override
   void dispose() {
+    requester.dispose();
     titleCtr.dispose();
     descriptionCtr.dispose();
 
@@ -100,17 +108,6 @@ class _AddMediaPageState extends StateBase<AddMediaPage> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              SizedBox(
-                                width: 110,
-                                child: ElevatedButton(
-                                  style: ElevatedButton.styleFrom(
-                                    primary: Colors.lightBlue
-                                  ),
-                                    onPressed: onUploadCall,
-                                    child: Text('آپلود')
-                                ),
-                              ),
-
                               ElevatedButton(
                                   onPressed: onBackPress,
                                   child: Text('برگشت')
@@ -187,30 +184,40 @@ class _AddMediaPageState extends StateBase<AddMediaPage> {
               ),
 
               SizedBox(height: 20,),
-              ElevatedButton(
-                  onPressed: pickMedia,
-                  child: Text('انتخاب فایل')
+              Row(
+                children: [
+                  ElevatedButton(
+                      onPressed: pickMedia,
+                      child: Text('انتخاب فایل')
+                  ),
+
+                  SizedBox(width: 30,),
+                  if(pickedMedia != null)
+                    Flexible(
+                      child: Chip(
+                          label: Text(
+                              '${pickedMedia!.name}  |  ${FileSize.getSize(pickedMedia!.size, precision: PrecisionValue.None)}',
+                            maxLines: 1,
+                          )
+                      ),
+                    ),
+
+                ],
               ),
 
               SizedBox(height: 10,),
 
+              if(pickedMedia != null)
               Center(
-                child: Builder(
-                    builder: (ctx){
-                      if(pickedMedia != null){
-                        bool isVideo = PathHelper.getDotExtension(pickedMedia!.name?? '') == '.mp4';
-
-                        return Column(
-                          children: [
-                            Text('${pickedMedia!.name?? ''}  |  ${pickedMedia!.size}'),
-                            SizedBox(height: 10,),
-                            //Text('$isVideo'),
-                          ],
-                        );
-                      }
-
-                      return SizedBox();
-                    }
+                child: SizedBox(
+                  width: 110,
+                  child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                          primary: Colors.lightBlue
+                      ),
+                      onPressed: onUploadCall,
+                      child: Text('آپلود')
+                  ),
                 ),
               ),
 
@@ -264,27 +271,75 @@ class _AddMediaPageState extends StateBase<AddMediaPage> {
   }
 
   void onUploadCall(){
-    if(false){
-      AppDialogIris.instance.showYesNoDialog(
-          context,
-          desc: 'لیست رسانه ها خالی می باشد. در صورت خروج محتوا حذف می شود',
-          yesText: 'خروج',
-          noText: 'اصلاح',
-          yesFn: (){
-
-            Navigator.of(context).pop();
-          },
-          noFn: (){}
-      );
-
-      return;
-    }
-
     final title = titleCtr.text.trim();
 
     if(title.isEmpty){
       AppSheet.showSheetOk(context, 'لطفا عنوان را وارد کنید');
       return;
     }
+
+    requestUpload();
   }
+
+  void requestUpload(){
+    bool isVideo = PathHelper.getDotExtension(pickedMedia!.name) == '.mp4';
+
+    final sb = SubBucketModel();
+    sb.title = titleCtr.text.trim();
+    sb.description = descriptionCtr.text;
+    sb.parentId = widget.injectData.bucketModel.id;
+    sb.type = isVideo ? 1 : 2;
+    //sb.duration = ;
+
+    final js = <String, dynamic>{};
+    js[Keys.requestZone] = 'upsert_sub_bucket';
+    js[Keys.requesterId] = Session.getLastLoginUser()?.userId;
+    js[Keys.id] = widget.injectData.bucketModel.id;
+    js[Keys.data] = sb.toMap();
+    AppManager.addAppInfo(js);
+
+    requester.httpItem.onSendProgress = (i, s){
+      print('progres >>> $i   $s');
+    };
+
+    js['media'] = 'media';
+    requester.httpItem.addBodyStream('media', '${Generator.generateDateMillWith6Digit()}.${isVideo? 'mp4': 'mp3'}', pickedMedia!.readStream!, pickedMedia!.size);
+
+    if(pickedImage != null) {
+      js['cover'] = 'cover';
+      requester.httpItem.addBodyBytes('cover', '${Generator.generateDateMillWith6Digit()}.jpg', pickedImage!.bytes!);
+    }
+    else {
+      if (editMode && deletedImageId != null) {
+        js['cover'] = false;
+      }
+    }
+
+    if(deletedImageId != null){
+      js['delete_cover_id'] = deletedImageId;
+    }
+
+    requester.httpItem.addBodyField(Keys.jsonPart, JsonHelper.mapToJson(js));
+
+    requester.httpRequestEvents.onAnyState = (req) async {
+      hideLoading();
+    };
+
+    requester.httpRequestEvents.onFailState = (req) async {
+      AppSheet.showSheet$OperationFailed(context);
+    };
+
+    requester.httpRequestEvents.onStatusOk = (req, data) async {
+      //PagesEventBus.getEventBus((ContentManagerPage).toString()).callEvent('update', null);
+
+      AppSheet.showSheet$SuccessOperation(context, onBtn: (){
+        Navigator.of(context).pop(true);
+      });
+    };
+
+    showLoading();
+    requester.prepareUrl();
+    requester.request(context);
+  }
+
 }

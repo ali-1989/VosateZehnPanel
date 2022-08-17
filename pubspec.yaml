@@ -50,6 +50,7 @@ dependencies:
   responsive_framework: ^0.2.0
   cool_dropdown: ^1.4.2
   pull_to_refresh: ^2.0.0
+  file_sizes: ^1.0.6
 
   iris_tools:
     git: https://github.com/ali-1989/IrisTools.git

@@ -49,7 +49,7 @@ class BuketEditPage extends StatefulWidget {
 class _BuketEditPageState extends StateBase<BuketEditPage> {
   TextEditingController titleCtr = TextEditingController();
   TextEditingController descriptionCtr = TextEditingController();
-  late Requester requester = Requester();
+  Requester requester = Requester();
   late InputDecoration inputDecoration;
   PlatformFile? pickedImage;
   bool editMode = false;

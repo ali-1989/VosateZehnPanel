@@ -247,6 +247,7 @@ class _BuketMediaManagerPageState extends StateBase<BuketMediaManagerPage> {
         }
     );
 
+    print('666666666666666666666666');
     print(result);
 
     if(result){

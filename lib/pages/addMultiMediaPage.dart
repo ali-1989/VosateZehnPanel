@@ -18,19 +18,19 @@ class AddMediaPageInjectData {
   late final SubBucketModel level2model;
 }
 ///----------------------------------------------------------------
-class AddMediaPage extends StatefulWidget {
+class AddMultiMediaPage extends StatefulWidget {
   final AddMediaPageInjectData injectData;
 
-  const AddMediaPage({
+  const AddMultiMediaPage({
     Key? key,
     required this.injectData,
   }) : super(key: key);
 
   @override
-  State<AddMediaPage> createState() => _AddMediaPageState();
+  State<AddMultiMediaPage> createState() => _AddMultiMediaPageState();
 }
 ///============================================================================================
-class _AddMediaPageState extends StateBase<AddMediaPage> {
+class _AddMultiMediaPageState extends StateBase<AddMultiMediaPage> {
   TextEditingController titleCtr = TextEditingController();
   TextEditingController descriptionCtr = TextEditingController();
   late InputDecoration inputDecoration;
