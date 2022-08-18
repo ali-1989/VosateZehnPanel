@@ -33,6 +33,7 @@ class ContentManagerPage extends StatefulWidget {
       name: (ContentManagerPage).toString().toLowerCase(),
       routes: [
         BuketEditPage.route,
+        BuketMediaManagerPage.route,
       ],
       builder: (BuildContext context, GoRouterState state) => const ContentManagerPage(),
   );

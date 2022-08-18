@@ -19,7 +19,8 @@ class SubBucketModel with DateFieldMixin {
 
   //-------- local
   MediaModel? imageModel;
-  List<ContentModel> contentList = [];
+  MediaModel? mediaModel;
+  ContentModel? contentModel;
 
   SubBucketModel();
 
@@ -29,16 +30,16 @@ class SubBucketModel with DateFieldMixin {
     }
 
     id = map[Keys.id];
+    parentId = map['parent_id'];
     title = map[Keys.title];
     description = map[Keys.description];
     type = map[Keys.type];
     date = DateHelper.tsToSystemDate(map[Keys.date]);
-    parentId = map['parent_id'];
     mediaId = map['media_id'];
     coverId = map['cover_id'];
     contentId = map['content_id'];
-    contentType = map['content_type'];
-    duration = map['duration'];
+    contentType = map['content_type']?? 0;
+    duration = map['duration']?? 0;
   }
 
   Map<String, dynamic> toMap(){
@@ -59,7 +60,7 @@ class SubBucketModel with DateFieldMixin {
       map[Keys.date] = DateHelper.toTimestampNullable(date);
     }
 
-    if(duration > 0){
+    if(duration > 0){ //if duration is not exist, server calc this
       map['duration'] = duration;
     }
 

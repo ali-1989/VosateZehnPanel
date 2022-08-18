@@ -66,10 +66,10 @@ class _HomePageState extends StateBase<HomePage> {
               //childAspectRatio: 1
             ),
             children: [
-              buildItem('مدیریت "درباره ما"', AppIcons.lightBulb, gotoAboutUsPage),
-              buildItem('مدیریت "حفظ حریم"', AppIcons.lock, gotoTermPage),
-              buildItem('مدیریت "حمایت از ما"', AppIcons.cashMultiple, gotoAidPage),
-              buildItem('متن "دیالوگ حمایت"', AppIcons.cashMultiple, gotoAidDialogPage),
+              buildItem('مدیریت \n"درباره ما"', AppIcons.lightBulb, gotoAboutUsPage),
+              buildItem('مدیریت \n"حفظ حریم"', AppIcons.lock, gotoTermPage),
+              buildItem('مدیریت \n"حمایت از ما"', AppIcons.cashMultiple, gotoAidPage),
+              buildItem('متن \n"دیالوگ حمایت"', AppIcons.cashMultiple, gotoAidDialogPage),
               buildItem('مدیریت محتوا', AppIcons.apps, gotoContentManagerPage),
               buildItem('گویندگان', AppIcons.accountDoubleCircle, gotoEmptyPage),
               buildItem('نمایش ارتباط باما', AppIcons.email, gotoEmptyPage),

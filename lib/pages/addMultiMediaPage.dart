@@ -6,13 +6,11 @@ import 'package:iris_tools/modules/stateManagers/assist.dart';
 import 'package:iris_tools/widgets/maxWidth.dart';
 import 'package:iris_tools/widgets/optionsRow/checkRow.dart';
 
-import 'package:vosate_zehn_panel/models/contentModel.dart';
 import 'package:vosate_zehn_panel/models/subBuketModel.dart';
 import 'package:vosate_zehn_panel/system/extensions.dart';
 import 'package:vosate_zehn_panel/system/stateBase.dart';
 import 'package:vosate_zehn_panel/tools/app/appDialogIris.dart';
 import 'package:vosate_zehn_panel/tools/app/appIcons.dart';
-import 'package:vosate_zehn_panel/tools/app/appToast.dart';
 
 class AddMediaPageInjectData {
   late final SubBucketModel level2model;
@@ -273,33 +271,8 @@ class _AddMultiMediaPageState extends StateBase<AddMultiMediaPage> {
   }
 
   void onBackPress(){
-    if(widget.injectData.level2model.contentList.isEmpty){
-      AppDialogIris.instance.showYesNoDialog(
-          context,
-          desc: 'لیست رسانه ها خالی می باشد. در صورت خروج محتوا حذف می شود',
-          yesText: 'خروج',
-          noText: 'اصلاح',
-          yesFn: (){
-            Navigator.of(context).pop();
-            Navigator.of(context).pop();
-          },
-          noFn: (){}
-      );
-
-      return;
-    }
 
     final title = titleCtr.text.trim();
-
-    if(title.isEmpty && widget.injectData.level2model.contentList.isNotEmpty){
-      AppDialogIris.instance.showInfoDialog(
-          context,
-        null,
-           'عنوان محتوا ذکر نشده.',
-      );
-
-      return;
-    }
 
     widget.injectData.level2model.title = title;
     widget.injectData.level2model.description = descriptionCtr.text;

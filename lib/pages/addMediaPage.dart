@@ -1,10 +1,12 @@
+import 'dart:async';
+
 import 'package:file_sizes/file_sizes.dart';
 import 'package:flutter/material.dart';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:iris_tools/api/generator.dart';
 import 'package:iris_tools/api/helpers/jsonHelper.dart';
-import 'package:iris_tools/api/helpers/mediaHelper.dart';
+import 'package:iris_tools/api/helpers/mathHelper.dart';
 import 'package:iris_tools/api/helpers/pathHelper.dart';
 import 'package:iris_tools/modules/stateManagers/assist.dart';
 import 'package:iris_tools/widgets/maxWidth.dart';
@@ -17,6 +19,7 @@ import 'package:vosate_zehn_panel/system/requester.dart';
 import 'package:vosate_zehn_panel/system/session.dart';
 import 'package:vosate_zehn_panel/system/stateBase.dart';
 import 'package:vosate_zehn_panel/tools/app/appIcons.dart';
+import 'package:vosate_zehn_panel/tools/app/appLoading.dart';
 import 'package:vosate_zehn_panel/tools/app/appManager.dart';
 import 'package:vosate_zehn_panel/tools/app/appSheet.dart';
 
@@ -298,8 +301,12 @@ class _AddMediaPageState extends StateBase<AddMediaPage> {
     js[Keys.data] = sb.toMap();
     AppManager.addAppInfo(js);
 
+    final progressStream = StreamController<double>();
+
     requester.httpItem.onSendProgress = (i, s){
-      print('progres >>> $i   $s');
+      final p = i / s * 100;
+      final dp = MathHelper.percentTop1(p);
+      progressStream.sink.add(dp);
     };
 
     js['media'] = 'media';
@@ -330,14 +337,24 @@ class _AddMediaPageState extends StateBase<AddMediaPage> {
     };
 
     requester.httpRequestEvents.onStatusOk = (req, data) async {
-      //PagesEventBus.getEventBus((ContentManagerPage).toString()).callEvent('update', null);
 
       AppSheet.showSheet$SuccessOperation(context, onBtn: (){
         Navigator.of(context).pop(true);
       });
     };
 
-    showLoading();
+    AppLoading.instance.showProgress(
+        context,
+        progressStream.stream,
+      buttonText: '  لغو  ',
+      message: 'در حال آپلود',
+      buttonEvent: (){
+        requester.httpRequestEvents = HttpRequestEvents();
+        requester.dispose();
+        AppLoading.instance.hideLoading(context);
+      },
+    );
+
     requester.prepareUrl();
     requester.request(context);
   }

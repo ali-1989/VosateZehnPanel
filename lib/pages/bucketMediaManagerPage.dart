@@ -247,10 +247,7 @@ class _BuketMediaManagerPageState extends StateBase<BuketMediaManagerPage> {
         }
     );
 
-    print('666666666666666666666666');
-    print(result);
-
-    if(result){
+    if(result != null && result){
       isInLoadData = true;
       requestSubBucket();
     }
@@ -313,7 +310,8 @@ class _BuketMediaManagerPageState extends StateBase<BuketMediaManagerPage> {
 
       for(final k in dList){
         final b = SubBucketModel.fromMap(k);
-        b.imageModel = MediaManager.getById(b.mediaId);
+        b.imageModel = MediaManager.getById(b.coverId);
+        b.mediaModel = MediaManager.getById(b.mediaId);
 
         subBucketList.add(b);
       }

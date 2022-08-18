@@ -10,6 +10,7 @@ import 'package:vosate_zehn_panel/tools/app/appMessages.dart';
 import 'package:vosate_zehn_panel/tools/app/appOverlay.dart';
 import 'package:vosate_zehn_panel/tools/app/appThemes.dart';
 import 'package:vosate_zehn_panel/views/overlay/overlayContainer.dart';
+import 'package:vosate_zehn_panel/views/progressBarPrompt.dart';
 
 class AppLoading {
   AppLoading._();
@@ -112,6 +113,28 @@ class AppLoading {
   Future<void> hideLoading(BuildContext context) async {
     //AppOverlay.hideIgnoreScreen(context);
     AppOverlay.hideScreen(context);
+  }
+  //---------------------------------------------------------------------------------
+  Future<void> showProgress(BuildContext context, Stream<double> stream, {
+    String? message,
+    String? buttonText,
+    VoidCallback? buttonEvent,
+  }){
+    final over = OverlayScreenView(
+      content: SizedBox.expand(
+        child: Center(
+          child: ProgressBarPrompt(
+            stream: stream,
+            message: message,
+            buttonEvent: buttonEvent,
+            buttonText: buttonText,
+          ),
+        ),
+      ),
+      backgroundColor: Colors.black26,
+    );
+
+    return AppOverlay.showScreen(context, over, canBack: false);
   }
 
   Widget _getLoadingView(){

@@ -6,7 +6,6 @@ import 'package:go_router/go_router.dart';
 import 'package:vosate_zehn_panel/pages/aboutUsPage.dart';
 import 'package:vosate_zehn_panel/pages/aidDialogPage.dart';
 import 'package:vosate_zehn_panel/pages/aidPage.dart';
-import 'package:vosate_zehn_panel/pages/bucketMediaManagerPage.dart';
 import 'package:vosate_zehn_panel/pages/contentManagerPage.dart';
 import 'package:vosate_zehn_panel/pages/e404_page.dart';
 import 'package:vosate_zehn_panel/pages/empty.dart';
@@ -108,7 +107,6 @@ final homeRouter = <GoRoute>[
   TermPage.route,
   AidDialogPage.route,
   ContentManagerPage.route,
-  BuketMediaManagerPage.route,
   Empty.route,
   ];
 
