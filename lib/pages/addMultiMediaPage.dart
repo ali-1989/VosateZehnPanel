@@ -10,6 +10,7 @@ import 'package:vosate_zehn_panel/models/BucketModel.dart';
 import 'package:vosate_zehn_panel/models/speakerModel.dart';
 import 'package:vosate_zehn_panel/models/subBuketModel.dart';
 import 'package:vosate_zehn_panel/pages/addSpeakerPage.dart';
+import 'package:vosate_zehn_panel/pages/selectSpeakerPage.dart';
 import 'package:vosate_zehn_panel/system/extensions.dart';
 import 'package:vosate_zehn_panel/system/keys.dart';
 import 'package:vosate_zehn_panel/system/requester.dart';
@@ -86,33 +87,76 @@ class _AddMultiMediaPageState extends StateBase<AddMultiMediaPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('گوینده').bold(),
-
-              SizedBox(height: 5),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Builder(
-                    builder: (ctx){
-                      if(speakerModel == null){
-                        return TextButton(
-                            onPressed: (){},
-                            child: Text('انتخاب')
-                        );
-                      }
+                  Column(
+                    children: [
+                      Text('گوینده').bold(),
 
-                      return Center();
-                    },
+                      SizedBox(height: 5),
+                      Builder(
+                        builder: (ctx){
+                          if(speakerModel == null){
+                            return TextButton(
+                                onPressed: gotoSelectSpeakerPage,
+                                child: Text('انتخاب')
+                            );
+                          }
+
+                          return GestureDetector(
+                            onTap: onChangeSpeakerClick,
+                            child: Column(
+                              children: [
+                                ClipOval(
+                                  child: SizedBox(
+                                    width: 70,
+                                    height: 70,
+                                    child: Builder(
+                                      builder: (ctx){
+                                        if(speakerModel!.profileModel != null){
+                                          return Image.network(speakerModel!.profileModel!.url!, width: 85, fit: BoxFit.fill,);
+                                        }
+
+                                        return ColoredBox(color: Colors.blueGrey);
+                                      },
+                                    ),
+                                  ),
+                                ),
+
+                                SizedBox(height: 10),
+                                Text(speakerModel!.name),
+                              ],
+                            ),
+                          );
+                        },
+                      ),
+                    ],
                   ),
 
-                  SizedBox(
-                    width: 110,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(primary: Colors.blue),
-                        onPressed: (){},
-                        child: Text('ذخیره')
-                    ),
+                  Column(
+                    children: [
+                      SizedBox(
+                        width: 110,
+                        child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(primary: Colors.blue),
+                            onPressed: (){},
+                            child: Text('ذخیره')
+                        ),
+                      ),
+
+                      SizedBox(
+                        width: 110,
+                        child: ElevatedButton(
+                            //style: ElevatedButton.styleFrom(primary: Colors.blue),
+                            onPressed: (){
+                              Navigator.of(context).pop();
+                            },
+                            child: Text('برگشت')
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
@@ -266,6 +310,25 @@ class _AddMultiMediaPageState extends StateBase<AddMultiMediaPage> {
   void tryClick(){
     requestData();
     assistCtr.updateMain();
+  }
+
+  void onChangeSpeakerClick(){
+    gotoSelectSpeakerPage();
+  }
+
+  void gotoSelectSpeakerPage() async {
+    final result = await showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (ctx){
+          return SelectSpeakerPage();
+        }
+    );
+
+    if(result is SpeakerModel){
+      speakerModel = result;
+      assistCtr.updateMain();
+    }
   }
 
   @override

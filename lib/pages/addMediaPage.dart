@@ -269,6 +269,18 @@ class _AddMediaPageState extends StateBase<AddMediaPage> {
                 ),
               ),
 
+              SizedBox(height: 12),
+              if(editMode)
+                Center(
+                  child: SizedBox(
+                    width: 110,
+                    child: ElevatedButton(
+                        onPressed: deleteItem,
+                        child: Text('حذف آیتم')
+                    ),
+                  ),
+                ),
+
             ],
           ),
         ),
@@ -458,4 +470,34 @@ class _AddMediaPageState extends StateBase<AddMediaPage> {
     requester.request(context);
   }
 
+  void deleteItem() {
+    AppSheet.showSheetYesNo(context, Text('آیا از حذف اطمینان دارید؟'), () {requestDeleteSubBucket();}, () {});
+  }
+
+  void requestDeleteSubBucket(){
+    final js = <String, dynamic>{};
+    js[Keys.requestZone] = 'delete_sub_bucket';
+    js[Keys.requesterId] = Session.getLastLoginUser()?.userId;
+    js[Keys.id] = widget.injectData.subBucketModel?.id;
+
+    requester.bodyJson = js;
+
+    requester.httpRequestEvents.onAnyState = (req) async {
+      hideLoading();
+    };
+
+    requester.httpRequestEvents.onFailState = (req) async {
+      AppSheet.showSheet$OperationFailed(context);
+    };
+
+    requester.httpRequestEvents.onStatusOk = (req, data) async {
+      AppSheet.showSheet$SuccessOperation(context, onBtn: (){
+        Navigator.of(context).pop(true);
+      });
+    };
+
+    showLoading();
+    requester.prepareUrl();
+    requester.request(context);
+  }
 }

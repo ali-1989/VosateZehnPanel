@@ -199,9 +199,12 @@ class _AddContainerPageState extends StateBase<AddContainerPage> {
 
               SizedBox(height: 12),
               if(editMode)
-                ElevatedButton(
-                    onPressed: deleteItem,
-                    child: Text('حذف')
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: ElevatedButton(
+                      onPressed: deleteItem,
+                      child: Text('حذف آیتم')
+                  ),
                 ),
 
               SizedBox(height: 30),
@@ -345,7 +348,7 @@ class _AddContainerPageState extends StateBase<AddContainerPage> {
     final js = <String, dynamic>{};
     js[Keys.requestZone] = 'delete_sub_bucket';
     js[Keys.requesterId] = Session.getLastLoginUser()?.userId;
-    js[Keys.id] = widget.injectData.bucketModel.id;
+    js[Keys.id] = widget.injectData.subBucketModel?.id;
 
     requester.bodyJson = js;
 

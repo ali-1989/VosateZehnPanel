@@ -260,21 +260,9 @@ class _SubBuketManagerPageState extends StateBase<SubBuketManagerPage> {
                   ),
                 ),
 
-                Builder(
-                    builder: (ctx) {
-                      /*if(itm.isHide){
-                        return Row(
-                          children: [
-                            SizedBox(width: 10,),
-                            Icon(AppIcons.eyeOff, size: 18,),
-                          ],
-                        );
-                      }*/
-
-                      return SizedBox();
-                    }),
-
                 SizedBox(width: 12,),
+
+                if(itm.type == SubBucketTypes.list.id())
                 IconButton(
                     visualDensity: VisualDensity.compact,
                     constraints: BoxConstraints.tightFor(),
@@ -283,7 +271,7 @@ class _SubBuketManagerPageState extends StateBase<SubBuketManagerPage> {
                     onPressed: (){
                       gotoAddMultiMediaPage(itm);
                     },
-                    icon: Icon(AppIcons.lightBulb, color: Colors.green, size: 20,)
+                    icon: Icon(AppIcons.grid, color: Colors.blueAccent, size: 20,)
                 ),
 
                 SizedBox(width: 12,),
