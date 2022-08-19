@@ -3,7 +3,6 @@ import 'package:iris_tools/dateSection/dateHelper.dart';
 import 'package:iris_tools/models/dataModels/mediaModel.dart';
 
 import 'package:vosate_zehn_panel/models/dateFieldMixin.dart';
-import 'package:vosate_zehn_panel/models/subBuketModel.dart';
 import 'package:vosate_zehn_panel/system/keys.dart';
 
 class BucketModel with DateFieldMixin {
@@ -11,11 +10,11 @@ class BucketModel with DateFieldMixin {
   late String title;
   String? description;
   int? mediaId;
-  int bucketType = 0;
+  int bucketType = 0; // focus, video, ...
   bool isHide = true;
   //--------------- local
   MediaModel? imageModel;
-  List<SubBucketModel> level2List = [];
+  //List<SubBucketModel> subList = [];
 
   BucketModel();
 

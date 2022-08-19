@@ -27,8 +27,8 @@ class AboutUsPage extends StatefulWidget {
 ///============================================================================================
 class _AboutUsPageState extends StateBase<AboutUsPage> {
   WebViewXController? webviewController;
-  late Requester requester;
   bool isInLoadWebView = true;
+  Requester requester = Requester();
   bool isInLoadData = false;
   String? htmlData;
   String? htmlDataOnResize;
@@ -38,7 +38,6 @@ class _AboutUsPageState extends StateBase<AboutUsPage> {
   void initState(){
     super.initState();
 
-    requester = Requester();
     requestGetAboutUs();
   }
 
@@ -85,10 +84,11 @@ class _AboutUsPageState extends StateBase<AboutUsPage> {
                     builder: (ctx, siz){
                       return WebViewX(
                         width: siz.maxWidth,
-                        height: 500,
+                        height: siz.maxHeight,
                         onWebViewCreated: (ctr) async {
                           if(webviewController == null) {
                             webviewController = ctr;
+
                             await ctr.loadContent('html/editor.html', SourceType.html, fromAssets: true);
                             isInLoadWebView = false;
 

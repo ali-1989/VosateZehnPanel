@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import 'package:go_router/go_router.dart';
-import 'package:iris_tools/api/helpers/colorHelper.dart';
 import 'package:iris_tools/modules/stateManagers/assist.dart';
 import 'package:iris_tools/widgets/maxWidth.dart';
 import 'package:vosate_zehn_panel/managers/mediaManager.dart';
@@ -48,7 +47,7 @@ class _BuketMediaManagerPageState extends StateBase<BuketMediaManagerPage> {
   late Requester requester = Requester();
   late BucketModel bucketModel;
   List<SubBucketModel> subBucketList = [];
-  bool isInLoadData = false;
+  bool isInLoadData = true;
   String state$fetchData = 'state_fetchData';
 
   @override
@@ -149,18 +148,16 @@ class _BuketMediaManagerPageState extends StateBase<BuketMediaManagerPage> {
                   ),
 
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                      Text('محتوا'),
-
                       Row(
                         children: [
                           ElevatedButton(
                               onPressed: onAddMedia,
-                              child: Text('اضافه کردن')
+                              child: Text('اضافه کردن مدیا')
                           ),
 
-                          SizedBox(width: 10,),
+                          SizedBox(width: 15,),
                           ElevatedButton(
                               onPressed: onMultiMedia,
                               child: Text(' اضافه کردن مجموعه')
@@ -170,7 +167,10 @@ class _BuketMediaManagerPageState extends StateBase<BuketMediaManagerPage> {
                     ],
                   ),
 
-                  SizedBox(height: 20,),
+                  SizedBox(height: 15,),
+                  Text('محتوا ها'),
+
+                  SizedBox(height: 10,),
 
                   LayoutBuilder(
                       builder: (ctx, siz) {
@@ -221,8 +221,94 @@ class _BuketMediaManagerPageState extends StateBase<BuketMediaManagerPage> {
   Widget buildListItem(int idx) {
     final itm = subBucketList[idx];
 
-    return ColoredBox(color: ColorHelper.getRandomRGB(),
-        child: SizedBox(height: 20,));
+    return SizedBox(
+      key: ValueKey(itm.id),
+      height: 80,
+      child: InkWell(
+        onTap: (){
+          gotoEditePage(itm);
+        },
+        child: Card(
+          child: Padding(
+            padding: const EdgeInsets.all(6.0),
+            child: Row(
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(10),
+                  child: Builder(
+                    builder: (ctx){
+                      if(itm.imageModel != null){
+                        return Image.network(itm.imageModel!.url!, width: 85, fit: BoxFit.fill,);
+                      }
+
+                      return Image.asset(AppImages.appIcon, width: 85, fit: BoxFit.fill);
+                    },
+                  ),
+                ),
+
+                SizedBox(width: 20,),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(itm.title).bold(),
+
+                      SizedBox(height: 5),
+                      Text(itm.description?? '').alpha(),
+                    ],
+                  ),
+                ),
+
+                Builder(
+                    builder: (ctx) {
+                      /*if(itm.isHide){
+                        return Row(
+                          children: [
+                            SizedBox(width: 10,),
+                            Icon(AppIcons.eyeOff, size: 18,),
+                          ],
+                        );
+                      }*/
+
+                      return SizedBox();
+                    }),
+
+                SizedBox(width: 12,),
+                IconButton(
+                    visualDensity: VisualDensity.compact,
+                    constraints: BoxConstraints.tightFor(),
+                    padding: EdgeInsets.zero,
+                    splashRadius: 18,
+                    onPressed: (){
+                      //gotoMediaManagerPage(itm);
+                    },
+                    icon: Icon(itm.getTypeIcon(), color: Colors.green, size: 20,)
+                )
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  void gotoEditePage(SubBucketModel sub) async {
+    final inject = AddMediaPageInjectData();
+    inject.bucketModel = bucketModel;
+    inject.subBucketModel = sub;
+
+    final result = await showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (ctx){
+          return AddMediaPage(injectData: inject);
+        }
+    );
+
+    if(result != null && result){
+      isInLoadData = true;
+      requestSubBucket();
+    }
   }
 
   @override
@@ -286,11 +372,12 @@ class _BuketMediaManagerPageState extends StateBase<BuketMediaManagerPage> {
   }
 
   void requestSubBucket(){
+    subBucketList.clear();
+
     final js = <String, dynamic>{};
     js[Keys.requestZone] = 'get_sub_bucket_data';
     js[Keys.requesterId] = Session.getLastLoginUser()?.userId;
     js[Keys.id] = bucketModel.id;
-
 
     requester.bodyJson = js;
 

@@ -1,14 +1,14 @@
 
-enum Level2Types {
+enum SubBucketTypes {
   video(1),
   audio(2),
   list(10);
 
   final int _type;
 
-  const Level2Types(this._type);
+  const SubBucketTypes(this._type);
 
-  int type(){
+  int id(){
     return _type;
   }
 }

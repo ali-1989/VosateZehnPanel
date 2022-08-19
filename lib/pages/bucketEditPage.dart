@@ -274,8 +274,17 @@ class _BuketEditPageState extends StateBase<BuketEditPage> {
     }
 
     pickedImage = null;
-
     assistCtr.updateMain();
+  }
+
+  void deleteImageInEditMode(){
+    if(editMode){
+      deletedImageId ??= widget.injectData!.bucket!.imageModel!.id;
+
+      widget.injectData!.bucket!.mediaId = null;
+      widget.injectData!.bucket!.imageModel = null;
+      assistCtr.updateMain();
+    }
   }
 
   void pickImage() async {
@@ -318,15 +327,6 @@ class _BuketEditPageState extends StateBase<BuketEditPage> {
     bucketModel.description = descriptionCtr.text;
 
     requestUpsertBucket(bucketModel);
-  }
-
-  void deleteImageInEditMode(){
-    if(editMode){
-      deletedImageId ??= widget.injectData!.bucket!.imageModel!.id;
-
-      widget.injectData!.bucket!.imageModel = null;
-      assistCtr.updateMain();
-    }
   }
 
   void requestUpsertBucket(BucketModel bucketModel){

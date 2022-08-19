@@ -64,7 +64,7 @@ class _ProgressBarPromptState extends State<ProgressBarPrompt> {
 
                   SizedBox(height: 12,),
                   if(widget.buttonEvent != null && widget.buttonText != null)
-                    ElevatedButton(
+                    TextButton(
                       onPressed: widget.buttonEvent,
                       child: Text('${widget.buttonText}'),
                     ),

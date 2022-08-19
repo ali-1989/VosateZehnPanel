@@ -1,12 +1,28 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
 	<title></title>
-	
-	<style type="text/css">	
 
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+	<style>
 		body {
-			width: auto;
-			overflow-x: auto;
+			margin: 0;
+			padding: 0;
+			width: 100vw;
+			height: 100vh;
+		}
+
+		textarea {
+			position: absolute;
+			margin: 0;
+			padding: 0;
+			top: 0;
+			left: 0;
+			width: 95%;
+			/*height: 100%;*/
+			object-fit: contain;
 		}
 	</style>
 </head>
@@ -121,9 +137,9 @@ var nicEditorSaveButton=nicEditorButton.extend({init:function(){if(!this.ne.opti
 });
 </script>
 
-
-<textarea id="editor1" style="width: 95%; min-height: 100px; overflow-x: hidden;">
-</textarea>
+	<label>
+		<textarea id="editor1" style="min-height: 100px;"></textarea>
+	</label>
 
 </body>
 </html>

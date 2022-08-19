@@ -22,9 +22,11 @@ import 'package:vosate_zehn_panel/tools/app/appIcons.dart';
 import 'package:vosate_zehn_panel/tools/app/appLoading.dart';
 import 'package:vosate_zehn_panel/tools/app/appManager.dart';
 import 'package:vosate_zehn_panel/tools/app/appSheet.dart';
+import 'package:webviewx/webviewx.dart';
 
 class AddMediaPageInjectData {
   late final BucketModel bucketModel;
+  SubBucketModel? subBucketModel;
 }
 ///----------------------------------------------------------------
 class AddMediaPage extends StatefulWidget {
@@ -44,10 +46,15 @@ class _AddMediaPageState extends StateBase<AddMediaPage> {
   TextEditingController descriptionCtr = TextEditingController();
   Requester requester = Requester();
   late InputDecoration inputDecoration;
+  WebViewXController? webviewController;
+  bool isInLoadWebView = true;
   PlatformFile? pickedImage;
   PlatformFile? pickedMedia;
   bool editMode = false;
   int? deletedImageId;
+  int? deletedMediaId;
+  String? coverUrl;
+  String? mediaUrl;
 
   @override
   void initState(){
@@ -60,6 +67,15 @@ class _AddMediaPageState extends StateBase<AddMediaPage> {
       isDense: true,
       contentPadding: EdgeInsets.all(12),
     );
+
+    editMode = widget.injectData.subBucketModel != null;
+
+    if(editMode){
+      titleCtr.text = widget.injectData.subBucketModel!.title;
+      descriptionCtr.text = widget.injectData.subBucketModel!.description?? '';
+      coverUrl = widget.injectData.subBucketModel!.imageModel?.url;
+      mediaUrl = widget.injectData.subBucketModel!.mediaModel?.url;
+    }
   }
 
   @override
@@ -141,7 +157,7 @@ class _AddMediaPageState extends StateBase<AddMediaPage> {
 
                       Builder(
                           builder: (context) {
-                            if(pickedImage == null){
+                            if(pickedImage == null && coverUrl == null){
                               return SizedBox(
                                 width: 90,
                                 height: 90,
@@ -156,6 +172,11 @@ class _AddMediaPageState extends StateBase<AddMediaPage> {
 
                             return Stack(
                               children: [
+                                if(coverUrl != null)
+                                  Image.network(coverUrl!,
+                                    width: 100, height: 100, fit: BoxFit.cover,),
+
+                                if(coverUrl == null)
                                 Image.memory(pickedImage!.bytes!,
                                   width: 100, height: 100, fit: BoxFit.cover,),
 
@@ -191,7 +212,7 @@ class _AddMediaPageState extends StateBase<AddMediaPage> {
                 children: [
                   ElevatedButton(
                       onPressed: pickMedia,
-                      child: Text('انتخاب فایل')
+                      child: Text(editMode? 'تغییر فایل' : 'انتخاب فایل')
                   ),
 
                   SizedBox(width: 30,),
@@ -210,7 +231,27 @@ class _AddMediaPageState extends StateBase<AddMediaPage> {
 
               SizedBox(height: 10,),
 
-              if(pickedMedia != null)
+              if(mediaUrl != null)
+                Center(
+                  child: WebViewX(
+                    width: 200,
+                    height: 200,
+                    onWebViewCreated: (ctr) {
+                      if(webviewController == null) {
+                        webviewController = ctr;
+                        ctr.loadContent('html/vplayer.html', SourceType.html, fromAssets: true);
+                      }
+                    },
+                    onPageFinished: (t){
+                      isInLoadWebView = false;
+                      setVideoToPlayer();
+                      assistCtr.updateMain();
+                    },
+                  ),
+                ),
+
+              SizedBox(height: 20,),
+              if(editMode || pickedMedia != null)
               Center(
                 child: SizedBox(
                   width: 110,
@@ -219,7 +260,7 @@ class _AddMediaPageState extends StateBase<AddMediaPage> {
                           primary: Colors.lightBlue
                       ),
                       onPressed: onUploadCall,
-                      child: Text('آپلود')
+                      child: Text(editMode? 'ثبت': 'آپلود')
                   ),
                 ),
               ),
@@ -231,9 +272,33 @@ class _AddMediaPageState extends StateBase<AddMediaPage> {
     );
   }
 
+  void setVideoToPlayer() async {
+    final cmd = '''
+      document.getElementById("v_player").src = '$mediaUrl';
+    ''';
+
+    await webviewController?.evalRawJavascript(cmd);
+  }
+
   void removeImage() async {
+    if(editMode && widget.injectData.subBucketModel!.imageModel != null){
+      AppSheet.showSheetYesNo(context, Text('آیا عکس حذف شود؟'), () {deleteImageInEditMode();}, () {});
+      return;
+    }
+
     pickedImage = null;
     assistCtr.updateMain();
+  }
+
+  void deleteImageInEditMode(){
+    if(editMode){
+      deletedImageId ??= widget.injectData.subBucketModel!.imageModel!.id;
+
+      coverUrl = null;
+      widget.injectData.subBucketModel!.coverId = null;
+      widget.injectData.subBucketModel!.imageModel = null;
+      assistCtr.updateMain();
+    }
   }
 
   void pickImage() async {
@@ -244,6 +309,7 @@ class _AddMediaPageState extends StateBase<AddMediaPage> {
     );
 
     if(p != null) {
+      coverUrl = null;
       pickedImage = p.files.first;
       assistCtr.updateMain();
     }
@@ -259,6 +325,15 @@ class _AddMediaPageState extends StateBase<AddMediaPage> {
     );
 
     if(p != null) {
+      if(editMode){
+        deletedMediaId ??= widget.injectData.subBucketModel!.mediaId;
+
+        mediaUrl = null;
+        widget.injectData.subBucketModel!.mediaId = null;
+        widget.injectData.subBucketModel!.mediaModel = null;
+        assistCtr.updateMain();
+      }
+
       pickedMedia = p.files.first;
       assistCtr.updateMain();
     }
@@ -284,14 +359,22 @@ class _AddMediaPageState extends StateBase<AddMediaPage> {
     requestUpload();
   }
 
-  void requestUpload(){
-    bool isVideo = PathHelper.getDotExtension(pickedMedia!.name) == '.mp4';
+  bool isVideo(){
+    if(pickedMedia != null) {
+      return PathHelper.getDotExtension(pickedMedia!.name) == '.mp4';
+    }
+    else {
+      return PathHelper.getDotExtension(widget.injectData.subBucketModel?.mediaModel?.url?? '') == '.mp4';
+    }
+  }
 
-    final sb = SubBucketModel();
+  void requestUpload(){
+
+    final sb = widget.injectData.subBucketModel?? SubBucketModel();
     sb.title = titleCtr.text.trim();
     sb.description = descriptionCtr.text;
     sb.parentId = widget.injectData.bucketModel.id;
-    sb.type = isVideo ? 1 : 2;
+    sb.type = isVideo() ? 1 : 2;
     //sb.duration = ;
 
     final js = <String, dynamic>{};
@@ -299,8 +382,10 @@ class _AddMediaPageState extends StateBase<AddMediaPage> {
     js[Keys.requesterId] = Session.getLastLoginUser()?.userId;
     js[Keys.id] = widget.injectData.bucketModel.id;
     js[Keys.data] = sb.toMap();
+    js[Keys.fileName] = pickedMedia?.name?? widget.injectData.subBucketModel?.mediaModel?.fileName;
     AppManager.addAppInfo(js);
 
+    final extension = isVideo()? 'mp4': 'mp3';
     final progressStream = StreamController<double>();
 
     requester.httpItem.onSendProgress = (i, s){
@@ -309,21 +394,27 @@ class _AddMediaPageState extends StateBase<AddMediaPage> {
       progressStream.sink.add(dp);
     };
 
-    js['media'] = 'media';
-    requester.httpItem.addBodyStream('media', '${Generator.generateDateMillWith6Digit()}.${isVideo? 'mp4': 'mp3'}', pickedMedia!.readStream!, pickedMedia!.size);
+    if(pickedMedia != null) {
+      js['media'] = 'media';
+      requester.httpItem.addBodyStream('media', '${Generator.generateDateMillWith6Digit()}.$extension', pickedMedia!.readStream!, pickedMedia!.size);
+    }
 
     if(pickedImage != null) {
       js['cover'] = 'cover';
       requester.httpItem.addBodyBytes('cover', '${Generator.generateDateMillWith6Digit()}.jpg', pickedImage!.bytes!);
     }
     else {
-      if (editMode && deletedImageId != null) {
+      if (deletedImageId != null) {
         js['cover'] = false;
       }
     }
 
     if(deletedImageId != null){
       js['delete_cover_id'] = deletedImageId;
+    }
+
+    if(deletedMediaId != null){
+      js['delete_media_id'] = deletedMediaId;
     }
 
     requester.httpItem.addBodyField(Keys.jsonPart, JsonHelper.mapToJson(js));
@@ -334,6 +425,10 @@ class _AddMediaPageState extends StateBase<AddMediaPage> {
 
     requester.httpRequestEvents.onFailState = (req) async {
       AppSheet.showSheet$OperationFailed(context);
+    };
+
+    requester.httpRequestEvents.onStatusError = (req, data, code, sCode) async {
+      return true;
     };
 
     requester.httpRequestEvents.onStatusOk = (req, data) async {

@@ -1,14 +1,17 @@
+import 'package:flutter/material.dart';
 import 'package:iris_tools/dateSection/dateHelper.dart';
 import 'package:iris_tools/models/dataModels/mediaModel.dart';
 
 import 'package:vosate_zehn_panel/models/contentModel.dart';
 import 'package:vosate_zehn_panel/models/dateFieldMixin.dart';
+import 'package:vosate_zehn_panel/models/enums.dart';
 import 'package:vosate_zehn_panel/system/keys.dart';
+import 'package:vosate_zehn_panel/tools/app/appIcons.dart';
 
 class SubBucketModel with DateFieldMixin {
   int? id;
   int? parentId;
-  String? title;
+  late String title;
   String? description;
   int? coverId;
   int? mediaId;
@@ -31,7 +34,7 @@ class SubBucketModel with DateFieldMixin {
 
     id = map[Keys.id];
     parentId = map['parent_id'];
-    title = map[Keys.title];
+    title = map[Keys.title]?? '';
     description = map[Keys.description];
     type = map[Keys.type];
     date = DateHelper.tsToSystemDate(map[Keys.date]);
@@ -65,5 +68,21 @@ class SubBucketModel with DateFieldMixin {
     }
 
     return map;
+  }
+
+  IconData? getTypeIcon(){
+    if(type == SubBucketTypes.video.id()){
+      return AppIcons.videoCamera;
+    }
+
+    if(type == SubBucketTypes.audio.id()){
+      return AppIcons.headset;
+    }
+
+    if(type == SubBucketTypes.list.id()){
+      return AppIcons.list;
+    }
+
+    return null;
   }
 }
