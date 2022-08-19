@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import 'package:cool_dropdown/cool_dropdown.dart';
 import 'package:go_router/go_router.dart';
 import 'package:iris_tools/modules/stateManagers/assist.dart';
 import 'package:iris_tools/widgets/maxWidth.dart';
@@ -8,47 +7,37 @@ import 'package:iris_tools/widgets/searchBar.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 import 'package:vosate_zehn_panel/managers/mediaManager.dart';
-import 'package:vosate_zehn_panel/models/BucketModel.dart';
-import 'package:vosate_zehn_panel/models/enums.dart';
-import 'package:vosate_zehn_panel/pages/bucketEditPage.dart';
-import 'package:vosate_zehn_panel/pages/subBucketManagerPage.dart';
-import 'package:vosate_zehn_panel/services/pagesEventBus.dart';
+import 'package:vosate_zehn_panel/models/speakerModel.dart';
+import 'package:vosate_zehn_panel/pages/addSpeakerPage.dart';
 import 'package:vosate_zehn_panel/system/extensions.dart';
 import 'package:vosate_zehn_panel/system/keys.dart';
 import 'package:vosate_zehn_panel/system/requester.dart';
 import 'package:vosate_zehn_panel/system/session.dart';
 import 'package:vosate_zehn_panel/system/stateBase.dart';
-import 'package:vosate_zehn_panel/tools/app/appDb.dart';
 import 'package:vosate_zehn_panel/tools/app/appIcons.dart';
 import 'package:vosate_zehn_panel/tools/app/appImages.dart';
-import 'package:vosate_zehn_panel/tools/app/appRoute.dart';
+import 'package:vosate_zehn_panel/tools/app/appSheet.dart';
 import 'package:vosate_zehn_panel/tools/publicAccess.dart';
 import 'package:vosate_zehn_panel/tools/searchFilterTool.dart';
 import 'package:vosate_zehn_panel/views/emptyData.dart';
 import 'package:vosate_zehn_panel/views/notFetchData.dart';
 
-class ContentManagerPage extends StatefulWidget {
+class SpeakersManagerPage extends StatefulWidget {
   static final route = GoRoute(
-      path: 'ContentManager',
-      name: (ContentManagerPage).toString().toLowerCase(),
-      routes: [
-        BuketEditPage.route,
-        SubBuketManagerPage.route,
-      ],
-      builder: (BuildContext context, GoRouterState state) => const ContentManagerPage(),
+      path: 'SpeakersManagerPage',
+      name: (SpeakersManagerPage).toString().toLowerCase(),
+      builder: (BuildContext context, GoRouterState state) => const SpeakersManagerPage(),
   );
 
-  const ContentManagerPage({Key? key}) : super(key: key);
+  const SpeakersManagerPage({Key? key}) : super(key: key);
 
   @override
-  State<ContentManagerPage> createState() => _ContentManagerPageState();
+  State<SpeakersManagerPage> createState() => _SpeakersManagerPageState();
 }
 ///============================================================================================
-class _ContentManagerPageState extends StateBase<ContentManagerPage> {
+class _SpeakersManagerPageState extends StateBase<SpeakersManagerPage> {
   late Requester requester = Requester();
-  BucketTypes levelType = BucketTypes.video;
-  List<Map> typesDropdownList = [];
-  List<BucketModel> bucketList = [];
+  List<SpeakerModel> speakerList = [];
   SearchFilterTool searchFilter = SearchFilterTool();
   RefreshController refreshController = RefreshController(initialRefresh: false);
   int allCount = 0;
@@ -60,24 +49,13 @@ class _ContentManagerPageState extends StateBase<ContentManagerPage> {
     super.initState();
 
     searchFilter.limit = 12;
-    searchFilter.addFilter('is_hide', true);
-    final type = AppDB.fetchKv(Keys.setting$bucketType);
-
-    if(type != null){
-      levelType = BucketTypes.fromId(type);
-    }
-
-    for(final i in BucketTypes.values){
-      typesDropdownList.add({'label': i.translate(), 'value': i.id()});
-    }
-
     requestData();
   }
 
   @override
   void dispose() {
     requester.dispose();
-    PagesEventBus.removeFor((ContentManagerPage).toString());
+    //PagesEventBus.removeFor((SpeakersManagerPage).toString());
 
     super.dispose();
   }
@@ -90,7 +68,7 @@ class _ContentManagerPageState extends StateBase<ContentManagerPage> {
         return Scaffold(
           backgroundColor: Colors.grey[200],
           appBar: AppBar(
-            title: Text('مدیریت بخش ${levelType.translate()}'),
+            title: Text('مدیریت گویندگان'),
           ),
           body: SafeArea(
               child: buildBody()
@@ -134,42 +112,6 @@ class _ContentManagerPageState extends StateBase<ContentManagerPage> {
                       ],
                     ),
 
-
-                    CoolDropdown(
-                      dropdownList: typesDropdownList,
-                      defaultValue: {'label': levelType.translate(), 'value': levelType.id()},
-                      isTriangle: false,
-                      iconSize: 10,
-                      dropdownItemGap: 0,
-                      dropdownItemBottomGap: 0,
-                      gap: 10,
-                      dropdownItemTopGap: 5,
-                      dropdownHeight: 230,
-                      resultTS: TextStyle(
-                        fontSize: 14,
-                        color: Colors.black,
-                      ),
-                      unselectedItemTS: TextStyle(
-                        fontSize: 14,
-                        color: Colors.black,
-                      ),
-                      onChange: (v){
-                        /// this hack need for correct address bar after open dropdown
-                        AppRoute.pushNamed(context, ContentManagerPage.route.name!);
-
-                        if(levelType.id() == v['value']){
-                          return;
-                        }
-
-                        levelType = BucketTypes.fromId(v['value']);
-                        AppDB.setReplaceKv(Keys.setting$bucketType, levelType.id());
-
-                        assistCtr.updateMain();
-
-                        reset();
-                        requestData();
-                      },
-                    ),
                   ],
                 ),
 
@@ -193,7 +135,7 @@ class _ContentManagerPageState extends StateBase<ContentManagerPage> {
                       );
                     }
 
-                    if(bucketList.isEmpty){
+                    if(speakerList.isEmpty){
                       return SizedBox(
                         height: 200,
                           child: Center(child: EmptyData())
@@ -218,7 +160,7 @@ class _ContentManagerPageState extends StateBase<ContentManagerPage> {
                           onLoading: onLoadingMoreCall,
                           child: ListView.builder(
                             shrinkWrap: true,
-                            itemCount: bucketList.length,
+                            itemCount: speakerList.length,
                             itemBuilder: (ctx, idx){
                               return buildListItem(idx);
                             },
@@ -237,7 +179,7 @@ class _ContentManagerPageState extends StateBase<ContentManagerPage> {
   }
 
   Widget buildListItem(int idx){
-    final itm = bucketList[idx];
+    final itm = speakerList[idx];
 
     return SizedBox(
       key: ValueKey(itm.id),
@@ -255,8 +197,8 @@ class _ContentManagerPageState extends StateBase<ContentManagerPage> {
                   borderRadius: BorderRadius.circular(10),
                   child: Builder(
                     builder: (ctx){
-                      if(itm.imageModel != null){
-                        return Image.network(itm.imageModel!.url!, width: 85, fit: BoxFit.fill,);
+                      if(itm.profileModel != null){
+                        return Image.network(itm.profileModel!.url!, width: 85, fit: BoxFit.fill,);
                       }
 
                       return Image.asset(AppImages.appIcon, width: 85, fit: BoxFit.fill);
@@ -269,7 +211,7 @@ class _ContentManagerPageState extends StateBase<ContentManagerPage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(itm.title).bold(),
+                      Text(itm.name).bold(),
 
                       SizedBox(height: 5),
                       Text(itm.description?? '').alpha(),
@@ -279,14 +221,14 @@ class _ContentManagerPageState extends StateBase<ContentManagerPage> {
 
                 Builder(
                     builder: (ctx) {
-                      if(itm.isHide){
+                      /*if(itm.isHide){
                         return Row(
                           children: [
                             SizedBox(width: 10,),
                             Icon(AppIcons.eyeOff, size: 18,),
                           ],
                         );
-                      }
+                      }*/
 
                       return SizedBox();
                     }),
@@ -298,9 +240,9 @@ class _ContentManagerPageState extends StateBase<ContentManagerPage> {
                     padding: EdgeInsets.zero,
                     splashRadius: 18,
                     onPressed: (){
-                      gotoMediaManagerPage(itm);
+                      deleteItem(itm);
                     },
-                    icon: Icon(AppIcons.apps2, color: Colors.lightBlue,)
+                    icon: Icon(AppIcons.delete, color: Colors.red,)
                 )
               ],
             ),
@@ -331,36 +273,41 @@ class _ContentManagerPageState extends StateBase<ContentManagerPage> {
     requestData();
   }
 
-  void gotoMediaManagerPage(BucketModel bucketModel) async {
-    final inject = SubBuketManagerPageInjectData();
-    inject.bucket = bucketModel;
-
-    AppRoute.pushNamed(context, SubBuketManagerPage.route.name!, extra: inject);
-  }
-
   void gotoAddPage() async {
-    final inject = BuketEditPageInjectData();
-    inject.bucketType = levelType;
+    final inject = AddSpeakerPageInjectData();
 
-    AppRoute.pushNamed(context, BuketEditPage.route.name!, extra: inject);
-    final event = PagesEventBus.getEventBus((ContentManagerPage).toString());
-    event.addEvent('update', (param) {
+    final result = await showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (ctx){
+          return AddSpeakerPage(injectData: inject);
+        }
+    );
+
+    if(result != null && result){
+      isInLoadData = true;
       reset();
       requestData();
-    });
+    }
   }
 
-  void gotoEditePage(BucketModel bucketModel) async {
-    final inject = BuketEditPageInjectData();
-    inject.bucketType = levelType;
-    inject.bucket = bucketModel;
+  void gotoEditePage(SpeakerModel speakerModel) async {
+    final inject = AddSpeakerPageInjectData();
+    inject.speakerModel = speakerModel;
 
-    AppRoute.pushNamed(context, BuketEditPage.route.name!, extra: inject);
-    final event = PagesEventBus.getEventBus((ContentManagerPage).toString());
-    event.addEvent('update', (param) {
+    final result = await showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (ctx){
+          return AddSpeakerPage(injectData: inject);
+        }
+    );
+
+    if(result != null && result){
+      isInLoadData = true;
       reset();
       requestData();
-    });
+    }
   }
 
   void tryClick(){
@@ -373,20 +320,54 @@ class _ContentManagerPageState extends StateBase<ContentManagerPage> {
     //callState();
   }
 
+  void deleteItem(SpeakerModel itm) {
+    AppSheet.showSheetYesNo(context, Text('آیا گوینده حذف شود؟'), () {
+      requestDeleteSpeaker(itm.id!);
+    }, () {});
+
+  }
+
   void reset(){
     refreshController.resetNoData();
-    bucketList.clear();
+    speakerList.clear();
+  }
+
+  void requestDeleteSpeaker(int id){
+    final js = <String, dynamic>{};
+    js[Keys.requestZone] = 'delete_speaker';
+    js[Keys.requesterId] = Session.getLastLoginUser()?.userId;
+    js[Keys.id] = id;
+
+    requester.prepareUrl();
+    requester.bodyJson = js;
+
+    requester.httpRequestEvents.onAnyState = (req) async {
+      hideLoading();
+    };
+
+    requester.httpRequestEvents.onFailState = (req) async {
+      assistCtr.removeStateAndUpdate(state$fetchData);
+    };
+
+    requester.httpRequestEvents.onStatusOk = (req, data) async {
+      speakerList.removeWhere((element) => element.id == id);
+      allCount--;
+
+      assistCtr.updateMain();
+    };
+
+    showLoading();
+    requester.request(context);
   }
 
   void requestData(){
-    final ul = PublicAccess.findUpperLower(bucketList, searchFilter.ascOrder);
+    final ul = PublicAccess.findUpperLower(speakerList, searchFilter.ascOrder);
     searchFilter.lower = ul.lowerAsTS;
     searchFilter.upper = ul.upperAsTS;
 
     final js = <String, dynamic>{};
-    js[Keys.requestZone] = 'get_bucket_data';
+    js[Keys.requestZone] = 'get_speaker_data';
     js[Keys.requesterId] = Session.getLastLoginUser()?.userId;
-    js[Keys.key] = levelType.id();
     js[Keys.searchFilter] = searchFilter.toMap();
 
     requester.prepareUrl();
@@ -401,7 +382,7 @@ class _ContentManagerPageState extends StateBase<ContentManagerPage> {
     };
 
     requester.httpRequestEvents.onStatusOk = (req, data) async {
-      final dList = data['bucket_list'];
+      final dList = data['speaker_list'];
       final mList = data['media_list'];
       allCount = data['all_count'];
       searchFilter.ascOrder = data[Keys.isAsc]?? false;
@@ -418,10 +399,10 @@ class _ContentManagerPageState extends StateBase<ContentManagerPage> {
       MediaManager.addItemsFromMap(mList);
 
       for(final k in dList){
-        final b = BucketModel.fromMap(k);
-        b.imageModel = MediaManager.getById(b.mediaId);
+        final b = SpeakerModel.fromMap(k);
+        b.profileModel = MediaManager.getById(b.mediaId);
 
-        bucketList.add(b);
+        speakerList.add(b);
       }
 
       assistCtr.addStateAndUpdate(state$fetchData);

@@ -1,14 +1,15 @@
 import 'package:iris_tools/models/dataModels/mediaModel.dart';
+import 'package:vosate_zehn_panel/models/dateFieldMixin.dart';
 
 import 'package:vosate_zehn_panel/system/keys.dart';
 
-class SpeakerModel {
+class SpeakerModel with DateFieldMixin {
   int? id;
-  String? name;
+  late String name;
   String? description;
   int? mediaId;
   //----------- local
-  MediaModel? imageModel;
+  MediaModel? profileModel;
 
   SpeakerModel();
 
@@ -18,7 +19,7 @@ class SpeakerModel {
     }
 
     id = map[Keys.id];
-    name = map[Keys.name];
+    name = map[Keys.name]?? '-';
     description = map[Keys.description];
     mediaId = map['media_id'];
 

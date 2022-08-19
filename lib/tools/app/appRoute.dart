@@ -11,6 +11,7 @@ import 'package:vosate_zehn_panel/pages/e404_page.dart';
 import 'package:vosate_zehn_panel/pages/empty.dart';
 import 'package:vosate_zehn_panel/pages/home_page.dart';
 import 'package:vosate_zehn_panel/pages/login_page.dart';
+import 'package:vosate_zehn_panel/pages/speakersManagerPage.dart';
 import 'package:vosate_zehn_panel/pages/termPage.dart';
 import 'package:vosate_zehn_panel/system/session.dart';
 import 'package:vosate_zehn_panel/tools/app/appDb.dart';
@@ -107,6 +108,7 @@ final homeRouter = <GoRoute>[
   TermPage.route,
   AidDialogPage.route,
   ContentManagerPage.route,
+  SpeakersManagerPage.route,
   Empty.route,
   ];
 

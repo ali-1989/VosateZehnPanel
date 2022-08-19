@@ -6,44 +6,45 @@ import 'package:iris_tools/widgets/maxWidth.dart';
 import 'package:vosate_zehn_panel/managers/mediaManager.dart';
 
 import 'package:vosate_zehn_panel/models/BucketModel.dart';
+import 'package:vosate_zehn_panel/models/enums.dart';
 import 'package:vosate_zehn_panel/models/subBuketModel.dart';
+import 'package:vosate_zehn_panel/pages/addContainerPage.dart';
 import 'package:vosate_zehn_panel/pages/addMediaPage.dart';
-import 'package:vosate_zehn_panel/pages/contentManagerPage.dart';
-import 'package:vosate_zehn_panel/services/pagesEventBus.dart';
+import 'package:vosate_zehn_panel/pages/addMultiMediaPage.dart';
 import 'package:vosate_zehn_panel/system/extensions.dart';
 import 'package:vosate_zehn_panel/system/keys.dart';
 import 'package:vosate_zehn_panel/system/requester.dart';
 import 'package:vosate_zehn_panel/system/session.dart';
 import 'package:vosate_zehn_panel/system/stateBase.dart';
+import 'package:vosate_zehn_panel/tools/app/appIcons.dart';
 import 'package:vosate_zehn_panel/tools/app/appImages.dart';
 import 'package:vosate_zehn_panel/tools/app/appRoute.dart';
-import 'package:vosate_zehn_panel/tools/app/appSheet.dart';
 import 'package:vosate_zehn_panel/views/emptyData.dart';
 import 'package:vosate_zehn_panel/views/notFetchData.dart';
 
-class BuketMediaManagerPageInjectData {
+class SubBuketManagerPageInjectData {
   late BucketModel bucket;
 }
 ///----------------------------------------------------------------
-class BuketMediaManagerPage extends StatefulWidget {
+class SubBuketManagerPage extends StatefulWidget {
   static final route = GoRoute(
-    path: 'BuketMediaManagerPage',
-    name: (BuketMediaManagerPage).toString().toLowerCase(),
-    builder: (BuildContext context, GoRouterState state) => BuketMediaManagerPage(injectData: state.extra as BuketMediaManagerPageInjectData?),
+    path: 'SubBuketManagerPage',
+    name: (SubBuketManagerPage).toString().toLowerCase(),
+    builder: (BuildContext context, GoRouterState state) => SubBuketManagerPage(injectData: state.extra as SubBuketManagerPageInjectData?),
   );
 
-  final BuketMediaManagerPageInjectData? injectData;
+  final SubBuketManagerPageInjectData? injectData;
 
-  const BuketMediaManagerPage({
+  const SubBuketManagerPage({
     Key? key,
     this.injectData,
   }) : super(key: key);
 
   @override
-  State<BuketMediaManagerPage> createState() => _BuketMediaManagerPageState();
+  State<SubBuketManagerPage> createState() => _SubBuketManagerPageState();
 }
 ///============================================================================================
-class _BuketMediaManagerPageState extends StateBase<BuketMediaManagerPage> {
+class _SubBuketManagerPageState extends StateBase<SubBuketManagerPage> {
   late Requester requester = Requester();
   late BucketModel bucketModel;
   List<SubBucketModel> subBucketList = [];
@@ -159,7 +160,7 @@ class _BuketMediaManagerPageState extends StateBase<BuketMediaManagerPage> {
 
                           SizedBox(width: 15,),
                           ElevatedButton(
-                              onPressed: onMultiMedia,
+                              onPressed: onAddMultiMedia,
                               child: Text(' اضافه کردن مجموعه')
                           ),
                         ],
@@ -280,10 +281,13 @@ class _BuketMediaManagerPageState extends StateBase<BuketMediaManagerPage> {
                     padding: EdgeInsets.zero,
                     splashRadius: 18,
                     onPressed: (){
-                      //gotoMediaManagerPage(itm);
+                      gotoAddMultiMediaPage(itm);
                     },
-                    icon: Icon(itm.getTypeIcon(), color: Colors.green, size: 20,)
-                )
+                    icon: Icon(AppIcons.lightBulb, color: Colors.green, size: 20,)
+                ),
+
+                SizedBox(width: 12,),
+                Icon(itm.getTypeIcon(), color: Colors.green, size: 20,)
               ],
             ),
           ),
@@ -293,17 +297,34 @@ class _BuketMediaManagerPageState extends StateBase<BuketMediaManagerPage> {
   }
 
   void gotoEditePage(SubBucketModel sub) async {
-    final inject = AddMediaPageInjectData();
-    inject.bucketModel = bucketModel;
-    inject.subBucketModel = sub;
+    dynamic result;
 
-    final result = await showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (ctx){
-          return AddMediaPage(injectData: inject);
-        }
-    );
+    if(sub.type == SubBucketTypes.list.id()){
+      final inject = AddContainerPageInjectData();
+      inject.bucketModel = bucketModel;
+      inject.subBucketModel = sub;
+
+      result = await showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (ctx){
+            return AddContainerPage(injectData: inject);
+          }
+      );
+    }
+    else {
+      final inject = AddMediaPageInjectData();
+      inject.bucketModel = bucketModel;
+      inject.subBucketModel = sub;
+
+      result = await showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (ctx){
+            return AddMediaPage(injectData: inject);
+          }
+      );
+    }
 
     if(result != null && result){
       isInLoadData = true;
@@ -311,14 +332,18 @@ class _BuketMediaManagerPageState extends StateBase<BuketMediaManagerPage> {
     }
   }
 
-  @override
-  void onResize(oldW, oldH, newW, newH) async {
-    //callState();
-  }
+  void gotoAddMultiMediaPage(SubBucketModel sub) async {
+    final inject = AddMultiMediaPageInjectData();
+    inject.bucketModel = bucketModel;
+    inject.subBucketModel = sub;
 
-  void tryClick(){
-    requestSubBucket();
-    assistCtr.updateMain();
+    await showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (ctx){
+          return AddMultiMediaPage(injectData: inject);
+        }
+    );
   }
 
   void onAddMedia() async {
@@ -339,36 +364,32 @@ class _BuketMediaManagerPageState extends StateBase<BuketMediaManagerPage> {
     }
   }
 
-  void onMultiMedia() async {
+  void onAddMultiMedia() async {
+    final inject = AddContainerPageInjectData();
+    inject.bucketModel = bucketModel;
 
+    final result = await showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (ctx){
+          return AddContainerPage(injectData: inject);
+        }
+    );
+
+    if(result != null && result){
+      isInLoadData = true;
+      requestSubBucket();
+    }
   }
 
-  void requestDeleteMedia(){
-    final js = <String, dynamic>{};
-    js[Keys.requestZone] = 'delete_bucket_image';
-    js[Keys.requesterId] = Session.getLastLoginUser()?.userId;
-    js[Keys.id] = bucketModel.id;
+  @override
+  void onResize(oldW, oldH, newW, newH) async {
+    //callState();
+  }
 
-    requester.prepareUrl();
-    requester.bodyJson = js;
-
-    requester.httpRequestEvents.onAnyState = (req) async {
-      hideLoading();
-    };
-
-    requester.httpRequestEvents.onFailState = (req) async {
-      AppSheet.showSheet$OperationFailed(context);
-    };
-
-    requester.httpRequestEvents.onStatusOk = (req, data) async {
-      bucketModel.imageModel = null;
-
-      assistCtr.updateMain();
-      PagesEventBus.getEventBus((ContentManagerPage).toString()).callEvent('update', null);
-    };
-
-    showLoading();
-    requester.request(context);
+  void tryClick(){
+    requestSubBucket();
+    assistCtr.updateMain();
   }
 
   void requestSubBucket(){

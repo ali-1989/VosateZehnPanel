@@ -1,57 +1,59 @@
 import 'package:flutter/material.dart';
+import 'package:iris_tools/api/helpers/pathHelper.dart';
 
-import 'package:file_picker/file_picker.dart';
-import 'package:iris_tools/api/helpers/colorHelper.dart';
+import 'package:iris_tools/models/dataModels/mediaModel.dart';
 import 'package:iris_tools/modules/stateManagers/assist.dart';
 import 'package:iris_tools/widgets/maxWidth.dart';
-import 'package:iris_tools/widgets/optionsRow/checkRow.dart';
 
+import 'package:vosate_zehn_panel/managers/mediaManager.dart';
+import 'package:vosate_zehn_panel/models/BucketModel.dart';
+import 'package:vosate_zehn_panel/models/speakerModel.dart';
 import 'package:vosate_zehn_panel/models/subBuketModel.dart';
+import 'package:vosate_zehn_panel/pages/addSpeakerPage.dart';
 import 'package:vosate_zehn_panel/system/extensions.dart';
+import 'package:vosate_zehn_panel/system/keys.dart';
+import 'package:vosate_zehn_panel/system/requester.dart';
+import 'package:vosate_zehn_panel/system/session.dart';
 import 'package:vosate_zehn_panel/system/stateBase.dart';
-import 'package:vosate_zehn_panel/tools/app/appDialogIris.dart';
 import 'package:vosate_zehn_panel/tools/app/appIcons.dart';
+import 'package:vosate_zehn_panel/tools/app/appSheet.dart';
+import 'package:vosate_zehn_panel/views/emptyData.dart';
+import 'package:vosate_zehn_panel/views/notFetchData.dart';
 
-class AddMediaPageInjectData {
-  late final SubBucketModel level2model;
+
+class AddMultiMediaPageInjectData {
+  late BucketModel bucketModel;
+  SubBucketModel? subBucketModel;
 }
 ///----------------------------------------------------------------
 class AddMultiMediaPage extends StatefulWidget {
-  final AddMediaPageInjectData injectData;
+  final AddMultiMediaPageInjectData injectData;
 
-  const AddMultiMediaPage({
-    Key? key,
-    required this.injectData,
-  }) : super(key: key);
+  const AddMultiMediaPage({required this.injectData, Key? key}) : super(key: key);
 
   @override
   State<AddMultiMediaPage> createState() => _AddMultiMediaPageState();
 }
 ///============================================================================================
 class _AddMultiMediaPageState extends StateBase<AddMultiMediaPage> {
-  TextEditingController titleCtr = TextEditingController();
-  TextEditingController descriptionCtr = TextEditingController();
-  late InputDecoration inputDecoration;
-  FilePickerResult? imagePickerResult;
-  bool multiMedia = false;
+  late Requester requester = Requester();
+  List<MediaModel> mediaList = [];
+  SpeakerModel? speakerModel;
+  int allCount = 0;
+  bool isInLoadData = false;
+  String state$fetchData = 'state_fetchData';
 
   @override
   void initState(){
     super.initState();
 
-    inputDecoration = InputDecoration(
-      border: OutlineInputBorder(),
-      enabledBorder: OutlineInputBorder(),
-      focusedBorder: OutlineInputBorder(),
-      isDense: true,
-      contentPadding: EdgeInsets.all(12),
-    );
+    requestData();
   }
 
   @override
   void dispose() {
-    titleCtr.dispose();
-    descriptionCtr.dispose();
+    requester.dispose();
+    //PagesEventBus.removeFor((SpeakersManagerPage).toString());
 
     super.dispose();
   }
@@ -59,9 +61,9 @@ class _AddMultiMediaPageState extends StateBase<AddMultiMediaPage> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 10.0),
+      padding: const EdgeInsets.symmetric(vertical: 15.0),
       child: MaxWidth(
-        maxWidth: 480,
+        maxWidth: 500,
         child: Assist(
           controller: assistCtr,
           builder: (context, controller, sendData) {
@@ -76,133 +78,99 @@ class _AddMultiMediaPageState extends StateBase<AddMultiMediaPage> {
 
   Widget buildBody(){
     return Scrollbar(
-      thumbVisibility: true,
       trackVisibility: true,
+      thumbVisibility: true,
       child: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              Text('گوینده').bold(),
+
+              SizedBox(height: 5),
               Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Flexible(
-                    child: Padding(
-                      padding: const EdgeInsets.only(left: 14.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          SizedBox(
-                            width: 200,
-                            child: ElevatedButton(
-                                onPressed: onBackPress,
-                                child: Text('برگشت')
-                            ),
-                          ),
+                  Builder(
+                    builder: (ctx){
+                      if(speakerModel == null){
+                        return TextButton(
+                            onPressed: (){},
+                            child: Text('انتخاب')
+                        );
+                      }
 
-                          SizedBox(height: 15,),
-                          Text('عنوان'),
-
-                          TextField(
-                            controller: titleCtr,
-                            decoration: inputDecoration,
-                          ),
-                        ],
-                      ),
-                    ),
+                      return Center();
+                    },
                   ),
 
-
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text('عکس'),
-
-                      SizedBox(height: 10),
-
-                      Builder(
-                          builder: (context) {
-                            if(imagePickerResult == null){
-                              return SizedBox(
-                                width: 90,
-                                height: 90,
-                                child: Center(
-                                    child: IconButton(
-                                        onPressed: pickImage,
-                                        icon: Icon(AppIcons.add)
-                                    )
-                                ),
-                              ).wrapDotBorder();
-                            }
-
-                            return Stack(
-                              children: [
-                                Image.memory(imagePickerResult!.files.first.bytes!,
-                                  width: 100, height: 100, fit: BoxFit.cover,),
-
-                                Icon(
-                                  AppIcons.delete,
-                                  color: Colors.white,
-                                )
-                                    .wrapMaterial(
-                                  materialColor: Colors.black.withAlpha(100),
-                                  onTapDelay: removeImage,
-                                )
-                              ],
-                            );
-                          }
-                      ),
-                    ],
-                  )
+                  SizedBox(
+                    width: 110,
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(primary: Colors.blue),
+                        onPressed: (){},
+                        child: Text('ذخیره')
+                    ),
+                  ),
                 ],
               ),
 
-              SizedBox(height: 10,),
-              Text('توضیحات'),
-
-              TextField(
-                controller: descriptionCtr,
-                minLines: 2,
-                maxLines: 4,
-                decoration: inputDecoration,
-              ),
-
-              SizedBox(height: 10,),
-              CheckBoxRow(
-                  value: multiMedia,
-                  description: Text('چند محتوایی'),
-                  onChanged: (v){
-                    multiMedia = !multiMedia;
-                    assistCtr.updateMain();
-                  }
-              ),
-
-              SizedBox(height: 10,),
+              SizedBox(height: 20),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text('محتوا'),
+                  Row(
+                    children: [
+                      ElevatedButton(
+                          onPressed: gotoAddPage,
+                          child: Text('مدیا جدید +')
+                      ),
 
-                  ElevatedButton(
-                      onPressed: pickMedia,
-                      child: Text('اضافه کردن')
+                      SizedBox(width: 40,),
+                      Text('تعداد کل: $allCount').bold(),
+                    ],
                   ),
                 ],
               ),
 
-              SizedBox(height: 10,),
-              Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 10),
-                  child: ListView.builder(
-                      shrinkWrap: true,
-                      itemCount: 0,//mediaList.length,
-                      itemBuilder: (ctx, idx){
-                        return buildListItem(idx);
-                      }
-                  )
-              ).wrapBoxBorder(),
+              SizedBox(height: 20),
+
+              LayoutBuilder(
+                builder: (ctx, siz) {
+                  if(isInLoadData){
+                    return SizedBox(
+                      height: 200,
+                      child: Center(
+                        child: CircularProgressIndicator(),
+                      ),
+                    );
+                  }
+
+                  if(!assistCtr.hasState(state$fetchData)){
+                    return SizedBox(
+                      height: 200,
+                        child: Center(child: NotFetchData(tryClick: tryClick,))
+                    );
+                  }
+
+                  if(mediaList.isEmpty){
+                    return SizedBox(
+                      height: 200,
+                        child: Center(child: EmptyData())
+                    );
+                  }
+
+                  return ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: mediaList.length,
+                    itemBuilder: (ctx, idx){
+                      return buildListItem(idx);
+                    },
+                  );
+                }
+              ),
             ],
           ),
         ),
@@ -210,59 +178,94 @@ class _AddMultiMediaPageState extends StateBase<AddMultiMediaPage> {
     );
   }
 
-  Widget buildListItem(int idx) {
-    //final itm = mediaList[idx];
+  /*
+  * /*if(itm.profileModel != null){
+                        return Image.network(itm.profileModel!.url!, width: 85, fit: BoxFit.fill,);
+                      }*/
 
-    return ColoredBox(color: ColorHelper.getRandomRGB(),
-        child: SizedBox(height: 20,));
-  }
+                      return Image.asset(AppImages.appIcon, width: 85, fit: BoxFit.fill);*/
 
-  void removeImage() async {
-    imagePickerResult = null;
-    assistCtr.updateMain();
-  }
+  Widget buildListItem(int idx){
+    final itm = mediaList[idx];
 
-  void pickImage() async {
-    imagePickerResult = await FilePicker.platform.pickFiles(
-      allowedExtensions: ['jpg', 'png'],
-      allowMultiple: false,
-      type: FileType.custom,
+    return SizedBox(
+      key: ValueKey(itm.id!),
+      height: 80,
+      child: InkWell(
+        onTap: (){
+          //play(itm);
+        },
+        child: Card(
+          child: Padding(
+            padding: const EdgeInsets.all(6.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Icon(
+                  isVideo(itm)? AppIcons.videoCamera: AppIcons.headset
+                ),
+
+                SizedBox(width: 12,),
+                IconButton(
+                    visualDensity: VisualDensity.compact,
+                    constraints: BoxConstraints.tightFor(),
+                    padding: EdgeInsets.zero,
+                    splashRadius: 18,
+                    onPressed: (){
+                      //todo deleteItem(itm);
+                    },
+                    icon: Icon(AppIcons.delete, color: Colors.red,)
+                )
+              ],
+            ),
+          ),
+        ),
+      ),
     );
-
-    assistCtr.updateMain();
   }
 
-  void pickMedia() async {
-    final mediaPickerResult = await FilePicker.platform.pickFiles(
-      allowedExtensions: ['mp3', 'mp4'],
-      allowMultiple: multiMedia,
-      type: FileType.custom,
-    );
+  bool isVideo(MediaModel model){
+    return PathHelper.getDotExtension(model.url?? '') == '.mp4';
+  }
 
-    /*if(mediaPickerResult != null){
-      if(!multiMedia){
-        widget.injectData.level2model.pickedFile = mediaPickerResult.files.first;
-      }
-      else {
-        for (final k in mediaPickerResult.files) {
-          bool exist = false;
+  void gotoAddPage() async {
+    final inject = AddSpeakerPageInjectData();
 
-          for (final k2 in widget.injectData.level2model.pickedFiles){
-            if(k.name == k2.name && k.size == k2.size){
-              exist = true;
-              AppToast.showToast(context, 'موارد تکراری اضافه نمی شود');
-              break;
-            }
-          }
-
-          if(!exist){
-            widget.injectData.level2model.pickedFiles.add(k);
-          }
+    final result = await showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (ctx){
+          return AddSpeakerPage(injectData: inject);
         }
-      }
+    );
 
-      assistCtr.updateMain();
-    }*/
+    if(result != null && result){
+      isInLoadData = true;
+      requestData();
+    }
+  }
+
+  void gotoEditePage(SpeakerModel speakerModel) async {
+    final inject = AddSpeakerPageInjectData();
+    inject.speakerModel = speakerModel;
+
+    final result = await showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (ctx){
+          return AddSpeakerPage(injectData: inject);
+        }
+    );
+
+    if(result != null && result){
+      isInLoadData = true;
+      requestData();
+    }
+  }
+
+  void tryClick(){
+    requestData();
+    assistCtr.updateMain();
   }
 
   @override
@@ -270,13 +273,73 @@ class _AddMultiMediaPageState extends StateBase<AddMultiMediaPage> {
     //callState();
   }
 
-  void onBackPress(){
+  void deleteItem(SpeakerModel itm) {
+    AppSheet.showSheetYesNo(context, Text('آیا گوینده حذف شود؟'), () {
+      requestDeleteSpeaker(itm.id!);
+    }, () {});
+  }
 
-    final title = titleCtr.text.trim();
+  void requestDeleteSpeaker(int id){
+    final js = <String, dynamic>{};
+    js[Keys.requestZone] = 'delete_speaker';
+    js[Keys.requesterId] = Session.getLastLoginUser()?.userId;
+    js[Keys.id] = id;
 
-    widget.injectData.level2model.title = title;
-    widget.injectData.level2model.description = descriptionCtr.text;
+    requester.prepareUrl();
+    requester.bodyJson = js;
 
-    Navigator.of(context).pop();
+    requester.httpRequestEvents.onAnyState = (req) async {
+      hideLoading();
+    };
+
+    requester.httpRequestEvents.onFailState = (req) async {
+      assistCtr.removeStateAndUpdate(state$fetchData);
+    };
+
+    requester.httpRequestEvents.onStatusOk = (req, data) async {
+      mediaList.removeWhere((element) => element.id == id);
+      allCount--;
+      
+      assistCtr.updateMain();
+    };
+
+    showLoading();
+    requester.request(context);
+  }
+
+  void requestData(){
+    final js = <String, dynamic>{};
+    js[Keys.requestZone] = 'get_bucket_content_data';
+    js[Keys.requesterId] = Session.getLastLoginUser()?.userId;
+
+    requester.prepareUrl();
+    requester.bodyJson = js;
+
+    requester.httpRequestEvents.onAnyState = (req) async {
+      isInLoadData = false;
+    };
+
+    requester.httpRequestEvents.onFailState = (req) async {
+      assistCtr.removeStateAndUpdate(state$fetchData);
+    };
+
+    requester.httpRequestEvents.onStatusOk = (req, data) async {
+      final dList = data['speaker_list'];
+      final mList = data['media_list'];
+      allCount = data['all_count'];
+
+      MediaManager.addItemsFromMap(mList);
+
+      for(final k in dList){
+        final b = MediaModel.fromMap(k);
+
+        mediaList.add(b);
+      }
+
+      assistCtr.addStateAndUpdate(state$fetchData);
+    };
+
+    isInLoadData = true;
+    requester.request(context);
   }
 }
