@@ -1,4 +1,10 @@
+import 'dart:async';
+
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:iris_tools/api/generator.dart';
+import 'package:iris_tools/api/helpers/jsonHelper.dart';
+import 'package:iris_tools/api/helpers/mathHelper.dart';
 import 'package:iris_tools/api/helpers/pathHelper.dart';
 
 import 'package:iris_tools/models/dataModels/mediaModel.dart';
@@ -7,6 +13,7 @@ import 'package:iris_tools/widgets/maxWidth.dart';
 
 import 'package:vosate_zehn_panel/managers/mediaManager.dart';
 import 'package:vosate_zehn_panel/models/BucketModel.dart';
+import 'package:vosate_zehn_panel/models/contentModel.dart';
 import 'package:vosate_zehn_panel/models/speakerModel.dart';
 import 'package:vosate_zehn_panel/models/subBuketModel.dart';
 import 'package:vosate_zehn_panel/pages/addSpeakerPage.dart';
@@ -17,14 +24,15 @@ import 'package:vosate_zehn_panel/system/requester.dart';
 import 'package:vosate_zehn_panel/system/session.dart';
 import 'package:vosate_zehn_panel/system/stateBase.dart';
 import 'package:vosate_zehn_panel/tools/app/appIcons.dart';
+import 'package:vosate_zehn_panel/tools/app/appLoading.dart';
+import 'package:vosate_zehn_panel/tools/app/appManager.dart';
 import 'package:vosate_zehn_panel/tools/app/appSheet.dart';
 import 'package:vosate_zehn_panel/views/emptyData.dart';
-import 'package:vosate_zehn_panel/views/notFetchData.dart';
 
 
 class AddMultiMediaPageInjectData {
   late BucketModel bucketModel;
-  SubBucketModel? subBucketModel;
+  late SubBucketModel subBucketModel;
 }
 ///----------------------------------------------------------------
 class AddMultiMediaPage extends StatefulWidget {
@@ -39,6 +47,9 @@ class AddMultiMediaPage extends StatefulWidget {
 class _AddMultiMediaPageState extends StateBase<AddMultiMediaPage> {
   late Requester requester = Requester();
   List<MediaModel> mediaList = [];
+  List<PlatformFile> newAddList = [];
+  List<ListItemHolder> itemList = [];
+  List<int> deletedList = [];
   SpeakerModel? speakerModel;
   int allCount = 0;
   bool isInLoadData = false;
@@ -141,7 +152,7 @@ class _AddMultiMediaPageState extends StateBase<AddMultiMediaPage> {
                         width: 110,
                         child: ElevatedButton(
                             style: ElevatedButton.styleFrom(primary: Colors.blue),
-                            onPressed: (){},
+                            onPressed: onSaveClick,
                             child: Text('ذخیره')
                         ),
                       ),
@@ -168,7 +179,7 @@ class _AddMultiMediaPageState extends StateBase<AddMultiMediaPage> {
                   Row(
                     children: [
                       ElevatedButton(
-                          onPressed: gotoAddPage,
+                          onPressed: pickMedia,
                           child: Text('مدیا جدید +')
                       ),
 
@@ -176,6 +187,17 @@ class _AddMultiMediaPageState extends StateBase<AddMultiMediaPage> {
                       Text('تعداد کل: $allCount').bold(),
                     ],
                   ),
+
+                if(!assistCtr.hasState(state$fetchData))
+                  Row(
+                    children: [
+                      Text('عدم ارتباط با سرور '),
+                      TextButton(
+                        onPressed: tryClick,
+                        child: Text('تلاش مجدد'),
+                      ),
+                    ],
+                  )
                 ],
               ),
 
@@ -192,14 +214,7 @@ class _AddMultiMediaPageState extends StateBase<AddMultiMediaPage> {
                     );
                   }
 
-                  if(!assistCtr.hasState(state$fetchData)){
-                    return SizedBox(
-                      height: 200,
-                        child: Center(child: NotFetchData(tryClick: tryClick,))
-                    );
-                  }
-
-                  if(mediaList.isEmpty){
+                  if(itemList.isEmpty){
                     return SizedBox(
                       height: 200,
                         child: Center(child: EmptyData())
@@ -208,7 +223,7 @@ class _AddMultiMediaPageState extends StateBase<AddMultiMediaPage> {
 
                   return ListView.builder(
                     shrinkWrap: true,
-                    itemCount: mediaList.length,
+                    itemCount: itemList.length,
                     itemBuilder: (ctx, idx){
                       return buildListItem(idx);
                     },
@@ -222,18 +237,11 @@ class _AddMultiMediaPageState extends StateBase<AddMultiMediaPage> {
     );
   }
 
-  /*
-  * /*if(itm.profileModel != null){
-                        return Image.network(itm.profileModel!.url!, width: 85, fit: BoxFit.fill,);
-                      }*/
-
-                      return Image.asset(AppImages.appIcon, width: 85, fit: BoxFit.fill);*/
-
   Widget buildListItem(int idx){
-    final itm = mediaList[idx];
+    final itm = itemList[idx];
 
     return SizedBox(
-      key: ValueKey(itm.id!),
+      key: ValueKey(itm.id),
       height: 80,
       child: InkWell(
         onTap: (){
@@ -241,7 +249,7 @@ class _AddMultiMediaPageState extends StateBase<AddMultiMediaPage> {
         },
         child: Card(
           child: Padding(
-            padding: const EdgeInsets.all(6.0),
+            padding: const EdgeInsets.symmetric(horizontal: 4.0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -249,7 +257,11 @@ class _AddMultiMediaPageState extends StateBase<AddMultiMediaPage> {
                   isVideo(itm)? AppIcons.videoCamera: AppIcons.headset
                 ),
 
-                SizedBox(width: 12,),
+                SizedBox(width: 10,),
+                Expanded(
+                    child: Text(itm.name),
+                ),
+
                 IconButton(
                     visualDensity: VisualDensity.compact,
                     constraints: BoxConstraints.tightFor(),
@@ -268,8 +280,51 @@ class _AddMultiMediaPageState extends StateBase<AddMultiMediaPage> {
     );
   }
 
-  bool isVideo(MediaModel model){
-    return PathHelper.getDotExtension(model.url?? '') == '.mp4';
+  void pickMedia() async {
+    final p = await FilePicker.platform.pickFiles(
+      allowedExtensions: ['mp3', 'mp4'],
+      allowMultiple: false,
+      withData: false,
+      withReadStream: true,
+      type: FileType.custom,
+    );
+
+    if(p != null) {
+      newAddList.add(p.files.first);
+      prepareItemList();
+
+      assistCtr.updateMain();
+    }
+  }
+
+  void prepareItemList(){
+    itemList.clear();
+
+    for(final k in newAddList){
+      final t = ListItemHolder();
+      t.id = Generator.generateDateMillWith6Digit();
+      t.name = k.name;
+      t.extension = PathHelper.getDotExtension(k.extension?? '');
+      t.object = k;
+
+      itemList.add(t);
+    }
+
+    for(final k in mediaList){
+      final t = ListItemHolder();
+      t.id = k.id!;
+      t.name = k.fileName?? '-';
+      t.extension = PathHelper.getDotExtension(k.url!);
+      t.object = k;
+
+      itemList.add(t);
+    }
+
+    allCount = itemList.length;
+  }
+
+  bool isVideo(ListItemHolder model){
+    return PathHelper.getDotExtension(model.extension) == '.mp4';
   }
 
   void gotoAddPage() async {
@@ -331,6 +386,20 @@ class _AddMultiMediaPageState extends StateBase<AddMultiMediaPage> {
     }
   }
 
+  void onSaveClick(){
+    if(speakerModel == null){
+      AppSheet.showSheetOk(context, 'گوینده را انتخاب کنید');
+      return;
+    }
+
+    if(itemList.isEmpty){
+      AppSheet.showSheetOk(context, 'حد اقل یک مدیا انتخاب کنبد');
+      return;
+    }
+
+    requestSave();
+  }
+
   @override
   void onResize(oldW, oldH, newW, newH) async {
     //callState();
@@ -371,9 +440,12 @@ class _AddMultiMediaPageState extends StateBase<AddMultiMediaPage> {
   }
 
   void requestData(){
+    mediaList.clear();
+
     final js = <String, dynamic>{};
     js[Keys.requestZone] = 'get_bucket_content_data';
     js[Keys.requesterId] = Session.getLastLoginUser()?.userId;
+    js[Keys.id] = widget.injectData.subBucketModel.id;
 
     requester.prepareUrl();
     requester.bodyJson = js;
@@ -387,22 +459,122 @@ class _AddMultiMediaPageState extends StateBase<AddMultiMediaPage> {
     };
 
     requester.httpRequestEvents.onStatusOk = (req, data) async {
-      final dList = data['speaker_list'];
+      final content = data['content'];
+      final speaker = data['speaker'];
       final mList = data['media_list'];
-      allCount = data['all_count'];
+      //allCount = data['all_count'];
 
       MediaManager.addItemsFromMap(mList);
 
-      for(final k in dList){
-        final b = MediaModel.fromMap(k);
+      final contentModel = ContentModel.fromMap(content);
 
-        mediaList.add(b);
+      speakerModel = SpeakerModel.fromMap(speaker);
+
+      widget.injectData.subBucketModel.contentModel = contentModel;
+      widget.injectData.subBucketModel.contentModel?.speakerModel = speakerModel;
+
+      for(final k in contentModel.mediaIds){
+        final mm = MediaManager.getById(k);
+
+        if(mm != null) {
+          mediaList.add(mm);
+        }
       }
-
+      print('-----------5');
+      prepareItemList();
       assistCtr.addStateAndUpdate(state$fetchData);
     };
 
     isInLoadData = true;
     requester.request(context);
   }
+
+  void requestSave(){
+    final js = <String, dynamic>{};
+    js[Keys.requestZone] = 'upsert_bucket_content';
+    js[Keys.requesterId] = Session.getLastLoginUser()?.userId;
+    js['parent_id'] = widget.injectData.subBucketModel.id;
+    js['speaker'] = speakerModel?.toMap();
+
+    js[Keys.id] = widget.injectData.subBucketModel.contentId;
+
+    if(widget.injectData.subBucketModel.contentModel != null) {
+      js['current_media_ids'] = widget.injectData.subBucketModel.contentModel!.mediaIds;
+    }
+
+    AppManager.addAppInfo(js);
+
+    final medias = <String, PlatformFile>{};
+    final mediasInfo = <String, Map>{};
+
+    for(final k in newAddList){
+      medias['${Generator.generateDateMillWith6Digit()}'] = k;
+    }
+
+    for(final k in medias.entries){
+      final map = {};
+      //map['key'] = medias.entries.firstWhere((element) => element.value == k).key;
+      map[Keys.fileName] = k.value.name;
+      map['extension'] = PathHelper.getDotExtension(k.value.name);
+
+      mediasInfo[k.key] = map;
+    }
+
+    js['medias_parts'] = medias.keys.toList();
+    js['medias_info'] = mediasInfo;
+
+    for(final k in medias.entries){
+      final name = '${k.key}.${mediasInfo[k.key]!['extension']}';
+      requester.httpItem.addBodyStream(k.key, name, k.value.readStream!, k.value.size);
+    }
+
+    final progressStream = StreamController<double>();
+
+    requester.httpItem.onSendProgress = (i, s){
+      final p = i / s * 100;
+      final dp = MathHelper.percentTop1(p);
+      progressStream.sink.add(dp);
+    };
+
+    requester.httpItem.addBodyField(Keys.jsonPart, JsonHelper.mapToJson(js));
+
+
+    requester.httpRequestEvents.onAnyState = (req) async {
+      hideLoading();
+    };
+
+    requester.httpRequestEvents.onFailState = (req) async {
+      AppSheet.showSheet$OperationFailed(context);
+    };
+
+    requester.httpRequestEvents.onStatusOk = (req, data) async {
+      AppSheet.showSheet$SuccessOperation(context, onBtn: (){
+        Navigator.of(context).pop(true);
+      });
+    };
+
+    AppLoading.instance.showProgress(
+      context,
+      progressStream.stream,
+      buttonText: '  لغو  ',
+      message: 'در حال آپلود',
+      buttonEvent: (){
+        requester.httpRequestEvents = HttpRequestEvents();
+        requester.dispose();
+        AppLoading.instance.hideLoading(context);
+      },
+    );
+
+    requester.bodyJson = null;
+    requester.prepareUrl();
+    requester.request(context);
+  }
+}
+///===================================================================================
+class ListItemHolder {
+  late int id;
+  late String name;
+  late String extension;
+  dynamic object;
+  bool isNew = false;
 }

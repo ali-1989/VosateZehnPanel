@@ -385,7 +385,6 @@ class _AddMediaPageState extends StateBase<AddMediaPage> {
   }
 
   void requestUpload(){
-
     final sb = widget.injectData.subBucketModel?? SubBucketModel();
     sb.title = titleCtr.text.trim();
     sb.description = descriptionCtr.text;
@@ -399,6 +398,7 @@ class _AddMediaPageState extends StateBase<AddMediaPage> {
     js[Keys.id] = widget.injectData.bucketModel.id;
     js[Keys.data] = sb.toMap();
     js[Keys.fileName] = pickedMedia?.name?? widget.injectData.subBucketModel?.mediaModel?.fileName;
+
     AppManager.addAppInfo(js);
 
     final extension = isVideo()? 'mp4': 'mp3';
@@ -448,7 +448,6 @@ class _AddMediaPageState extends StateBase<AddMediaPage> {
     };
 
     requester.httpRequestEvents.onStatusOk = (req, data) async {
-
       AppSheet.showSheet$SuccessOperation(context, onBtn: (){
         Navigator.of(context).pop(true);
       });

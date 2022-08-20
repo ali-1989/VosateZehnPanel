@@ -1,3 +1,4 @@
+import 'package:iris_tools/api/converter.dart';
 import 'package:iris_tools/models/dataModels/mediaModel.dart';
 
 import 'package:vosate_zehn_panel/models/dateFieldMixin.dart';
@@ -11,7 +12,7 @@ class ContentModel with DateFieldMixin {
   List<int> mediaIds = [];
   //------------- local
   SpeakerModel? speakerModel;
-  List<MediaModel> mediaList = [];
+  //List<MediaModel> mediaList = [];
 
   ContentModel();
 
@@ -22,14 +23,14 @@ class ContentModel with DateFieldMixin {
 
     id = map[Keys.id];
     speakerId = map['speaker_id'];
-    mediaList = map['media_ids'];
+    mediaIds = Converter.correctList<int>(map['media_ids'])?? <int>[];
   }
 
   Map<String, dynamic> toMap(){
     final map = <String, dynamic>{};
     map[Keys.id] = id;
     map['speaker_id'] = speakerId;
-    map['media_ids'] = mediaList;
+    map['media_ids'] = mediaIds;
 
     return map;
   }
