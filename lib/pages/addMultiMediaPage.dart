@@ -16,7 +16,6 @@ import 'package:vosate_zehn_panel/models/BucketModel.dart';
 import 'package:vosate_zehn_panel/models/contentModel.dart';
 import 'package:vosate_zehn_panel/models/speakerModel.dart';
 import 'package:vosate_zehn_panel/models/subBuketModel.dart';
-import 'package:vosate_zehn_panel/pages/addSpeakerPage.dart';
 import 'package:vosate_zehn_panel/pages/selectSpeakerPage.dart';
 import 'package:vosate_zehn_panel/system/extensions.dart';
 import 'package:vosate_zehn_panel/system/keys.dart';
@@ -268,7 +267,7 @@ class _AddMultiMediaPageState extends StateBase<AddMultiMediaPage> {
                     padding: EdgeInsets.zero,
                     splashRadius: 18,
                     onPressed: (){
-                      //todo deleteItem(itm);
+                      deleteItem(itm);
                     },
                     icon: Icon(AppIcons.delete, color: Colors.red,)
                 )
@@ -304,6 +303,7 @@ class _AddMultiMediaPageState extends StateBase<AddMultiMediaPage> {
       final t = ListItemHolder();
       t.id = Generator.generateDateMillWith6Digit();
       t.name = k.name;
+      t.isNew = true;
       t.extension = PathHelper.getDotExtension(k.extension?? '');
       t.object = k;
 
@@ -325,41 +325,6 @@ class _AddMultiMediaPageState extends StateBase<AddMultiMediaPage> {
 
   bool isVideo(ListItemHolder model){
     return PathHelper.getDotExtension(model.extension) == '.mp4';
-  }
-
-  void gotoAddPage() async {
-    final inject = AddSpeakerPageInjectData();
-
-    final result = await showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (ctx){
-          return AddSpeakerPage(injectData: inject);
-        }
-    );
-
-    if(result != null && result){
-      isInLoadData = true;
-      requestData();
-    }
-  }
-
-  void gotoEditePage(SpeakerModel speakerModel) async {
-    final inject = AddSpeakerPageInjectData();
-    inject.speakerModel = speakerModel;
-
-    final result = await showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (ctx){
-          return AddSpeakerPage(injectData: inject);
-        }
-    );
-
-    if(result != null && result){
-      isInLoadData = true;
-      requestData();
-    }
   }
 
   void tryClick(){
@@ -405,13 +370,25 @@ class _AddMultiMediaPageState extends StateBase<AddMultiMediaPage> {
     //callState();
   }
 
-  void deleteItem(SpeakerModel itm) {
-    AppSheet.showSheetYesNo(context, Text('آیا گوینده حذف شود؟'), () {
-      requestDeleteSpeaker(itm.id!);
+  void deleteItem(ListItemHolder itm) {
+    AppSheet.showSheetYesNo(context, Text('آیا مدیا حذف شود؟'), () {
+      if(itm.isNew){
+        newAddList.removeWhere((element) => element == itm.object);
+      }
+      else {
+        final m = (itm.object as MediaModel);
+        deletedList.add(m.id!);
+        mediaList.removeWhere((element) => element.id == m.id);
+
+        widget.injectData.subBucketModel.contentModel!.mediaIds.removeWhere((element) => element == m.id);
+      }
+
+      prepareItemList();
+      assistCtr.updateMain();
     }, () {});
   }
 
-  void requestDeleteSpeaker(int id){
+  /*void requestDeleteSpeaker(int id){
     final js = <String, dynamic>{};
     js[Keys.requestZone] = 'delete_speaker';
     js[Keys.requesterId] = Session.getLastLoginUser()?.userId;
@@ -437,7 +414,7 @@ class _AddMultiMediaPageState extends StateBase<AddMultiMediaPage> {
 
     showLoading();
     requester.request(context);
-  }
+  }*/
 
   void requestData(){
     mediaList.clear();
@@ -459,16 +436,21 @@ class _AddMultiMediaPageState extends StateBase<AddMultiMediaPage> {
     };
 
     requester.httpRequestEvents.onStatusOk = (req, data) async {
-      final content = data['content'];
-      final speaker = data['speaker'];
-      final mList = data['media_list'];
+      final content = data['content'] as Map?;
+      final speaker = data['speaker'] as Map?;
+      final mList = data['media_list'] as List?;
       //allCount = data['all_count'];
 
       MediaManager.addItemsFromMap(mList);
 
       final contentModel = ContentModel.fromMap(content);
 
-      speakerModel = SpeakerModel.fromMap(speaker);
+      widget.injectData.subBucketModel.contentId = contentModel.id;
+
+      if(speaker != null && speaker.isNotEmpty) {
+        speakerModel = SpeakerModel.fromMap(speaker);
+        speakerModel?.profileModel = MediaManager.getById(speakerModel?.mediaId);
+      }
 
       widget.injectData.subBucketModel.contentModel = contentModel;
       widget.injectData.subBucketModel.contentModel?.speakerModel = speakerModel;
@@ -480,7 +462,7 @@ class _AddMultiMediaPageState extends StateBase<AddMultiMediaPage> {
           mediaList.add(mm);
         }
       }
-      print('-----------5');
+
       prepareItemList();
       assistCtr.addStateAndUpdate(state$fetchData);
     };
@@ -513,7 +495,6 @@ class _AddMultiMediaPageState extends StateBase<AddMultiMediaPage> {
 
     for(final k in medias.entries){
       final map = {};
-      //map['key'] = medias.entries.firstWhere((element) => element.value == k).key;
       map[Keys.fileName] = k.value.name;
       map['extension'] = PathHelper.getDotExtension(k.value.name);
 
@@ -526,6 +507,10 @@ class _AddMultiMediaPageState extends StateBase<AddMultiMediaPage> {
     for(final k in medias.entries){
       final name = '${k.key}.${mediasInfo[k.key]!['extension']}';
       requester.httpItem.addBodyStream(k.key, name, k.value.readStream!, k.value.size);
+    }
+
+    if(deletedList.isNotEmpty){
+      js['delete_media_ids'] = deletedList;
     }
 
     final progressStream = StreamController<double>();

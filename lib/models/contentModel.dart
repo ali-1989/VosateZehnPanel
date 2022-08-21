@@ -1,6 +1,4 @@
 import 'package:iris_tools/api/converter.dart';
-import 'package:iris_tools/models/dataModels/mediaModel.dart';
-
 import 'package:vosate_zehn_panel/models/dateFieldMixin.dart';
 import 'package:vosate_zehn_panel/models/speakerModel.dart';
 import 'package:vosate_zehn_panel/system/keys.dart';
@@ -12,7 +10,6 @@ class ContentModel with DateFieldMixin {
   List<int> mediaIds = [];
   //------------- local
   SpeakerModel? speakerModel;
-  //List<MediaModel> mediaList = [];
 
   ContentModel();
 
