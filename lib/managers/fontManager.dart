@@ -3,9 +3,9 @@ import 'dart:ui' as ui;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
-import 'package:vosate_zehn_panel/system/keys.dart';
-import 'package:vosate_zehn_panel/tools/app/appDb.dart';
-import 'package:vosate_zehn_panel/tools/app/appThemes.dart';
+import 'package:app/system/keys.dart';
+import 'package:app/tools/app/appDb.dart';
+import 'package:app/tools/app/appThemes.dart';
 
 class FontManager {
   FontManager._();

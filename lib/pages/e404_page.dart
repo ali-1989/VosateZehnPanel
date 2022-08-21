@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lottie/lottie.dart';
 
-import 'package:vosate_zehn_panel/tools/app/appImages.dart';
-import 'package:vosate_zehn_panel/tools/app/appMessages.dart';
-import 'package:vosate_zehn_panel/tools/app/appThemes.dart';
+import 'package:app/tools/app/appImages.dart';
+import 'package:app/tools/app/appMessages.dart';
+import 'package:app/tools/app/appThemes.dart';
 
 class E404Page extends StatefulWidget {
   static final route = GoRoute(

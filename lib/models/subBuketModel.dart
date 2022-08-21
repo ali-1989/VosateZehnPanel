@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:iris_tools/dateSection/dateHelper.dart';
 import 'package:iris_tools/models/dataModels/mediaModel.dart';
 
-import 'package:vosate_zehn_panel/models/contentModel.dart';
-import 'package:vosate_zehn_panel/models/dateFieldMixin.dart';
-import 'package:vosate_zehn_panel/models/enums.dart';
-import 'package:vosate_zehn_panel/system/keys.dart';
-import 'package:vosate_zehn_panel/tools/app/appIcons.dart';
+import 'package:app/models/contentModel.dart';
+import 'package:app/models/dateFieldMixin.dart';
+import 'package:app/models/enums.dart';
+import 'package:app/system/keys.dart';
+import 'package:app/tools/app/appIcons.dart';
 
 class SubBucketModel with DateFieldMixin {
   int? id;

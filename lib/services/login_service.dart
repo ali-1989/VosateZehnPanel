@@ -2,13 +2,13 @@ import 'dart:async';
 
 import 'package:dio/dio.dart';
 
-import 'package:vosate_zehn_panel/models/countryModel.dart';
-import 'package:vosate_zehn_panel/system/httpCodes.dart';
-import 'package:vosate_zehn_panel/system/keys.dart';
-import 'package:vosate_zehn_panel/tools/app/appHttpDio.dart';
-import 'package:vosate_zehn_panel/tools/app/appManager.dart';
-import 'package:vosate_zehn_panel/tools/deviceInfoTools.dart';
-import 'package:vosate_zehn_panel/tools/publicAccess.dart';
+import 'package:app/models/countryModel.dart';
+import 'package:app/system/httpCodes.dart';
+import 'package:app/system/keys.dart';
+import 'package:app/tools/app/appHttpDio.dart';
+import 'package:app/tools/app/appManager.dart';
+import 'package:app/tools/deviceInfoTools.dart';
+import 'package:app/tools/publicAccess.dart';
 
 class LoginService {
   LoginService._();

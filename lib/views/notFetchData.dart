@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:vosate_zehn_panel/tools/app/appMessages.dart';
+import 'package:app/tools/app/appMessages.dart';
 
 class NotFetchData extends StatelessWidget {
   final VoidCallback? tryClick;

@@ -3,13 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:iris_tools/modules/stateManagers/assist.dart';
 
-import 'package:vosate_zehn_panel/system/extensions.dart';
-import 'package:vosate_zehn_panel/system/keys.dart';
-import 'package:vosate_zehn_panel/system/requester.dart';
-import 'package:vosate_zehn_panel/system/session.dart';
-import 'package:vosate_zehn_panel/system/stateBase.dart';
-import 'package:vosate_zehn_panel/tools/app/appSheet.dart';
-import 'package:vosate_zehn_panel/views/notFetchData.dart';
+import 'package:app/system/extensions.dart';
+import 'package:app/system/keys.dart';
+import 'package:app/system/requester.dart';
+import 'package:app/system/session.dart';
+import 'package:app/system/stateBase.dart';
+import 'package:app/tools/app/appSheet.dart';
+import 'package:app/views/notFetchData.dart';
 
 class AidDialogPage extends StatefulWidget {
   static final route = GoRoute(

@@ -1,4 +1,4 @@
-import 'package:vosate_zehn_panel/tools/app/appCache.dart';
+import 'package:app/tools/app/appCache.dart';
 
 class LifeCycleApplication {
   LifeCycleApplication._();

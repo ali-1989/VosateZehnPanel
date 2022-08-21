@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
-import 'package:vosate_zehn_panel/tools/app/appBroadcast.dart';
-import 'package:vosate_zehn_panel/tools/app/appIcons.dart';
-import 'package:vosate_zehn_panel/tools/app/appMessages.dart';
-import 'package:vosate_zehn_panel/tools/app/appSizes.dart';
-import 'package:vosate_zehn_panel/tools/app/appThemes.dart';
+import 'package:app/tools/app/appBroadcast.dart';
+import 'package:app/tools/app/appIcons.dart';
+import 'package:app/tools/app/appMessages.dart';
+import 'package:app/tools/app/appSizes.dart';
+import 'package:app/tools/app/appThemes.dart';
 
 class AppSnack {
   AppSnack._();

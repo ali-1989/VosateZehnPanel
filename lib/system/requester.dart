@@ -3,9 +3,9 @@ import 'package:flutter/widgets.dart';
 import 'package:iris_tools/api/helpers/jsonHelper.dart';
 import 'package:iris_tools/api/logger/logger.dart';
 
-import 'package:vosate_zehn_panel/managers/settingsManager.dart';
-import 'package:vosate_zehn_panel/tools/app/appHttpDio.dart';
-import 'package:vosate_zehn_panel/tools/app/appSheet.dart';
+import 'package:app/managers/settingsManager.dart';
+import 'package:app/tools/app/appHttpDio.dart';
+import 'package:app/tools/app/appSheet.dart';
 import '/system/httpProcess.dart';
 import '/system/keys.dart';
 import '/tools/app/appManager.dart';

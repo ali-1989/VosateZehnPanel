@@ -8,20 +8,20 @@ import 'package:iris_tools/modules/stateManagers/assist.dart';
 import 'package:iris_tools/widgets/maxWidth.dart';
 import 'package:iris_tools/widgets/optionsRow/checkRow.dart';
 
-import 'package:vosate_zehn_panel/models/BucketModel.dart';
-import 'package:vosate_zehn_panel/models/enums.dart';
-import 'package:vosate_zehn_panel/pages/contentManagerPage.dart';
-import 'package:vosate_zehn_panel/services/pagesEventBus.dart';
-import 'package:vosate_zehn_panel/system/extensions.dart';
-import 'package:vosate_zehn_panel/system/keys.dart';
-import 'package:vosate_zehn_panel/system/requester.dart';
-import 'package:vosate_zehn_panel/system/session.dart';
-import 'package:vosate_zehn_panel/system/stateBase.dart';
-import 'package:vosate_zehn_panel/tools/app/appIcons.dart';
-import 'package:vosate_zehn_panel/tools/app/appManager.dart';
-import 'package:vosate_zehn_panel/tools/app/appRoute.dart';
-import 'package:vosate_zehn_panel/tools/app/appSheet.dart';
-import 'package:vosate_zehn_panel/tools/app/appThemes.dart';
+import 'package:app/models/BucketModel.dart';
+import 'package:app/models/enums.dart';
+import 'package:app/pages/contentManagerPage.dart';
+import 'package:app/services/pagesEventBus.dart';
+import 'package:app/system/extensions.dart';
+import 'package:app/system/keys.dart';
+import 'package:app/system/requester.dart';
+import 'package:app/system/session.dart';
+import 'package:app/system/stateBase.dart';
+import 'package:app/tools/app/appIcons.dart';
+import 'package:app/tools/app/appManager.dart';
+import 'package:app/tools/app/appRoute.dart';
+import 'package:app/tools/app/appSheet.dart';
+import 'package:app/tools/app/appThemes.dart';
 
 class BuketEditPageInjectData {
   late BucketTypes bucketType;

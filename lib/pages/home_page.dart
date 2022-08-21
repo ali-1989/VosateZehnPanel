@@ -3,17 +3,17 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:iris_tools/modules/stateManagers/assist.dart';
 
-import 'package:vosate_zehn_panel/pages/aboutUsPage.dart';
-import 'package:vosate_zehn_panel/pages/aidDialogPage.dart';
-import 'package:vosate_zehn_panel/pages/aidPage.dart';
-import 'package:vosate_zehn_panel/pages/contentManagerPage.dart';
-import 'package:vosate_zehn_panel/pages/empty.dart';
-import 'package:vosate_zehn_panel/pages/speakersManagerPage.dart';
-import 'package:vosate_zehn_panel/pages/termPage.dart';
-import 'package:vosate_zehn_panel/system/stateBase.dart';
-import 'package:vosate_zehn_panel/tools/app/appIcons.dart';
-import 'package:vosate_zehn_panel/tools/app/appMessages.dart';
-import 'package:vosate_zehn_panel/tools/app/appRoute.dart';
+import 'package:app/pages/aboutUsPage.dart';
+import 'package:app/pages/aidDialogPage.dart';
+import 'package:app/pages/aidPage.dart';
+import 'package:app/pages/contentManagerPage.dart';
+import 'package:app/pages/empty.dart';
+import 'package:app/pages/speakersManagerPage.dart';
+import 'package:app/pages/termPage.dart';
+import 'package:app/system/stateBase.dart';
+import 'package:app/tools/app/appIcons.dart';
+import 'package:app/tools/app/appMessages.dart';
+import 'package:app/tools/app/appRoute.dart';
 
 class HomePage extends StatefulWidget {
   static final route = GoRoute(

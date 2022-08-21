@@ -5,16 +5,16 @@ import 'package:iris_tools/api/helpers/mathHelper.dart';
 import 'package:iris_tools/modules/stateManagers/assist.dart';
 import 'package:iris_tools/widgets/maxWidth.dart';
 
-import 'package:vosate_zehn_panel/pages/home_page.dart';
-import 'package:vosate_zehn_panel/system/keys.dart';
-import 'package:vosate_zehn_panel/system/requester.dart';
-import 'package:vosate_zehn_panel/system/session.dart';
-import 'package:vosate_zehn_panel/system/stateBase.dart';
-import 'package:vosate_zehn_panel/tools/app/appImages.dart';
-import 'package:vosate_zehn_panel/tools/app/appMessages.dart';
-import 'package:vosate_zehn_panel/tools/app/appRoute.dart';
-import 'package:vosate_zehn_panel/tools/app/appSheet.dart';
-import 'package:vosate_zehn_panel/tools/deviceInfoTools.dart';
+import 'package:app/pages/home_page.dart';
+import 'package:app/system/keys.dart';
+import 'package:app/system/requester.dart';
+import 'package:app/system/session.dart';
+import 'package:app/system/stateBase.dart';
+import 'package:app/tools/app/appImages.dart';
+import 'package:app/tools/app/appMessages.dart';
+import 'package:app/tools/app/appRoute.dart';
+import 'package:app/tools/app/appSheet.dart';
+import 'package:app/tools/deviceInfoTools.dart';
 
 class LoginPage extends StatefulWidget {
   static final route = GoRoute(

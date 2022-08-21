@@ -6,11 +6,11 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:iris_tools/api/helpers/colorHelper.dart';
 import 'package:iris_tools/features/overlayDialog.dart';
 
-import 'package:vosate_zehn_panel/tools/app/appMessages.dart';
-import 'package:vosate_zehn_panel/tools/app/appOverlay.dart';
-import 'package:vosate_zehn_panel/tools/app/appThemes.dart';
-import 'package:vosate_zehn_panel/views/overlay/overlayContainer.dart';
-import 'package:vosate_zehn_panel/views/progressBarPrompt.dart';
+import 'package:app/tools/app/appMessages.dart';
+import 'package:app/tools/app/appOverlay.dart';
+import 'package:app/tools/app/appThemes.dart';
+import 'package:app/views/overlay/overlayContainer.dart';
+import 'package:app/views/progressBarPrompt.dart';
 
 class AppLoading {
   AppLoading._();

@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 
 import 'package:iris_tools/dateSection/calendarTools.dart';
 
-import 'package:vosate_zehn_panel/managers/fontManager.dart';
-import 'package:vosate_zehn_panel/system/keys.dart';
-import 'package:vosate_zehn_panel/tools/app/appThemes.dart';
-import 'package:vosate_zehn_panel/tools/dateTools.dart';
+import 'package:app/managers/fontManager.dart';
+import 'package:app/system/keys.dart';
+import 'package:app/tools/app/appThemes.dart';
+import 'package:app/tools/dateTools.dart';
 
 class SettingsModel {
   String? lastUserId;

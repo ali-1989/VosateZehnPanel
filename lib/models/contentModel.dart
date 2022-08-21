@@ -1,7 +1,7 @@
 import 'package:iris_tools/api/converter.dart';
-import 'package:vosate_zehn_panel/models/dateFieldMixin.dart';
-import 'package:vosate_zehn_panel/models/speakerModel.dart';
-import 'package:vosate_zehn_panel/system/keys.dart';
+import 'package:app/models/dateFieldMixin.dart';
+import 'package:app/models/speakerModel.dart';
+import 'package:app/system/keys.dart';
 
 class ContentModel with DateFieldMixin {
   int? id;

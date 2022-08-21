@@ -10,7 +10,7 @@ import 'package:iris_tools/api/converter.dart';
 import 'package:iris_tools/api/helpers/jsonHelper.dart';
 import 'package:iris_tools/api/helpers/listHelper.dart';
 
-import 'package:vosate_zehn_panel/tools/app/appManager.dart';
+import 'package:app/tools/app/appManager.dart';
 
 class AppHttpDio {
 	AppHttpDio._();

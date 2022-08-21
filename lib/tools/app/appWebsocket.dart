@@ -6,9 +6,9 @@ import 'package:iris_tools/api/checker.dart';
 import 'package:iris_tools/api/helpers/jsonHelper.dart';
 import 'package:iris_tools/api/system.dart';
 
-import 'package:vosate_zehn_panel/models/settingsModel.dart';
-import 'package:vosate_zehn_panel/tools/app/appBroadcast.dart';
-import 'package:vosate_zehn_panel/tools/publicAccess.dart';
+import 'package:app/models/settingsModel.dart';
+import 'package:app/tools/app/appBroadcast.dart';
+import 'package:app/tools/publicAccess.dart';
 import '/system/httpCodes.dart';
 import '/system/keys.dart';
 

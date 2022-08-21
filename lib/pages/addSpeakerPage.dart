@@ -6,16 +6,16 @@ import 'package:iris_tools/api/generator.dart';
 import 'package:iris_tools/api/helpers/jsonHelper.dart';
 import 'package:iris_tools/modules/stateManagers/assist.dart';
 import 'package:iris_tools/widgets/maxWidth.dart';
-import 'package:vosate_zehn_panel/models/speakerModel.dart';
+import 'package:app/models/speakerModel.dart';
 
-import 'package:vosate_zehn_panel/system/extensions.dart';
-import 'package:vosate_zehn_panel/system/keys.dart';
-import 'package:vosate_zehn_panel/system/requester.dart';
-import 'package:vosate_zehn_panel/system/session.dart';
-import 'package:vosate_zehn_panel/system/stateBase.dart';
-import 'package:vosate_zehn_panel/tools/app/appIcons.dart';
-import 'package:vosate_zehn_panel/tools/app/appManager.dart';
-import 'package:vosate_zehn_panel/tools/app/appSheet.dart';
+import 'package:app/system/extensions.dart';
+import 'package:app/system/keys.dart';
+import 'package:app/system/requester.dart';
+import 'package:app/system/session.dart';
+import 'package:app/system/stateBase.dart';
+import 'package:app/tools/app/appIcons.dart';
+import 'package:app/tools/app/appManager.dart';
+import 'package:app/tools/app/appSheet.dart';
 
 class AddSpeakerPageInjectData {
   SpeakerModel? speakerModel;

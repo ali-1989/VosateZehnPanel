@@ -6,21 +6,21 @@ import 'package:iris_tools/widgets/maxWidth.dart';
 import 'package:iris_tools/widgets/searchBar.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
-import 'package:vosate_zehn_panel/managers/mediaManager.dart';
-import 'package:vosate_zehn_panel/models/speakerModel.dart';
-import 'package:vosate_zehn_panel/pages/addSpeakerPage.dart';
-import 'package:vosate_zehn_panel/system/extensions.dart';
-import 'package:vosate_zehn_panel/system/keys.dart';
-import 'package:vosate_zehn_panel/system/requester.dart';
-import 'package:vosate_zehn_panel/system/session.dart';
-import 'package:vosate_zehn_panel/system/stateBase.dart';
-import 'package:vosate_zehn_panel/tools/app/appIcons.dart';
-import 'package:vosate_zehn_panel/tools/app/appImages.dart';
-import 'package:vosate_zehn_panel/tools/app/appSheet.dart';
-import 'package:vosate_zehn_panel/tools/publicAccess.dart';
-import 'package:vosate_zehn_panel/tools/searchFilterTool.dart';
-import 'package:vosate_zehn_panel/views/emptyData.dart';
-import 'package:vosate_zehn_panel/views/notFetchData.dart';
+import 'package:app/managers/mediaManager.dart';
+import 'package:app/models/speakerModel.dart';
+import 'package:app/pages/addSpeakerPage.dart';
+import 'package:app/system/extensions.dart';
+import 'package:app/system/keys.dart';
+import 'package:app/system/requester.dart';
+import 'package:app/system/session.dart';
+import 'package:app/system/stateBase.dart';
+import 'package:app/tools/app/appIcons.dart';
+import 'package:app/tools/app/appImages.dart';
+import 'package:app/tools/app/appSheet.dart';
+import 'package:app/tools/publicAccess.dart';
+import 'package:app/tools/searchFilterTool.dart';
+import 'package:app/views/emptyData.dart';
+import 'package:app/views/notFetchData.dart';
 
 class SpeakersManagerPage extends StatefulWidget {
   static final route = GoRoute(
