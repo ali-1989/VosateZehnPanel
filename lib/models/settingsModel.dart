@@ -31,10 +31,10 @@ class SettingsModel {
   static int maxViewHeightL = 200;
   static int maxViewHeightP = 460;
 
-  static const defaultHttpAddress = 'http://193.111.234.117:7436';
-  //static const defaultHttpAddress = 'http://192.168.1.103:7436';
-  //static const defaultWsAddress = 'ws://192.168.1.103:7438/ws';
-  static const defaultWsAddress = 'ws://193.111.234.117:7438/ws';
+  static const defaultHttpAddress = 'http://vosatezehn.com:7436';
+  static const defaultWsAddress = 'ws://vosatezehn.com:7438/ws';
+  //static const defaultHttpAddress = 'http://192.168.43.140:7436';
+  //static const defaultWsAddress = 'ws://192.168.43.140:7438/ws';  //43.140 ,
   static const defaultProxyAddress = '95.174.67.50:18080';
   static const Locale defaultAppLocale = Locale('fa', 'IR');
   static final CalendarType defaultCalendarType = CalendarType.solarHijri;

@@ -39,9 +39,6 @@ class InitialApplication {
 			await AppDirectories.prepareStoragePathsOs(Constants.appName);
 		}
 
-		await DeviceInfoTools.prepareDeviceInfo();
-		await DeviceInfoTools.prepareDeviceId();
-
 		return true;
 	}
 
@@ -51,6 +48,9 @@ class InitialApplication {
 		}
 
 		isCallInit = true;
+		await DeviceInfoTools.prepareDeviceInfo();
+		await DeviceInfoTools.prepareDeviceId();
+
 		AppManager.logger = Logger('${AppDirectories.getTempDir$ex()}/events.txt');
 
 		AppRoute.init();
