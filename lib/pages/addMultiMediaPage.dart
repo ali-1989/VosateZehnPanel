@@ -515,6 +515,7 @@ class _AddMultiMediaPageState extends StateBase<AddMultiMediaPage> {
 
     final progressStream = StreamController<double>();
 
+    requester.debug = true;
     requester.httpItem.onSendProgress = (i, s){
       final p = i / s * 100;
       final dp = MathHelper.percentTop1(p);

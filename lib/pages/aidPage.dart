@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 import 'package:go_router/go_router.dart';
@@ -26,19 +28,19 @@ class AidPage extends StatefulWidget {
 }
 ///============================================================================================
 class _AidPageState extends StateBase<AidPage> {
+  Requester requester = Requester();
   WebViewXController? webviewController;
-  late Requester requester;
   bool isInLoadWebView = true;
   bool isInLoadData = false;
   String? htmlData;
   String? htmlDataOnResize;
+  Timer? reloadTimer;
   String state$fetchData = 'state_fetchData';
 
   @override
   void initState(){
     super.initState();
 
-    requester = Requester();
     requestGetAid();
   }
 
@@ -66,6 +68,24 @@ class _AidPageState extends StateBase<AidPage> {
     );
   }
 
+  @override
+  void onResize(oldW, oldH, newW, newH) async {
+    htmlDataOnResize ??= await getEditorData();
+
+    callState();
+
+    if(reloadTimer != null && reloadTimer!.isActive){
+      reloadTimer!.cancel();
+    }
+
+    reloadTimer = Timer(Duration(milliseconds: 800), (){
+      webviewController?.reload().then((value) async {
+        await injectDataToEditor(htmlDataOnResize ?? ' ');
+        htmlDataOnResize = null;
+      });
+    });
+  }
+
   Widget buildBody(){
     return Stack(
       children: [
@@ -86,17 +106,20 @@ class _AidPageState extends StateBase<AidPage> {
                       return WebViewX(
                         width: siz.maxWidth,
                         height: 500,
-                        onWebViewCreated: (ctr) async {
+                        onWebViewCreated: (ctr) {
                           if(webviewController == null) {
                             webviewController = ctr;
-                            await ctr.loadContent('html/editor.html', SourceType.html, fromAssets: true);
-                            isInLoadWebView = false;
-
-                            if(assistCtr.hasState(state$fetchData)){
-                              injectDataToEditor(htmlData!);
-                              callState();
-                            }
+                            ctr.loadContent('html/editor.html', SourceType.html, fromAssets: true);
                           }
+                        },
+                        onPageFinished: (v) async {
+                          isInLoadWebView = false;
+
+                          if(assistCtr.hasState(state$fetchData)){
+                            await injectDataToEditor(htmlData!);
+                          }
+
+                          callState();
                         },
                       );
                     },
@@ -136,24 +159,7 @@ class _AidPageState extends StateBase<AidPage> {
     );
   }
 
-  @override
-  void onResize(oldW, oldH, newW, newH) async {
-    htmlDataOnResize ??= await getEditorData();
-
-    callState();
-
-    webviewController?.reload().then((value) {
-      Future.delayed(Duration(milliseconds: 800), (){
-        injectDataToEditor(htmlDataOnResize ?? ' ');
-
-        Future.delayed(Duration(milliseconds: 2000), (){
-          htmlDataOnResize = null;
-        });
-      });
-    });
-  }
-
-  void injectDataToEditor(String data) async {
+  Future<void> injectDataToEditor(String data) async {
     final cmd = "nicEditors.findEditor('editor1').setContent('$data');";
     await webviewController?.evalRawJavascript(cmd);
   }
@@ -161,6 +167,11 @@ class _AidPageState extends StateBase<AidPage> {
   Future<String?> getEditorData() async {
     final cmd = "nicEditors.findEditor('editor1').getContent();";
     return await webviewController?.evalRawJavascript(cmd);
+  }
+
+  void tryClick(){
+    requestGetAid();
+    assistCtr.updateMain();
   }
 
   void onSaveCall() async {
@@ -174,17 +185,11 @@ class _AidPageState extends StateBase<AidPage> {
     }
   }
 
-  void tryClick(){
-    requestGetAid();
-    assistCtr.updateMain();
-  }
-
   void requestGetAid(){
     final js = <String, dynamic>{};
     js[Keys.requestZone] = 'get_aid_data';
     js[Keys.requesterId] = Session.getLastLoginUser()?.userId;
 
-    requester.prepareUrl();
     requester.bodyJson = js;
 
     requester.httpRequestEvents.onAnyState = (req) async {
@@ -195,19 +200,26 @@ class _AidPageState extends StateBase<AidPage> {
       assistCtr.removeStateAndUpdate(state$fetchData);
     };
 
+    requester.httpRequestEvents.onResponseError = (req, data) async {
+      return true;
+    };
+
     requester.httpRequestEvents.onStatusOk = (req, data) async {
       htmlData = data[Keys.data];
 
-      if(webviewController != null){
+      if(!isInLoadWebView){
         Future.delayed(Duration(milliseconds: 500), (){
           injectDataToEditor(htmlData?? '');
+          assistCtr.addStateAndUpdate(state$fetchData);
         });
       }
-
-      assistCtr.addStateAndUpdate(state$fetchData);
+      else {
+        assistCtr.addStateAndUpdate(state$fetchData);
+      }
     };
 
     isInLoadData = true;
+    requester.prepareUrl();
     requester.request(context);
   }
 
@@ -217,7 +229,6 @@ class _AidPageState extends StateBase<AidPage> {
     js[Keys.requesterId] = Session.getLastLoginUser()?.userId;
     js[Keys.data] = data;
 
-    requester.prepareUrl();
     requester.bodyJson = js;
 
     requester.httpRequestEvents.onAnyState = (req) async {
@@ -229,6 +240,7 @@ class _AidPageState extends StateBase<AidPage> {
     };
 
     showLoading();
+    requester.prepareUrl();
     requester.request(context);
   }
 }

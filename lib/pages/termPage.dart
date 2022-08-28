@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 import 'package:go_router/go_router.dart';
@@ -26,12 +28,13 @@ class TermPage extends StatefulWidget {
 }
 ///============================================================================================
 class _TermPageState extends StateBase<TermPage> {
-  WebViewXController? webviewController;
   Requester requester = Requester();
+  WebViewXController? webviewController;
   bool isInLoadWebView = true;
   bool isInLoadData = false;
   String? htmlData;
   String? htmlDataOnResize;
+  Timer? reloadTimer;
   String state$fetchData = 'state_fetchData';
 
   @override
@@ -91,13 +94,14 @@ class _TermPageState extends StateBase<TermPage> {
                             ctr.loadContent('html/editor.html', SourceType.html, fromAssets: true);
                           }
                         },
-                        onPageFinished: (s){
+                        onPageFinished: (s) async {
                           isInLoadWebView = false;
 
                           if(assistCtr.hasState(state$fetchData)){
-                            injectDataToEditor(htmlData!);
-                            callState();
+                            await injectDataToEditor(htmlData!);
                           }
+
+                          callState();
                         },
                       );
                     },
@@ -143,18 +147,19 @@ class _TermPageState extends StateBase<TermPage> {
 
     callState();
 
-    webviewController?.reload().then((value) {
-      Future.delayed(Duration(milliseconds: 800), (){
-        injectDataToEditor(htmlDataOnResize ?? ' ');
+    if(reloadTimer != null && reloadTimer!.isActive){
+      reloadTimer!.cancel();
+    }
 
-        Future.delayed(Duration(milliseconds: 2000), (){
-          htmlDataOnResize = null;
-        });
+    reloadTimer = Timer(Duration(milliseconds: 800), (){
+      webviewController?.reload().then((value) async {
+        await injectDataToEditor(htmlDataOnResize ?? ' ');
+        htmlDataOnResize = null;
       });
     });
   }
 
-  void injectDataToEditor(String data) async {
+  Future<void> injectDataToEditor(String data) async {
     final cmd = "nicEditors.findEditor('editor1').setContent('$data');";
     await webviewController?.evalRawJavascript(cmd);
   }
@@ -162,6 +167,11 @@ class _TermPageState extends StateBase<TermPage> {
   Future<String?> getEditorData() async {
     final cmd = "nicEditors.findEditor('editor1').getContent();";
     return await webviewController?.evalRawJavascript(cmd);
+  }
+
+  void tryClick(){
+    requestGetAid();
+    assistCtr.updateMain();
   }
 
   void onSaveCall() async {
@@ -175,17 +185,11 @@ class _TermPageState extends StateBase<TermPage> {
     }
   }
 
-  void tryClick(){
-    requestGetAid();
-    assistCtr.updateMain();
-  }
-
   void requestGetAid(){
     final js = <String, dynamic>{};
     js[Keys.requestZone] = 'get_term_data';
     js[Keys.requesterId] = Session.getLastLoginUser()?.userId;
 
-    requester.prepareUrl();
     requester.bodyJson = js;
 
     requester.httpRequestEvents.onAnyState = (req) async {
@@ -196,19 +200,26 @@ class _TermPageState extends StateBase<TermPage> {
       assistCtr.removeStateAndUpdate(state$fetchData);
     };
 
+    requester.httpRequestEvents.onResponseError = (req, data) async {
+      return true;
+    };
+
     requester.httpRequestEvents.onStatusOk = (req, data) async {
       htmlData = data[Keys.data];
 
-      if(webviewController != null){
+      if(!isInLoadWebView){
         Future.delayed(Duration(milliseconds: 500), (){
           injectDataToEditor(htmlData?? '');
+          assistCtr.addStateAndUpdate(state$fetchData);
         });
       }
-
-      assistCtr.addStateAndUpdate(state$fetchData);
+      else {
+        assistCtr.addStateAndUpdate(state$fetchData);
+      }
     };
 
     isInLoadData = true;
+    requester.prepareUrl();
     requester.request(context);
   }
 
@@ -218,7 +229,6 @@ class _TermPageState extends StateBase<TermPage> {
     js[Keys.requesterId] = Session.getLastLoginUser()?.userId;
     js[Keys.data] = data;
 
-    requester.prepareUrl();
     requester.bodyJson = js;
 
     requester.httpRequestEvents.onAnyState = (req) async {
@@ -230,6 +240,7 @@ class _TermPageState extends StateBase<TermPage> {
     };
 
     showLoading();
+    requester.prepareUrl();
     requester.request(context);
   }
 }
