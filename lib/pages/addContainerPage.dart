@@ -1,4 +1,5 @@
 
+import 'package:app/tools/app/appThemes.dart';
 import 'package:flutter/material.dart';
 
 import 'package:file_picker/file_picker.dart';
@@ -114,12 +115,26 @@ class _AddContainerPageState extends StateBase<AddContainerPage> {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              ElevatedButton(
-                                  onPressed: onBackPress,
-                                  child: Text('برگشت')
-                              )
+                              SizedBox(
+                                width: 110,
+                                child: ElevatedButton(
+                                    onPressed: onBackPress,
+                                    child: Text('برگشت')
+                                ),
+                              ),
+
+                              SizedBox(width: 20),
+                              if(editMode)
+                                SizedBox(
+                                  width: 110,
+                                  child: ElevatedButton(
+                                      style: ElevatedButton.styleFrom(primary: AppThemes.instance.currentTheme.errorColor),
+                                      onPressed: deleteItem,
+                                      child: Text('حذف آیتم')
+                                  ),
+                                ),
+
                             ],
                           ),
 
@@ -195,17 +210,6 @@ class _AddContainerPageState extends StateBase<AddContainerPage> {
                 maxLines: 4,
                 decoration: inputDecoration,
               ),
-
-
-              SizedBox(height: 12),
-              if(editMode)
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: ElevatedButton(
-                      onPressed: deleteItem,
-                      child: Text('حذف آیتم')
-                  ),
-                ),
 
               SizedBox(height: 30),
 

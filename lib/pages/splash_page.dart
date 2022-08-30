@@ -217,11 +217,11 @@ class SplashScreenState extends State<SplashPage> {
     await AppDB.db.openTable(AppDB.tbLanguages);
     await AppDB.db.openTable(AppDB.tbUserModel);
 
-    await AppDB.db.clearTable(AppDB.tbKv);
     return AppDB.db;
   }
 
   Future<void> testCodes(BuildContext context) async {
     //await AppDB.db.clearTable(DbCenter.tbKv);
+    //SettingsManager.settingsModel.httpAddress = 'http://192.168.1.103:7436';
   }
 }

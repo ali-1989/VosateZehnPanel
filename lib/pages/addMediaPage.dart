@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:app/tools/app/appThemes.dart';
 import 'package:file_sizes/file_sizes.dart';
 import 'package:flutter/material.dart';
 
@@ -125,12 +126,25 @@ class _AddMediaPageState extends StateBase<AddMediaPage> {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              ElevatedButton(
-                                  onPressed: onBackPress,
-                                  child: Text('برگشت')
-                              )
+                              SizedBox(
+                                width: 110,
+                                child: ElevatedButton(
+                                    onPressed: onBackPress,
+                                    child: Text('برگشت')
+                                ),
+                              ),
+
+                              SizedBox(width: 20),
+                              if(editMode)
+                                SizedBox(
+                                  width: 110,
+                                  child: ElevatedButton(
+                                    style: ElevatedButton.styleFrom(primary: AppThemes.instance.currentTheme.errorColor),
+                                      onPressed: deleteItem,
+                                      child: Text('حذف آیتم')
+                                  ),
+                                ),
                             ],
                           ),
 
@@ -246,10 +260,13 @@ class _AddMediaPageState extends StateBase<AddMediaPage> {
                         }
                       }
                     },
-                    onPageFinished: (t){
+                    onPageFinished: (t) {
                       isInLoadWebView = false;
-                      setMediaToPlayer();
-                      assistCtr.updateMain();
+
+                      Future.delayed(Duration(milliseconds: 800), () async {
+                        await setMediaToPlayer();
+                        assistCtr.updateMain();
+                      });
                     },
                   ),
                 ),
@@ -268,19 +285,6 @@ class _AddMediaPageState extends StateBase<AddMediaPage> {
                   ),
                 ),
               ),
-
-              SizedBox(height: 12),
-              if(editMode)
-                Center(
-                  child: SizedBox(
-                    width: 110,
-                    child: ElevatedButton(
-                        onPressed: deleteItem,
-                        child: Text('حذف آیتم')
-                    ),
-                  ),
-                ),
-
             ],
           ),
         ),
@@ -288,9 +292,17 @@ class _AddMediaPageState extends StateBase<AddMediaPage> {
     );
   }
 
-  void setMediaToPlayer() async {
+  Future<void> setMediaToPlayer() async {
     final cmd = '''
-      document.getElementById("v_player").src = '$mediaUrl';
+      var player = document.getElementById("player");
+      console.log(player == null);
+      console.log('$mediaUrl');
+      if(player != null){
+        //player.src = "$mediaUrl";
+        var source = document.createElement('source');
+        source.src = "$mediaUrl";
+        player.appendChild(source);
+      }
     ''';
 
     await webviewController?.evalRawJavascript(cmd);

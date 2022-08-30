@@ -87,6 +87,11 @@ class _AddMultiMediaPageState extends StateBase<AddMultiMediaPage> {
     );
   }
 
+  @override
+  void onResize(oldW, oldH, newW, newH) async {
+    //callState();
+  }
+
   Widget buildBody(){
     return Scrollbar(
       trackVisibility: true,
@@ -365,11 +370,6 @@ class _AddMultiMediaPageState extends StateBase<AddMultiMediaPage> {
     requestSave();
   }
 
-  @override
-  void onResize(oldW, oldH, newW, newH) async {
-    //callState();
-  }
-
   void deleteItem(ListItemHolder itm) {
     AppSheet.showSheetYesNo(context, Text('آیا مدیا حذف شود؟'), () {
       if(itm.isNew){
@@ -387,34 +387,6 @@ class _AddMultiMediaPageState extends StateBase<AddMultiMediaPage> {
       assistCtr.updateMain();
     }, () {});
   }
-
-  /*void requestDeleteSpeaker(int id){
-    final js = <String, dynamic>{};
-    js[Keys.requestZone] = 'delete_speaker';
-    js[Keys.requesterId] = Session.getLastLoginUser()?.userId;
-    js[Keys.id] = id;
-
-    requester.prepareUrl();
-    requester.bodyJson = js;
-
-    requester.httpRequestEvents.onAnyState = (req) async {
-      hideLoading();
-    };
-
-    requester.httpRequestEvents.onFailState = (req) async {
-      assistCtr.removeStateAndUpdate(state$fetchData);
-    };
-
-    requester.httpRequestEvents.onStatusOk = (req, data) async {
-      mediaList.removeWhere((element) => element.id == id);
-      allCount--;
-      
-      assistCtr.updateMain();
-    };
-
-    showLoading();
-    requester.request(context);
-  }*/
 
   void requestData(){
     mediaList.clear();
@@ -515,7 +487,6 @@ class _AddMultiMediaPageState extends StateBase<AddMultiMediaPage> {
 
     final progressStream = StreamController<double>();
 
-    requester.debug = true;
     requester.httpItem.onSendProgress = (i, s){
       final p = i / s * 100;
       final dp = MathHelper.percentTop1(p);

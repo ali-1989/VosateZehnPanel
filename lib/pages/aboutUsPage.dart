@@ -31,7 +31,7 @@ class _AboutUsPageState extends StateBase<AboutUsPage> {
   Requester requester = Requester();
   WebViewXController? webviewController;
   bool isInLoadWebView = true;
-  bool isInLoadData = false;
+  bool isInLoadData = true;
   String? htmlData;
   String? htmlDataOnResize;
   Timer? reloadTimer;
@@ -109,7 +109,6 @@ class _AboutUsPageState extends StateBase<AboutUsPage> {
                         onWebViewCreated: (ctr) {
                           if(webviewController == null) {
                             webviewController = ctr;
-
                             ctr.loadContent('html/editor.html', SourceType.html, fromAssets: true);
                           }
                         },
@@ -193,11 +192,8 @@ class _AboutUsPageState extends StateBase<AboutUsPage> {
 
     requester.bodyJson = js;
 
-    requester.httpRequestEvents.onAnyState = (req) async {
-      isInLoadData = false;
-    };
-
     requester.httpRequestEvents.onFailState = (req) async {
+      isInLoadData = false;
       assistCtr.removeStateAndUpdate(state$fetchData);
     };
 
@@ -207,6 +203,7 @@ class _AboutUsPageState extends StateBase<AboutUsPage> {
 
     requester.httpRequestEvents.onStatusOk = (req, data) async {
       htmlData = data[Keys.data];
+      isInLoadData = false;
 
       if(!isInLoadWebView){
         Future.delayed(Duration(milliseconds: 500), (){

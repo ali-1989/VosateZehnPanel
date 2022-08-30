@@ -31,7 +31,7 @@ class _AidPageState extends StateBase<AidPage> {
   Requester requester = Requester();
   WebViewXController? webviewController;
   bool isInLoadWebView = true;
-  bool isInLoadData = false;
+  bool isInLoadData = true;
   String? htmlData;
   String? htmlDataOnResize;
   Timer? reloadTimer;
@@ -192,11 +192,8 @@ class _AidPageState extends StateBase<AidPage> {
 
     requester.bodyJson = js;
 
-    requester.httpRequestEvents.onAnyState = (req) async {
-      isInLoadData = false;
-    };
-
     requester.httpRequestEvents.onFailState = (req) async {
+      isInLoadData = false;
       assistCtr.removeStateAndUpdate(state$fetchData);
     };
 
@@ -206,6 +203,7 @@ class _AidPageState extends StateBase<AidPage> {
 
     requester.httpRequestEvents.onStatusOk = (req, data) async {
       htmlData = data[Keys.data];
+      isInLoadData = false;
 
       if(!isInLoadWebView){
         Future.delayed(Duration(milliseconds: 500), (){

@@ -136,15 +136,31 @@ class _BuketEditPageState extends StateBase<BuketEditPage> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              SizedBox(
-                                width: 200,
-                                child: ElevatedButton(
-                                  style: ElevatedButton.styleFrom(
-                                    primary: AppThemes.instance.currentTheme.successColor
+                              Row(
+                                children: [
+                                  SizedBox(
+                                    width: 110,
+                                    child: ElevatedButton(
+                                      style: ElevatedButton.styleFrom(
+                                        primary: AppThemes.instance.currentTheme.successColor
+                                      ),
+                                        onPressed: onSaveBucket,
+                                        child: Text('ذخیره')
+                                    ),
                                   ),
-                                    onPressed: onSaveBucket,
-                                    child: Text('ذخیره')
-                                ),
+
+                                  SizedBox(width: 20,),
+                                  SizedBox(
+                                    width: 110,
+                                    child: ElevatedButton(
+                                        style: ElevatedButton.styleFrom(
+                                            primary: AppThemes.instance.currentTheme.errorColor
+                                        ),
+                                        onPressed: deleteBucketCall,
+                                        child: Text('حذف آیتم')
+                                    ),
+                                  )
+                                ],
                               ),
 
                               SizedBox(height: 15,),
@@ -242,11 +258,6 @@ class _BuketEditPageState extends StateBase<BuketEditPage> {
                                   assistCtr.updateMain();
                                 }
                             ),
-
-                            ElevatedButton(
-                                onPressed: deleteBucketCall,
-                                child: Text('حذف آیتم')
-                            )
                           ],
                         );
                       }

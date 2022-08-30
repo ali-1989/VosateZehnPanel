@@ -192,11 +192,8 @@ class _TermPageState extends StateBase<TermPage> {
 
     requester.bodyJson = js;
 
-    requester.httpRequestEvents.onAnyState = (req) async {
-      isInLoadData = false;
-    };
-
     requester.httpRequestEvents.onFailState = (req) async {
+      isInLoadData = false;
       assistCtr.removeStateAndUpdate(state$fetchData);
     };
 
@@ -206,6 +203,7 @@ class _TermPageState extends StateBase<TermPage> {
 
     requester.httpRequestEvents.onStatusOk = (req, data) async {
       htmlData = data[Keys.data];
+      isInLoadData = false;
 
       if(!isInLoadWebView){
         Future.delayed(Duration(milliseconds: 500), (){

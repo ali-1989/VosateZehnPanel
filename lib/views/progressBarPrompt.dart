@@ -1,3 +1,4 @@
+import 'package:app/tools/app/appThemes.dart';
 import 'package:flutter/material.dart';
 
 class ProgressBarPrompt extends StatefulWidget {
@@ -45,13 +46,13 @@ class _ProgressBarPromptState extends State<ProgressBarPrompt> {
 
                         if(snapshot.data != null && snapshot.data! >= 1.0) {
                           return CircularProgressIndicator(
-                            color: Colors.blue,
+                            color: AppThemes.instance.currentTheme.primaryColor,
                             backgroundColor: Colors.blueGrey,
                           );
                         }
 
                         return CircularProgressIndicator(value: snapshot.data!,
-                          color: Colors.blue,
+                          color: AppThemes.instance.currentTheme.primaryColor,
                           backgroundColor: Colors.blueGrey,
                           //valueColor: AlwaysStoppedAnimation(Colors.yellow),
                         );

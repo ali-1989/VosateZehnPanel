@@ -98,7 +98,7 @@ class Requester {
 
       if(!_httpRequester.isOk){
         if(debug){
-          Logger.L.logToScreen('>> Response is not ok | $val');
+          Logger.L.logToScreen('>> Response receive, but is not ok | $val');
         }
 
         await httpRequestEvents.onFailState?.call(_httpRequester);
@@ -110,7 +110,7 @@ class Requester {
 
       if (js == null) {
         if(debug){
-          Logger.L.logToScreen('>> Response is not json | $val');
+          Logger.L.logToScreen('>> Response receive, but is not json | $val');
         }
 
         await httpRequestEvents.onFailState?.call(_httpRequester);

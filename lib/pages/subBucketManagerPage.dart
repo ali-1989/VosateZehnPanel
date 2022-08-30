@@ -1,3 +1,4 @@
+import 'package:app/pages/sortListItemsPage.dart';
 import 'package:flutter/material.dart';
 
 import 'package:go_router/go_router.dart';
@@ -255,27 +256,54 @@ class _SubBuketManagerPageState extends StateBase<SubBuketManagerPage> {
                       Text(itm.title).bold(),
 
                       SizedBox(height: 5),
-                      Text(itm.description?? '').alpha(),
+                      Flexible(
+                          child: Text(itm.description?? '').alpha()
+                      ),
                     ],
                   ),
                 ),
 
                 SizedBox(width: 12,),
+                Builder(
+                    builder: (ctx){
+                      if(itm.type == SubBucketTypes.list.id()) {
+                        return Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            //if((itm.contentModel?.mediaIds.length?? 0) > 1)
+                              IconButton(
+                                  visualDensity: VisualDensity.compact,
+                                  constraints: BoxConstraints.tightFor(),
+                                  padding: EdgeInsets.zero,
+                                  splashRadius: 18,
+                                  onPressed: (){
+                                    gotoSortPage(itm);
+                                  },
+                                  icon: Icon(AppIcons.sort, color: Colors.deepOrange, size: 20)
+                              ),
 
-                if(itm.type == SubBucketTypes.list.id())
-                IconButton(
-                    visualDensity: VisualDensity.compact,
-                    constraints: BoxConstraints.tightFor(),
-                    padding: EdgeInsets.zero,
-                    splashRadius: 18,
-                    onPressed: (){
-                      gotoAddMultiMediaPage(itm);
-                    },
-                    icon: Icon(AppIcons.grid, color: Colors.blueAccent, size: 20,)
+                            IconButton(
+                                visualDensity: VisualDensity.compact,
+                                constraints: BoxConstraints.tightFor(),
+                                padding: EdgeInsets.zero,
+                                splashRadius: 18,
+                                onPressed: (){
+                                  gotoAddMultiMediaPage(itm);
+                                },
+                                icon: Icon(AppIcons.grid, color: Colors.blueAccent, size: 20,)
+                            ),
+                          ],
+                        );
+                      }
+
+                      return SizedBox();
+                    }
                 ),
 
                 SizedBox(width: 12,),
-                Icon(itm.getTypeIcon(), color: Colors.green, size: 20,)
+
+                if(itm.type != SubBucketTypes.list.id())
+                  Icon(itm.getTypeIcon(), color: Colors.green, size: 20,)
               ],
             ),
           ),
@@ -330,6 +358,20 @@ class _SubBuketManagerPageState extends StateBase<SubBuketManagerPage> {
         barrierDismissible: false,
         builder: (ctx){
           return AddMultiMediaPage(injectData: inject);
+        }
+    );
+  }
+
+  void gotoSortPage(SubBucketModel sub) async {
+    final inject = SortListItemsPageInjectData();
+    inject.bucketModel = bucketModel;
+    inject.subBucketModel = sub;
+
+    await showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (ctx){
+          return SortListItemsPage(injectData: inject);
         }
     );
   }
