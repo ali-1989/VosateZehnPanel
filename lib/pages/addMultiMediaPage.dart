@@ -1,12 +1,12 @@
 import 'dart:async';
 
+import 'package:app/views/playerView.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:iris_tools/api/generator.dart';
 import 'package:iris_tools/api/helpers/jsonHelper.dart';
 import 'package:iris_tools/api/helpers/mathHelper.dart';
 import 'package:iris_tools/api/helpers/pathHelper.dart';
-
 import 'package:iris_tools/models/dataModels/mediaModel.dart';
 import 'package:iris_tools/modules/stateManagers/assist.dart';
 import 'package:iris_tools/widgets/maxWidth.dart';
@@ -249,7 +249,7 @@ class _AddMultiMediaPageState extends StateBase<AddMultiMediaPage> {
       height: 80,
       child: InkWell(
         onTap: (){
-          //play(itm);
+          play(itm);
         },
         child: Card(
           child: Padding(
@@ -263,7 +263,7 @@ class _AddMultiMediaPageState extends StateBase<AddMultiMediaPage> {
 
                 SizedBox(width: 10,),
                 Expanded(
-                    child: Text(itm.name),
+                    child: Text(itm.name, textDirection: TextDirection.ltr, textAlign: TextAlign.right,).englishFont(),
                 ),
 
                 IconButton(
@@ -281,6 +281,36 @@ class _AddMultiMediaPageState extends StateBase<AddMultiMediaPage> {
           ),
         ),
       ),
+    );
+  }
+
+  void play(ListItemHolder item) async {
+    if(item.isNew){
+      return;
+    }
+
+    await showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (ctx){
+          return Center(
+              child: Card(
+                  child: SizedBox(
+                    width: 400,
+                    height: 300,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        CloseButton(),
+
+                        SizedBox(height: 80),
+                        PlayerView(mediaUrl: (item.object as MediaModel).url),
+                      ],
+                    ),
+                  )
+              )
+          );
+        }
     );
   }
 
@@ -488,9 +518,14 @@ class _AddMultiMediaPageState extends StateBase<AddMultiMediaPage> {
     final progressStream = StreamController<double>();
 
     requester.httpItem.onSendProgress = (i, s){
-      final p = i / s * 100;
-      final dp = MathHelper.percentTop1(p);
-      progressStream.sink.add(dp);
+      try {
+        final p = MathHelper.percentInt(s, i);
+        final dp = MathHelper.percentTop1(p);
+        progressStream.sink.add(dp);
+      }
+      catch (e){
+        debugPrint(e.toString());
+      }
     };
 
     requester.httpItem.addBodyField(Keys.jsonPart, JsonHelper.mapToJson(js));

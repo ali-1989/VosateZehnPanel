@@ -89,19 +89,22 @@ class _TermPageState extends StateBase<TermPage> {
                         width: siz.maxWidth,
                         height: 500,
                         onWebViewCreated: (ctr) async {
-                          if(webviewController == null) {
-                            webviewController = ctr;
+                          final webViewContent = await ctr.getContent();
+                          webviewController = ctr;
+
+                          if(webViewContent.sourceType != SourceType.html){
                             ctr.loadContent('html/editor.html', SourceType.html, fromAssets: true);
                           }
                         },
-                        onPageFinished: (s) async {
-                          isInLoadWebView = false;
+                        onPageFinished: (t) async {
+                          final webViewContent = await webviewController?.getContent();
 
-                          if(assistCtr.hasState(state$fetchData)){
+                          if(webViewContent?.sourceType == SourceType.html){
+                            isInLoadWebView = false;
                             await injectDataToEditor(htmlData!);
-                          }
 
-                          callState();
+                            callState();
+                          }
                         },
                       );
                     },

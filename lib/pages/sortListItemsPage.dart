@@ -11,6 +11,7 @@ import 'package:app/models/BucketModel.dart';
 import 'package:app/models/contentModel.dart';
 import 'package:app/models/subBuketModel.dart';
 import 'package:app/system/keys.dart';
+import 'package:app/system/extensions.dart';
 import 'package:app/system/requester.dart';
 import 'package:app/system/session.dart';
 import 'package:app/system/stateBase.dart';
@@ -132,13 +133,20 @@ class _SortListItemsPageState extends StateBase<SortListItemsPage> {
                     );
                   }
 
-                  return ReorderableListView.builder(
-                    onReorder: reorder,
-                    shrinkWrap: true,
-                    itemCount: itemList.length,
-                    itemBuilder: (ctx, idx){
-                      return buildListItem(idx);
-                    },
+                  return Column(
+                    children: [
+                      Text('مرتب سازی').bold(),
+
+                      SizedBox(height: 20,),
+                      ReorderableListView.builder(
+                        onReorder: reorder,
+                        shrinkWrap: true,
+                        itemCount: itemList.length,
+                        itemBuilder: (ctx, idx){
+                          return buildListItem(idx);
+                        },
+                      ),
+                    ],
                   );
                 }
               ),

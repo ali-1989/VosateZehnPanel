@@ -20,18 +20,31 @@ Future<void> main() async {
     SchedulerBinding.instance.ensureVisualUpdate();
     SchedulerBinding.instance.window.scheduleFrame();
 
+    FlutterError.onError = (FlutterErrorDetails errorDetails) {
+      debugPrint('@@ FlutterError: ${errorDetails.exception.toString()}');
+    };
+
     GoRouter.setUrlPathStrategy(UrlPathStrategy.path);
   }
 
-  if(kIsWeb){
+  /*if(kIsWeb){
     flutterBindingInitialize();
   }
   else {
     Timer(const Duration(milliseconds: 100), flutterBindingInitialize);
-  }
+  }*/
+
+  flutterBindingInitialize();
 
   ///===== call on any hot reload
-  runApp(const MyApp());
+  runZonedGuarded((){
+      runApp(const MyApp());
+    }, (error, stackTrace) {
+    debugPrint('@@ ZonedGuarded: ${error.toString()}');
+    }
+  );
+
+  //runApp(const MyApp());
 }
 ///==============================================================================================
 class MyApp extends StatelessWidget {

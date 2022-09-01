@@ -56,6 +56,7 @@ class _AddMediaPageState extends StateBase<AddMediaPage> {
   int? deletedMediaId;
   String? coverUrl;
   String? mediaUrl;
+  ValueKey kk = ValueKey(1);
 
   @override
   void initState(){
@@ -245,30 +246,41 @@ class _AddMediaPageState extends StateBase<AddMediaPage> {
               SizedBox(height: 10,),
 
               if(mediaUrl != null)
-                Center(
-                  child: WebViewX(
-                    width: 200,
-                    height: isVideo()? 200: 100,
-                    onWebViewCreated: (ctr) {
-                      if(webviewController == null) {
-                        webviewController = ctr;
-                        if(isVideo()) {
-                          ctr.loadContent('html/vplayer.html', SourceType.html, fromAssets: true);
-                        }
-                        else {
-                          ctr.loadContent('html/aplayer.html', SourceType.html, fromAssets: true);
-                        }
-                      }
-                    },
-                    onPageFinished: (t) {
-                      isInLoadWebView = false;
+                Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text('$mediaUrl').englishFont(),
+                    SizedBox(height: 10),
 
-                      Future.delayed(Duration(milliseconds: 800), () async {
-                        await setMediaToPlayer();
-                        assistCtr.updateMain();
-                      });
-                    },
-                  ),
+                    WebViewX(
+                      key: kk,
+                      width: 200,
+                      height: isVideo()? 200: 100,
+                      onWebViewCreated: (ctr) async {
+                        final webViewContent = await ctr.getContent();
+                        webviewController = ctr;
+
+                        if(webViewContent.sourceType != SourceType.html){
+                          if(isVideo()) {
+                            ctr.loadContent('html/vplayer.html', SourceType.html, fromAssets: true);
+                          }
+                          else {
+                            ctr.loadContent('html/aplayer.html', SourceType.html, fromAssets: true);
+                          }
+                        }
+                      },
+                      onPageFinished: (t) async {
+                        final webViewContent = await webviewController?.getContent();
+
+                        if(webViewContent?.sourceType == SourceType.html){
+                          isInLoadWebView = false;
+                          await setMediaToPlayer();
+
+                          assistCtr.updateMain();
+                        }
+                      },
+                    ),
+                  ],
                 ),
 
               SizedBox(height: 20,),
@@ -295,8 +307,8 @@ class _AddMediaPageState extends StateBase<AddMediaPage> {
   Future<void> setMediaToPlayer() async {
     final cmd = '''
       var player = document.getElementById("player");
-      console.log(player == null);
-      console.log('$mediaUrl');
+      //console.log(player == null);
+      
       if(player != null){
         //player.src = "$mediaUrl";
         var source = document.createElement('source');
