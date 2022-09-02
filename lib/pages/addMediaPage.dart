@@ -276,7 +276,7 @@ class _AddMediaPageState extends StateBase<AddMediaPage> {
                           isInLoadWebView = false;
                           await setMediaToPlayer();
 
-                          assistCtr.updateMain();
+                          //assistCtr.updateMain();
                         }
                       },
                     ),
@@ -307,7 +307,7 @@ class _AddMediaPageState extends StateBase<AddMediaPage> {
   Future<void> setMediaToPlayer() async {
     final cmd = '''
       var player = document.getElementById("player");
-      //console.log(player == null);
+      //console.log("is null: " + (player == null));
       
       if(player != null){
         //player.src = "$mediaUrl";
@@ -359,8 +359,8 @@ class _AddMediaPageState extends StateBase<AddMediaPage> {
     final p = await FilePicker.platform.pickFiles(
       allowedExtensions: ['mp3', 'mp4'],
       allowMultiple: false,
-      withData: false,
-      withReadStream: true,
+      withData: true,//false,   for stream state
+      withReadStream: false,//true,  for stream state
       type: FileType.custom,
     );
 
@@ -436,7 +436,8 @@ class _AddMediaPageState extends StateBase<AddMediaPage> {
 
     if(pickedMedia != null) {
       js['media'] = 'media';
-      requester.httpItem.addBodyStream('media', '${Generator.generateDateMillWith6Digit()}.$extension', pickedMedia!.readStream!, pickedMedia!.size);
+      //requester.httpItem.addBodyStream('media', '${Generator.generateDateMillWith6Digit()}.$extension', pickedMedia!.readStream!, pickedMedia!.size);
+      requester.httpItem.addBodyBytes('media', '${Generator.generateDateMillWith6Digit()}.$extension', pickedMedia!.bytes!);
     }
 
     if(pickedImage != null) {

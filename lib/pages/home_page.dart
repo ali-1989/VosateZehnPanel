@@ -1,3 +1,4 @@
+import 'package:app/pages/ticketManagerPage.dart';
 import 'package:flutter/material.dart';
 
 import 'package:go_router/go_router.dart';
@@ -73,7 +74,7 @@ class _HomePageState extends StateBase<HomePage> {
               buildItem('متن \n"دیالوگ حمایت"', AppIcons.cashMultiple, gotoAidDialogPage),
               buildItem('مدیریت محتوا', AppIcons.apps, gotoContentManagerPage),
               buildItem('گویندگان', AppIcons.accountDoubleCircle, gotoSpeakerPage),
-              buildItem('نمایش ارتباط باما', AppIcons.email, gotoEmptyPage),
+              buildItem('نمایش ارتباط باما', AppIcons.email, gotoTicketPage),
               buildItem('مدیریت تبلیغات', AppIcons.picture, gotoEmptyPage),
               buildItem('مدیریت جملات روز', AppIcons.message, gotoEmptyPage),
             ],
@@ -125,6 +126,10 @@ class _HomePageState extends StateBase<HomePage> {
 
   void gotoSpeakerPage(){
     AppRoute.pushNamed(context, SpeakersManagerPage.route.name!);
+  }
+
+  void gotoTicketPage(){
+    AppRoute.pushNamed(context, TicketManagerPage.route.name!);
   }
 
   void gotoEmptyPage(){

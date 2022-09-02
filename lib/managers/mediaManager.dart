@@ -47,7 +47,7 @@ class MediaManager {
     return res;
   }
 
-  static Future removeItem(int id, bool fromDb) async {
+  static Future removeItem(int id/*, bool fromDb*/) async {
     _list.removeWhere((element) => element.id == id);
   }
 

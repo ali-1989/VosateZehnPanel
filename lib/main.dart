@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 
@@ -34,16 +33,17 @@ Future<void> main() async {
     Timer(const Duration(milliseconds: 100), flutterBindingInitialize);
   }*/
 
-  flutterBindingInitialize();
 
   ///===== call on any hot reload
   runZonedGuarded((){
-      runApp(const MyApp());
+    flutterBindingInitialize();
+    runApp(const MyApp());
     }, (error, stackTrace) {
     debugPrint('@@ ZonedGuarded: ${error.toString()}');
     }
   );
 
+  //flutterBindingInitialize();
   //runApp(const MyApp());
 }
 ///==============================================================================================

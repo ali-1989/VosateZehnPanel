@@ -222,6 +222,6 @@ class SplashScreenState extends State<SplashPage> {
 
   Future<void> testCodes(BuildContext context) async {
     //await AppDB.db.clearTable(DbCenter.tbKv);
-    //SettingsManager.settingsModel.httpAddress = 'http://192.168.1.103:7436';
+    SettingsManager.settingsModel.httpAddress = 'http://192.168.1.103:7436';
   }
 }

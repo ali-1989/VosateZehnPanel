@@ -7,6 +7,7 @@ import 'package:app/pages/aboutUsPage.dart';
 import 'package:app/pages/aidDialogPage.dart';
 import 'package:app/pages/aidPage.dart';
 import 'package:app/pages/contentManagerPage.dart';
+import 'package:app/pages/ticketManagerPage.dart';
 import 'package:app/pages/e404_page.dart';
 import 'package:app/pages/empty.dart';
 import 'package:app/pages/home_page.dart';
@@ -109,6 +110,7 @@ final homeRouter = <GoRoute>[
   AidDialogPage.route,
   ContentManagerPage.route,
   SpeakersManagerPage.route,
+  TicketManagerPage.route,
   Empty.route,
   ];
 
