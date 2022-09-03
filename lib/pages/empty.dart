@@ -21,7 +21,7 @@ class _EmptyState extends State<Empty> {
     return Scaffold(
       appBar: AppBar(),
       body: Center(
-        child: Text('در حال اماده سازی'),
+        child: Text('خطا در دیتابیس'),
       ),
     );
   }

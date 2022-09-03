@@ -56,7 +56,6 @@ class _AddMediaPageState extends StateBase<AddMediaPage> {
   int? deletedMediaId;
   String? coverUrl;
   String? mediaUrl;
-  ValueKey kk = ValueKey(1);
 
   @override
   void initState(){
@@ -253,7 +252,6 @@ class _AddMediaPageState extends StateBase<AddMediaPage> {
                     SizedBox(height: 10),
 
                     WebViewX(
-                      key: kk,
                       width: 200,
                       height: isVideo()? 200: 100,
                       onWebViewCreated: (ctr) async {

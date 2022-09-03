@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 
@@ -21,6 +22,7 @@ Future<void> main() async {
 
     FlutterError.onError = (FlutterErrorDetails errorDetails) {
       debugPrint('@@ FlutterError: ${errorDetails.exception.toString()}');
+      debugPrint('@@ FlutterError stack: ${errorDetails.stack}');
     };
 
     GoRouter.setUrlPathStrategy(UrlPathStrategy.path);
@@ -39,7 +41,11 @@ Future<void> main() async {
     flutterBindingInitialize();
     runApp(const MyApp());
     }, (error, stackTrace) {
-    debugPrint('@@ ZonedGuarded: ${error.toString()}');
+      debugPrint('@@ ZonedGuarded: ${error.toString()}');
+
+      if(kDebugMode) {
+        throw error;
+      }
     }
   );
 

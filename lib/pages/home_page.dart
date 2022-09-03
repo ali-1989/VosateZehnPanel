@@ -1,3 +1,4 @@
+import 'package:app/pages/advertisingManagerPage.dart';
 import 'package:app/pages/ticketManagerPage.dart';
 import 'package:flutter/material.dart';
 
@@ -75,7 +76,7 @@ class _HomePageState extends StateBase<HomePage> {
               buildItem('مدیریت محتوا', AppIcons.apps, gotoContentManagerPage),
               buildItem('گویندگان', AppIcons.accountDoubleCircle, gotoSpeakerPage),
               buildItem('نمایش ارتباط باما', AppIcons.email, gotoTicketPage),
-              buildItem('مدیریت تبلیغات', AppIcons.picture, gotoEmptyPage),
+              buildItem('مدیریت تبلیغات', AppIcons.picture, gotoAdvertisingPage),
               buildItem('مدیریت جملات روز', AppIcons.message, gotoEmptyPage),
             ],
           );
@@ -130,6 +131,10 @@ class _HomePageState extends StateBase<HomePage> {
 
   void gotoTicketPage(){
     AppRoute.pushNamed(context, TicketManagerPage.route.name!);
+  }
+
+  void gotoAdvertisingPage(){
+    AppRoute.pushNamed(context, AdvertisingManagerPage.route.name!);
   }
 
   void gotoEmptyPage(){

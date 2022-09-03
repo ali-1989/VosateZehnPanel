@@ -1,8 +1,11 @@
 import 'package:app/managers/customerManager.dart';
 import 'package:app/models/ticketModel.dart';
+import 'package:app/pages/ticketDetailView.dart';
+import 'package:app/tools/dateTools.dart';
 import 'package:flutter/material.dart';
 
 import 'package:go_router/go_router.dart';
+import 'package:iris_tools/api/helpers/colorHelper.dart';
 import 'package:iris_tools/modules/stateManagers/assist.dart';
 import 'package:iris_tools/widgets/maxWidth.dart';
 import 'package:iris_tools/widgets/searchBar.dart';
@@ -11,6 +14,7 @@ import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:app/managers/mediaManager.dart';
 import 'package:app/system/keys.dart';
 import 'package:app/system/requester.dart';
+import 'package:app/system/extensions.dart';
 import 'package:app/system/session.dart';
 import 'package:app/system/stateBase.dart';
 import 'package:app/tools/publicAccess.dart';
@@ -169,14 +173,43 @@ class _TicketManagerPageState extends StateBase<TicketManagerPage> {
       height: 80,
       child: InkWell(
         onTap: (){
-          //gotoEditePage(itm);
+          gotoInfoPage(itm);
         },
         child: Card(
           child: Padding(
             padding: const EdgeInsets.all(6.0),
             child: Row(
               children: [
-                Text(itm.data!),
+                SizedBox(
+                  width: 70,
+                  child: ClipOval(
+                    child: Builder(
+                        builder: (ctx){
+                          if(itm.senderModel?.profileModel?.url == null){
+                            return SizedBox.expand(child: ColoredBox(color: ColorHelper.textToColor(itm.senderModel?.userName?? '0')));
+                          }
+
+                          return Image.network(itm.senderModel?.profileModel?.url?? '');
+                        }
+                    ),
+                  ),
+                ),
+
+                SizedBox(width: 10),
+
+                Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(itm.senderModel?.nameFamily?? '--').bold(),
+
+                        SizedBox(height: 10),
+                        Flexible(child: Text(itm.data!).alpha()),
+                      ],
+                    )
+                ),
+
+                Text(DateTools.dateAndHmRelative$String(itm.sendDate!)),
               ],
             ),
           ),
@@ -206,12 +239,15 @@ class _TicketManagerPageState extends StateBase<TicketManagerPage> {
     requestData();
   }
 
-  /*void gotoMediaManagerPage(BucketModel bucketModel) async {
-    final inject = SubBuketManagerPageInjectData();
-    inject.bucket = bucketModel;
-
-    AppRoute.pushNamed(context, SubBuketManagerPage.route.name!, extra: inject);
-  }*/
+  void gotoInfoPage(TicketModel ticketModel) async {
+    await showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (ctx){
+          return TicketDetailView(ticketModel: ticketModel);
+        }
+    );
+  }
 
   void tryClick(){
     requestData();
@@ -243,7 +279,6 @@ class _TicketManagerPageState extends StateBase<TicketManagerPage> {
     };
 
     requester.httpRequestEvents.onStatusOk = (req, data) async {
-      print(data);
       final tList = data['ticket_list'];
       final mList = data['media_list'];
       final cuList = data['customer_list'];

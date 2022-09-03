@@ -1,3 +1,4 @@
+import 'package:app/pages/advertisingManagerPage.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
@@ -111,6 +112,7 @@ final homeRouter = <GoRoute>[
   ContentManagerPage.route,
   SpeakersManagerPage.route,
   TicketManagerPage.route,
+  AdvertisingManagerPage.route,
   Empty.route,
   ];
 

@@ -19,7 +19,7 @@ class TicketModel with DateFieldMixin {
     }
 
     id = map[Keys.id];
-    senderId = map['sender_user_id'];
+    senderId = map['sender_user_id']?.toString();
     data = map[Keys.data];
     sendDate = map['send_date'];
   }

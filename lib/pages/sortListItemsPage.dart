@@ -16,7 +16,6 @@ import 'package:app/system/requester.dart';
 import 'package:app/system/session.dart';
 import 'package:app/system/stateBase.dart';
 import 'package:app/tools/app/appIcons.dart';
-import 'package:app/tools/app/appManager.dart';
 import 'package:app/tools/app/appSheet.dart';
 import 'package:app/views/emptyData.dart';
 
@@ -270,7 +269,6 @@ class _SortListItemsPageState extends StateBase<SortListItemsPage> {
 
     js['media_ids'] = itemList.map((e) => e.id).toList();
 
-    AppManager.addAppInfo(js);
 
     requester.httpRequestEvents.onAnyState = (req) async {
       hideLoading();
@@ -286,10 +284,9 @@ class _SortListItemsPageState extends StateBase<SortListItemsPage> {
       });
     };
 
-print(js);
-    //showLoading();
+    showLoading();
     requester.bodyJson = js;
     requester.prepareUrl();
-    //requester.request(context);
+    requester.request(context);
   }
 }
