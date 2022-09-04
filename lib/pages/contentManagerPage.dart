@@ -45,7 +45,7 @@ class ContentManagerPage extends StatefulWidget {
 }
 ///============================================================================================
 class _ContentManagerPageState extends StateBase<ContentManagerPage> {
-  late Requester requester = Requester();
+  Requester requester = Requester();
   BucketTypes levelType = BucketTypes.video;
   List<Map> typesDropdownList = [];
   List<BucketModel> bucketList = [];

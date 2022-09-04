@@ -9,7 +9,7 @@ import 'package:app/pages/aboutUsPage.dart';
 import 'package:app/pages/aidDialogPage.dart';
 import 'package:app/pages/aidPage.dart';
 import 'package:app/pages/contentManagerPage.dart';
-import 'package:app/pages/empty.dart';
+import 'package:app/pages/dailyTextPage.dart';
 import 'package:app/pages/speakersManagerPage.dart';
 import 'package:app/pages/termPage.dart';
 import 'package:app/system/stateBase.dart';
@@ -77,7 +77,7 @@ class _HomePageState extends StateBase<HomePage> {
               buildItem('گویندگان', AppIcons.accountDoubleCircle, gotoSpeakerPage),
               buildItem('نمایش ارتباط باما', AppIcons.email, gotoTicketPage),
               buildItem('مدیریت تبلیغات', AppIcons.picture, gotoAdvertisingPage),
-              buildItem('مدیریت جملات روز', AppIcons.message, gotoEmptyPage),
+              buildItem('مدیریت جملات روز', AppIcons.message, gotoDailyTextPage),
             ],
           );
         }
@@ -137,7 +137,7 @@ class _HomePageState extends StateBase<HomePage> {
     AppRoute.pushNamed(context, AdvertisingManagerPage.route.name!);
   }
 
-  void gotoEmptyPage(){
-    AppRoute.pushNamed(context, Empty.route.name!);
+  void gotoDailyTextPage(){
+    AppRoute.pushNamed(context, DailyTextPage.route.name!);
   }
 }

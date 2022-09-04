@@ -10,7 +10,7 @@ import 'package:app/pages/aidPage.dart';
 import 'package:app/pages/contentManagerPage.dart';
 import 'package:app/pages/ticketManagerPage.dart';
 import 'package:app/pages/e404_page.dart';
-import 'package:app/pages/empty.dart';
+import 'package:app/pages/dailyTextPage.dart';
 import 'package:app/pages/home_page.dart';
 import 'package:app/pages/login_page.dart';
 import 'package:app/pages/speakersManagerPage.dart';
@@ -113,7 +113,7 @@ final homeRouter = <GoRoute>[
   SpeakersManagerPage.route,
   TicketManagerPage.route,
   AdvertisingManagerPage.route,
-  Empty.route,
+  DailyTextPage.route,
   ];
 
 bool checkFreeRoute(GoRoute route, GoRouterState state){
