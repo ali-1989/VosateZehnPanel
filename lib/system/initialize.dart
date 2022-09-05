@@ -43,6 +43,9 @@ class InitialApplication {
 		if(!kIsWeb) {
 			PublicAccess.reporter = Reporter(AppDirectories.getAppFolderInExternalStorage(), 'report');
 		}
+		
+		await DeviceInfoTools.prepareDeviceInfo();
+		await DeviceInfoTools.prepareDeviceId();
 
 		return true;
 	}
@@ -53,9 +56,6 @@ class InitialApplication {
 		}
 
 		isCallInit = true;
-		await DeviceInfoTools.prepareDeviceInfo();
-		await DeviceInfoTools.prepareDeviceId();
-
 		PublicAccess.logger = Logger('${AppDirectories.getTempDir$ex()}/events.txt');
 
 		AppRoute.init();
@@ -85,11 +85,11 @@ class InitialApplication {
 		AppWebsocket.prepareWebSocket(SettingsManager.settingsModel.wsAddress);
 		//NetManager.addChangeListener(NetListenerTools.onNetListener);
 
-		DownloadUpload.downloadManager = DownloadManager('${Constants.appName}DownloadManager');
-		DownloadUpload.uploadManager = UploadManager('${Constants.appName}UploadManager');
+		DownloadUploadService.downloadManager = DownloadManager('${Constants.appName}DownloadManager');
+		DownloadUploadService.uploadManager = UploadManager('${Constants.appName}UploadManager');
 
-		DownloadUpload.downloadManager.addListener(DownloadUpload.commonDownloadListener);
-		DownloadUpload.uploadManager.addListener(DownloadUpload.commonUploadListener);
+		DownloadUploadService.downloadManager.addListener(DownloadUploadService.commonDownloadListener);
+		DownloadUploadService.uploadManager.addListener(DownloadUploadService.commonUploadListener);
 
 		if(System.isWeb()){
 			void onSizeCheng(oldW, oldH, newW, newH){

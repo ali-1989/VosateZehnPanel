@@ -132,7 +132,6 @@ bool checkFreeRoute(GoRoute route, GoRouterState state){
 }
 
 String? _mainRedirect(GoRouterState state){
-  debugPrint('-- redirect---> ${state.subloc}         |  qp:${state.queryParams}');
 
   /*if(state.subloc == HomePage.route.path){
   }*/
