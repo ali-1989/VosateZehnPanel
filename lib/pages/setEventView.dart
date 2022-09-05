@@ -1,7 +1,15 @@
 import 'package:flutter/material.dart';
+
 import 'package:iris_tools/dateSection/ADateStructure.dart';
+import 'package:iris_tools/dateSection/dateHelper.dart';
 import 'package:iris_tools/widgets/maxWidth.dart';
+
+import 'package:app/models/abstract/stateBase.dart';
 import 'package:app/system/extensions.dart';
+import 'package:app/system/keys.dart';
+import 'package:app/system/requester.dart';
+import 'package:app/system/session.dart';
+import 'package:app/tools/app/appSheet.dart';
 
 class SetEventView extends StatefulWidget {
   final DateTime date;
@@ -17,8 +25,9 @@ class SetEventView extends StatefulWidget {
   State<SetEventView> createState() => _SetEventViewState();
 }
 ///=====================================================================
-class _SetEventViewState extends State<SetEventView> {
+class _SetEventViewState extends StateBase<SetEventView> {
   TextEditingController txtCtr = TextEditingController();
+  Requester requester = Requester();
 
   @override
   void initState() {
@@ -30,6 +39,7 @@ class _SetEventViewState extends State<SetEventView> {
   @override
   void dispose() {
     txtCtr.dispose();
+    requester.dispose();
 
     super.dispose();
   }
@@ -62,7 +72,12 @@ class _SetEventViewState extends State<SetEventView> {
 
                     ElevatedButton(
                         onPressed: (){
-                          Navigator.of(context).pop(txtCtr.text);
+                          if(widget.description == txtCtr.text){
+                            Navigator.of(context).pop();
+                            return;
+                          }
+
+                          requestSetDailyText();
                         },
                         child: Text('ذخیره')
                     ),
@@ -84,5 +99,30 @@ class _SetEventViewState extends State<SetEventView> {
     );
   }
 
+  void requestSetDailyText(){
+    final js = <String, dynamic>{};
+    js[Keys.requestZone] = 'set_daily_text';
+    js[Keys.requesterId] = Session.getLastLoginUser()?.userId;
+    js['text'] = txtCtr.text;
+    js[Keys.date] = DateHelper.toTimestamp(widget.date);
 
+    requester.httpRequestEvents.onAnyState = (req) async {
+      hideLoading();
+    };
+
+    requester.httpRequestEvents.onFailState = (req) async {
+      AppSheet.showSheet$OperationFailed(context);
+    };
+
+    requester.httpRequestEvents.onStatusOk = (req, data) async {
+      AppSheet.showSheet$SuccessOperation(context, onBtn: (){
+        Navigator.of(context).pop(txtCtr.text);
+      });
+    };
+
+    showLoading();
+    requester.prepareUrl();
+    requester.bodyJson = js;
+    requester.request(context);
+  }
 }

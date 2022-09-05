@@ -1,5 +1,6 @@
-import 'package:app/tools/app/appThemes.dart';
 import 'package:flutter/material.dart';
+
+import 'package:app/tools/app/appThemes.dart';
 
 class ProgressBarPrompt extends StatefulWidget {
   final EdgeInsets? padding;

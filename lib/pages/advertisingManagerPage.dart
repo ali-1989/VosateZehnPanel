@@ -1,24 +1,24 @@
-import 'package:app/managers/mediaManager.dart';
-import 'package:app/models/advertisingModel.dart';
-import 'package:app/tools/app/appIcons.dart';
-import 'package:app/tools/app/appManager.dart';
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 
+import 'package:file_picker/file_picker.dart';
 import 'package:go_router/go_router.dart';
 import 'package:iris_tools/api/generator.dart';
 import 'package:iris_tools/api/helpers/jsonHelper.dart';
 import 'package:iris_tools/api/helpers/pathHelper.dart';
 import 'package:iris_tools/modules/stateManagers/assist.dart';
+import 'package:iris_tools/widgets/maxWidth.dart';
 
+import 'package:app/managers/mediaManager.dart';
+import 'package:app/models/abstract/stateBase.dart';
+import 'package:app/models/advertisingModel.dart';
 import 'package:app/system/extensions.dart';
 import 'package:app/system/keys.dart';
+import 'package:app/system/publicAccess.dart';
 import 'package:app/system/requester.dart';
 import 'package:app/system/session.dart';
-import 'package:app/system/stateBase.dart';
+import 'package:app/tools/app/appIcons.dart';
 import 'package:app/tools/app/appSheet.dart';
 import 'package:app/views/notFetchData.dart';
-import 'package:iris_tools/widgets/maxWidth.dart';
 
 class AdvertisingManagerPage extends StatefulWidget {
   static final route = GoRoute(
@@ -343,7 +343,7 @@ class _AdvertisingManagerPageState extends StateBase<AdvertisingManagerPage> {
     js['tag'] = model.tag;
     js['media'] = 'media';
 
-    AppManager.addAppInfo(js);
+    PublicAccess.addAppInfo(js);
     requester.bodyJson = null;
     requester.httpItem.addBodyField(Keys.jsonPart, JsonHelper.mapToJson(js));
 

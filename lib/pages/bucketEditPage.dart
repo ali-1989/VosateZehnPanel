@@ -9,16 +9,16 @@ import 'package:iris_tools/widgets/maxWidth.dart';
 import 'package:iris_tools/widgets/optionsRow/checkRow.dart';
 
 import 'package:app/models/BucketModel.dart';
-import 'package:app/models/enums.dart';
+import 'package:app/models/abstract/stateBase.dart';
 import 'package:app/pages/contentManagerPage.dart';
 import 'package:app/services/pagesEventBus.dart';
+import 'package:app/system/enums.dart';
 import 'package:app/system/extensions.dart';
 import 'package:app/system/keys.dart';
+import 'package:app/system/publicAccess.dart';
 import 'package:app/system/requester.dart';
 import 'package:app/system/session.dart';
-import 'package:app/system/stateBase.dart';
 import 'package:app/tools/app/appIcons.dart';
-import 'package:app/tools/app/appManager.dart';
 import 'package:app/tools/app/appRoute.dart';
 import 'package:app/tools/app/appSheet.dart';
 import 'package:app/tools/app/appThemes.dart';
@@ -346,7 +346,7 @@ class _BuketEditPageState extends StateBase<BuketEditPage> {
     js[Keys.requesterId] = Session.getLastLoginUser()?.userId;
     js[Keys.key] = widget.injectData!.bucketType.id();
     js[Keys.data] = bucketModel.toMapServer();
-    AppManager.addAppInfo(js);
+    PublicAccess.addAppInfo(js);
 
     if(pickedImage != null) {
       js['image'] = 'image';

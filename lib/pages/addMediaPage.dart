@@ -1,29 +1,29 @@
 import 'dart:async';
 
-import 'package:app/tools/app/appThemes.dart';
-import 'package:file_sizes/file_sizes.dart';
 import 'package:flutter/material.dart';
 
 import 'package:file_picker/file_picker.dart';
+import 'package:file_sizes/file_sizes.dart';
 import 'package:iris_tools/api/generator.dart';
 import 'package:iris_tools/api/helpers/jsonHelper.dart';
 import 'package:iris_tools/api/helpers/mathHelper.dart';
 import 'package:iris_tools/api/helpers/pathHelper.dart';
 import 'package:iris_tools/modules/stateManagers/assist.dart';
 import 'package:iris_tools/widgets/maxWidth.dart';
-import 'package:app/models/BucketModel.dart';
-import 'package:app/models/subBuketModel.dart';
+import 'package:webviewx/webviewx.dart';
 
+import 'package:app/models/BucketModel.dart';
+import 'package:app/models/abstract/stateBase.dart';
+import 'package:app/models/subBuketModel.dart';
 import 'package:app/system/extensions.dart';
 import 'package:app/system/keys.dart';
+import 'package:app/system/publicAccess.dart';
 import 'package:app/system/requester.dart';
 import 'package:app/system/session.dart';
-import 'package:app/system/stateBase.dart';
 import 'package:app/tools/app/appIcons.dart';
 import 'package:app/tools/app/appLoading.dart';
-import 'package:app/tools/app/appManager.dart';
 import 'package:app/tools/app/appSheet.dart';
-import 'package:webviewx/webviewx.dart';
+import 'package:app/tools/app/appThemes.dart';
 
 class AddMediaPageInjectData {
   late final BucketModel bucketModel;
@@ -421,7 +421,7 @@ class _AddMediaPageState extends StateBase<AddMediaPage> {
     js[Keys.data] = sb.toMap();
     js[Keys.fileName] = pickedMedia?.name?? widget.injectData.subBucketModel?.mediaModel?.fileName;
 
-    AppManager.addAppInfo(js);
+    PublicAccess.addAppInfo(js);
 
     final extension = isVideo()? 'mp4': 'mp3';
     final progressStream = StreamController<double>();

@@ -1,8 +1,8 @@
 import 'dart:async';
 
-import 'package:app/views/playerView.dart';
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+
+import 'package:file_picker/file_picker.dart';
 import 'package:iris_tools/api/generator.dart';
 import 'package:iris_tools/api/helpers/jsonHelper.dart';
 import 'package:iris_tools/api/helpers/mathHelper.dart';
@@ -13,21 +13,21 @@ import 'package:iris_tools/widgets/maxWidth.dart';
 
 import 'package:app/managers/mediaManager.dart';
 import 'package:app/models/BucketModel.dart';
+import 'package:app/models/abstract/stateBase.dart';
 import 'package:app/models/contentModel.dart';
 import 'package:app/models/speakerModel.dart';
 import 'package:app/models/subBuketModel.dart';
 import 'package:app/pages/selectSpeakerPage.dart';
 import 'package:app/system/extensions.dart';
 import 'package:app/system/keys.dart';
+import 'package:app/system/publicAccess.dart';
 import 'package:app/system/requester.dart';
 import 'package:app/system/session.dart';
-import 'package:app/system/stateBase.dart';
 import 'package:app/tools/app/appIcons.dart';
 import 'package:app/tools/app/appLoading.dart';
-import 'package:app/tools/app/appManager.dart';
 import 'package:app/tools/app/appSheet.dart';
 import 'package:app/views/emptyData.dart';
-
+import 'package:app/views/playerView.dart';
 
 class AddMultiMediaPageInjectData {
   late BucketModel bucketModel;
@@ -486,7 +486,7 @@ class _AddMultiMediaPageState extends StateBase<AddMultiMediaPage> {
       js['current_media_ids'] = widget.injectData.subBucketModel.contentModel!.mediaIds;
     }
 
-    AppManager.addAppInfo(js);
+    PublicAccess.addAppInfo(js);
 
     final medias = <String, PlatformFile>{};
     final mediasInfo = <String, Map>{};

@@ -1,7 +1,3 @@
-import 'package:app/managers/customerManager.dart';
-import 'package:app/models/ticketModel.dart';
-import 'package:app/pages/ticketDetailView.dart';
-import 'package:app/tools/dateTools.dart';
 import 'package:flutter/material.dart';
 
 import 'package:go_router/go_router.dart';
@@ -11,13 +7,17 @@ import 'package:iris_tools/widgets/maxWidth.dart';
 import 'package:iris_tools/widgets/searchBar.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
+import 'package:app/managers/customerManager.dart';
 import 'package:app/managers/mediaManager.dart';
-import 'package:app/system/keys.dart';
-import 'package:app/system/requester.dart';
+import 'package:app/models/abstract/stateBase.dart';
+import 'package:app/models/ticketModel.dart';
+import 'package:app/pages/ticketDetailView.dart';
 import 'package:app/system/extensions.dart';
+import 'package:app/system/keys.dart';
+import 'package:app/system/publicAccess.dart';
+import 'package:app/system/requester.dart';
 import 'package:app/system/session.dart';
-import 'package:app/system/stateBase.dart';
-import 'package:app/tools/publicAccess.dart';
+import 'package:app/tools/dateTools.dart';
 import 'package:app/tools/searchFilterTool.dart';
 import 'package:app/views/emptyData.dart';
 import 'package:app/views/notFetchData.dart';

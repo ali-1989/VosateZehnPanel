@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 
 import 'package:file_picker/file_picker.dart';
@@ -6,15 +5,15 @@ import 'package:iris_tools/api/generator.dart';
 import 'package:iris_tools/api/helpers/jsonHelper.dart';
 import 'package:iris_tools/modules/stateManagers/assist.dart';
 import 'package:iris_tools/widgets/maxWidth.dart';
-import 'package:app/models/speakerModel.dart';
 
+import 'package:app/models/abstract/stateBase.dart';
+import 'package:app/models/speakerModel.dart';
 import 'package:app/system/extensions.dart';
 import 'package:app/system/keys.dart';
+import 'package:app/system/publicAccess.dart';
 import 'package:app/system/requester.dart';
 import 'package:app/system/session.dart';
-import 'package:app/system/stateBase.dart';
 import 'package:app/tools/app/appIcons.dart';
-import 'package:app/tools/app/appManager.dart';
 import 'package:app/tools/app/appSheet.dart';
 
 class AddSpeakerPageInjectData {
@@ -286,7 +285,7 @@ class _AddSpeakerPageState extends StateBase<AddSpeakerPage> {
     js[Keys.id] = widget.injectData.speakerModel?.id;
     js[Keys.data] = sb.toMap();
 
-    AppManager.addAppInfo(js);
+    PublicAccess.addAppInfo(js);
 
     if(pickedImage != null) {
       js['image'] = 'image';

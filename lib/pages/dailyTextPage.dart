@@ -1,13 +1,6 @@
-
-import 'package:app/managers/fontManager.dart';
-import 'package:app/pages/setEventView.dart';
-import 'package:app/system/keys.dart';
-import 'package:app/system/requester.dart';
-import 'package:app/system/session.dart';
-import 'package:app/system/stateBase.dart';
-import 'package:app/tools/app/appThemes.dart';
-import 'package:calendar_view/calendar_view.dart';
 import 'package:flutter/material.dart';
+
+import 'package:calendar_view/calendar_view.dart';
 import 'package:go_router/go_router.dart';
 import 'package:iris_tools/api/helpers/localeHelper.dart';
 import 'package:iris_tools/api/helpers/mathHelper.dart';
@@ -15,6 +8,14 @@ import 'package:iris_tools/api/helpers/textHelper.dart';
 import 'package:iris_tools/dateSection/ADateStructure.dart';
 import 'package:iris_tools/modules/stateManagers/assist.dart';
 import 'package:iris_tools/widgets/maxWidth.dart';
+
+import 'package:app/managers/fontManager.dart';
+import 'package:app/models/abstract/stateBase.dart';
+import 'package:app/pages/setEventView.dart';
+import 'package:app/system/keys.dart';
+import 'package:app/system/requester.dart';
+import 'package:app/system/session.dart';
+import 'package:app/tools/app/appThemes.dart';
 
 class DailyTextPage extends StatefulWidget {
   static final route = GoRoute(
@@ -35,6 +36,7 @@ class DailyTextPageState extends StateBase<DailyTextPage> {
   String state$fetchData = 'state_fetchData';
   EventController eventController = EventController();
   GlobalKey<MonthViewState> gKey = GlobalKey();
+  List<CalendarEventData> events = [];
   late String engFontFamily;
 
   @override
@@ -83,10 +85,10 @@ class DailyTextPageState extends StateBase<DailyTextPage> {
             controller: eventController,
             startDay: WeekDays.saturday,
             minMonth: DateTime.now().subtract(Duration(days: 60)),
-            onCellTap: (List<CalendarEventData> events, DateTime date){
+            onCellTap: (List<CalendarEventData> _, DateTime date){
               onCellClick(events, date);
             },
-            onEventTap: (CalendarEventData event, DateTime date){
+            onEventTap: (CalendarEventData _, DateTime date){
             },
             onPageChange: (dt, idx){
             },
@@ -127,7 +129,7 @@ class DailyTextPageState extends StateBase<DailyTextPage> {
                 ),
               );
             },
-            cellBuilder: (date, events, isToday, isInMonth,){
+            cellBuilder: (date, _, isToday, isInMonth,){
               final hasEvent = events.indexWhere((element) => element.date == date) > -1;
 
               return ColoredBox(
@@ -158,6 +160,31 @@ class DailyTextPageState extends StateBase<DailyTextPage> {
     );
   }
 
+  void onCellClick(List<CalendarEventData> _, DateTime date) async {
+    final evIdx = events.indexWhere((element) => element.date == date);
+
+    final res = await showDialog(
+        context: context,
+        builder: (ctx){
+          return SetEventView(date: date, description: evIdx > -1 ? events[evIdx].description: null);
+        }
+    );
+
+    if(res is String) {
+      if(res.isEmpty){
+        if(evIdx > -1) {
+          events.remove(events[evIdx]);
+        }
+      }
+      else {
+        final ev = CalendarEventData(date: date, title: '', description: res);
+        events.add(ev);
+      }
+
+      assistCtr.updateMain();
+    }
+  }
+
   void requestData(){
     final js = <String, dynamic>{};
     js[Keys.requestZone] = 'get_daily_text_data';
@@ -183,29 +210,6 @@ class DailyTextPageState extends StateBase<DailyTextPage> {
     requester.prepareUrl();
     requester.bodyJson = js;
     requester.request(context);
-  }
-
-  void onCellClick(List<CalendarEventData> events, DateTime date) async {
-    final evIdx = events.indexWhere((element) => element.date == date);
-
-    final res = await showDialog(
-        context: context,
-        builder: (ctx){
-          return SetEventView(date: date, description: evIdx > -1 ? events[evIdx].description: null);
-        }
-    );
-
-    if(res is String) {
-      if(res.isEmpty){
-        if(evIdx > -1) {
-          eventController.remove(events[evIdx]);
-        }
-      }
-      else {
-        final ev = CalendarEventData(date: date, title: '', description: res);
-        eventController.add(ev);
-      }
-    }
   }
 }
 

@@ -2,16 +2,17 @@ import 'dart:convert' as system_convert;
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:flutter/foundation.dart';
+
 import 'package:dio/adapter.dart';
 import 'package:dio/dio.dart';
-import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
 import 'package:iris_tools/api/converter.dart';
 import 'package:iris_tools/api/helpers/jsonHelper.dart';
 import 'package:iris_tools/api/helpers/listHelper.dart';
 
-import 'package:app/tools/app/appManager.dart';
+import 'package:app/system/publicAccess.dart';
 
 class AppHttpDio {
 	AppHttpDio._();
@@ -24,7 +25,7 @@ class AppHttpDio {
 
 	static HttpRequester send(HttpItem item, {BaseOptions? options}){
 		if(item.debugMode && !kIsWeb) {
-			AppManager.logger.logToAll('==== Stack Trace : ${StackTrace.current.toString()}');
+			PublicAccess.logger.logToAll('==== Stack Trace : ${StackTrace.current.toString()}');
 		}
 
 		item.prepareMultiParts();
@@ -117,7 +118,7 @@ class AppHttpDio {
 
 	static HttpRequester download(HttpItem item, String savePath, {BaseOptions? options}){
 		if(item.debugMode && !kIsWeb) {
-			AppManager.logger.logToAll('==== Stack Trace : ${StackTrace.current.toString()}');
+			PublicAccess.logger.logToAll('==== Stack Trace : ${StackTrace.current.toString()}');
 		}
 
 		final itemRes = HttpRequester();

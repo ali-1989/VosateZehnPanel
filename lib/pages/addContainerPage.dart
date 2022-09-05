@@ -1,5 +1,3 @@
-
-import 'package:app/tools/app/appThemes.dart';
 import 'package:flutter/material.dart';
 
 import 'package:file_picker/file_picker.dart';
@@ -7,18 +5,19 @@ import 'package:iris_tools/api/generator.dart';
 import 'package:iris_tools/api/helpers/jsonHelper.dart';
 import 'package:iris_tools/modules/stateManagers/assist.dart';
 import 'package:iris_tools/widgets/maxWidth.dart';
-import 'package:app/models/BucketModel.dart';
-import 'package:app/models/enums.dart';
-import 'package:app/models/subBuketModel.dart';
 
+import 'package:app/models/BucketModel.dart';
+import 'package:app/models/abstract/stateBase.dart';
+import 'package:app/models/subBuketModel.dart';
+import 'package:app/system/enums.dart';
 import 'package:app/system/extensions.dart';
 import 'package:app/system/keys.dart';
+import 'package:app/system/publicAccess.dart';
 import 'package:app/system/requester.dart';
 import 'package:app/system/session.dart';
-import 'package:app/system/stateBase.dart';
 import 'package:app/tools/app/appIcons.dart';
-import 'package:app/tools/app/appManager.dart';
 import 'package:app/tools/app/appSheet.dart';
+import 'package:app/tools/app/appThemes.dart';
 
 class AddContainerPageInjectData {
   late final BucketModel bucketModel;
@@ -302,7 +301,7 @@ class _AddContainerPageState extends StateBase<AddContainerPage> {
     js[Keys.id] = widget.injectData.bucketModel.id;
     js[Keys.data] = sb.toMap();
 
-    AppManager.addAppInfo(js);
+    PublicAccess.addAppInfo(js);
 
     if(pickedImage != null) {
       js['cover'] = 'cover';

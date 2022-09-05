@@ -1,25 +1,24 @@
-import 'package:app/pages/advertisingManagerPage.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import 'package:go_router/go_router.dart';
 
 import 'package:app/pages/aboutUsPage.dart';
+import 'package:app/pages/advertisingManagerPage.dart';
 import 'package:app/pages/aidDialogPage.dart';
 import 'package:app/pages/aidPage.dart';
 import 'package:app/pages/contentManagerPage.dart';
-import 'package:app/pages/ticketManagerPage.dart';
-import 'package:app/pages/e404_page.dart';
 import 'package:app/pages/dailyTextPage.dart';
+import 'package:app/pages/e404_page.dart';
 import 'package:app/pages/home_page.dart';
 import 'package:app/pages/login_page.dart';
 import 'package:app/pages/speakersManagerPage.dart';
 import 'package:app/pages/termPage.dart';
+import 'package:app/pages/ticketManagerPage.dart';
+import 'package:app/system/keys.dart';
 import 'package:app/system/session.dart';
 import 'package:app/tools/app/appDb.dart';
-import '/system/keys.dart';
-import '/tools/app/appManager.dart';
-import '/tools/app/appNavigator.dart';
+import 'package:app/tools/app/appNavigator.dart';
 
 class AppRoute {
   static final List<GoRoute> freeRoutes = [];
@@ -29,8 +28,8 @@ class AppRoute {
   static late BuildContext materialContext;
 
   static BuildContext getContext() {
-    var res = AppManager.widgetsBinding.focusManager.rootScope.focusedChild?.context;//deep: 50
-    res ??= AppManager.widgetsBinding.focusManager.primaryFocus?.context; //deep: 71
+    var res = WidgetsBinding.instance.focusManager.rootScope.focusedChild?.context;//deep: 50
+    res ??= WidgetsBinding.instance.focusManager.primaryFocus?.context; //deep: 71
 
     return res?? materialContext;
   }

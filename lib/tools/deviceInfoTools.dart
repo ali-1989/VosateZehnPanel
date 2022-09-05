@@ -1,8 +1,6 @@
 import 'dart:io';
 import 'dart:math';
 
-import 'package:app/system/keys.dart';
-import 'package:app/tools/app/appDb.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
@@ -10,6 +8,9 @@ import 'package:device_info_plus/device_info_plus.dart';
 import 'package:iris_tools/api/generator.dart';
 import 'package:iris_tools/api/system.dart';
 import 'package:platform_device_id/platform_device_id.dart';
+
+import 'package:app/system/keys.dart';
+import 'package:app/tools/app/appDb.dart';
 
 class DeviceInfoTools {
   DeviceInfoTools._();

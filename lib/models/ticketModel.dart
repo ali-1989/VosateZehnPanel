@@ -1,6 +1,5 @@
 import 'package:app/models/customerModel.dart';
-import 'package:app/models/dateFieldMixin.dart';
-
+import 'package:app/models/mixin/dateFieldMixin.dart';
 import 'package:app/system/keys.dart';
 
 class TicketModel with DateFieldMixin {

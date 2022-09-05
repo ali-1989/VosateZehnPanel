@@ -9,7 +9,7 @@ import 'package:iris_tools/api/helpers/storageHelper.dart';
 import 'package:iris_tools/api/system.dart';
 import 'package:iris_tools/models/dataModels/mediaModel.dart';
 
-import 'package:app/models/enums.dart';
+import 'package:app/system/enums.dart';
 
 class AppDirectories {
   AppDirectories._();
