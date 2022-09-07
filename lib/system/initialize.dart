@@ -43,9 +43,6 @@ class InitialApplication {
 		if(!kIsWeb) {
 			PublicAccess.reporter = Reporter(AppDirectories.getAppFolderInExternalStorage(), 'report');
 		}
-		
-		await DeviceInfoTools.prepareDeviceInfo();
-		await DeviceInfoTools.prepareDeviceId();
 
 		return true;
 	}
@@ -57,6 +54,8 @@ class InitialApplication {
 
 		isCallInit = true;
 		PublicAccess.logger = Logger('${AppDirectories.getTempDir$ex()}/events.txt');
+		await DeviceInfoTools.prepareDeviceInfo();
+		await DeviceInfoTools.prepareDeviceId();
 
 		AppRoute.init();
 		await AppLocale.localeDelegate().getLocalization().setFallbackByLocale(const Locale('en', 'EE'));

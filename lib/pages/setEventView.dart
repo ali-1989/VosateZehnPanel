@@ -1,3 +1,4 @@
+import 'package:calendar_view/calendar_view.dart';
 import 'package:flutter/material.dart';
 
 import 'package:iris_tools/dateSection/ADateStructure.dart';
@@ -12,12 +13,10 @@ import 'package:app/system/session.dart';
 import 'package:app/tools/app/appSheet.dart';
 
 class SetEventView extends StatefulWidget {
-  final DateTime date;
-  final String? description;
+  final CalendarEventData event;
 
   const SetEventView({
-    required this.date,
-    required this.description,
+    required this.event,
     Key? key,
   }) : super(key: key);
 
@@ -33,7 +32,7 @@ class _SetEventViewState extends StateBase<SetEventView> {
   void initState() {
     super.initState();
 
-    txtCtr.text = widget.description?? '';
+    txtCtr.text = widget.event.description;
   }
 
   @override
@@ -68,16 +67,26 @@ class _SetEventViewState extends StateBase<SetEventView> {
                   children: [
                     BackButton(),
 
-                    Text(SolarHijriDate.from(widget.date).format('yyyy/MM/dd', 'en')),
+                    Text(SolarHijriDate.from(widget.event.date).format('yyyy/MM/dd', 'en')),
 
                     ElevatedButton(
                         onPressed: (){
-                          if(widget.description == txtCtr.text){
+                          if(widget.event.description == txtCtr.text){
                             Navigator.of(context).pop();
                             return;
                           }
 
-                          requestSetDailyText();
+                          if(txtCtr.text.trim().isEmpty){
+                            if(widget.event.event == null){
+                              Navigator.of(context).pop();
+                            }
+                            else {
+                              requestDeleteDailyText();
+                            }
+                          }
+                          else {
+                            requestSetDailyText();
+                          }
                         },
                         child: Text('ذخیره')
                     ),
@@ -99,12 +108,12 @@ class _SetEventViewState extends StateBase<SetEventView> {
     );
   }
 
-  void requestSetDailyText(){
+  void requestDeleteDailyText(){
     final js = <String, dynamic>{};
-    js[Keys.requestZone] = 'set_daily_text';
+    js[Keys.requestZone] = 'delete_daily_text';
     js[Keys.requesterId] = Session.getLastLoginUser()?.userId;
-    js['text'] = txtCtr.text;
-    js[Keys.date] = DateHelper.toTimestamp(widget.date);
+    js[Keys.id] = widget.event.event as int?;
+    js[Keys.date] = DateHelper.toTimestamp(widget.event.date);
 
     requester.httpRequestEvents.onAnyState = (req) async {
       hideLoading();
@@ -116,7 +125,50 @@ class _SetEventViewState extends StateBase<SetEventView> {
 
     requester.httpRequestEvents.onStatusOk = (req, data) async {
       AppSheet.showSheet$SuccessOperation(context, onBtn: (){
-        Navigator.of(context).pop(txtCtr.text);
+        final res = CalendarEventData(
+          date: widget.event.date,
+          description: '',
+          title: '',
+        );
+
+        Navigator.of(context).pop(res);
+      });
+    };
+
+    showLoading();
+    requester.prepareUrl();
+    requester.bodyJson = js;
+    requester.request(context);
+  }
+
+  void requestSetDailyText(){
+    final js = <String, dynamic>{};
+    js[Keys.requestZone] = 'set_daily_text';
+    js[Keys.requesterId] = Session.getLastLoginUser()?.userId;
+    js[Keys.id] = widget.event.event as int?;
+    js['text'] = txtCtr.text;
+    js[Keys.date] = DateHelper.toTimestamp(widget.event.date);
+
+    requester.httpRequestEvents.onAnyState = (req) async {
+      hideLoading();
+    };
+
+    requester.httpRequestEvents.onFailState = (req) async {
+      AppSheet.showSheet$OperationFailed(context);
+    };
+
+    requester.httpRequestEvents.onStatusOk = (req, data) async {
+      final id = data[Keys.id];
+
+      AppSheet.showSheet$SuccessOperation(context, onBtn: (){
+        final res = CalendarEventData(
+          date: widget.event.date,
+          description: txtCtr.text,
+          event: id,
+          title: '',
+        );
+
+        Navigator.of(context).pop(res);
       });
     };
 

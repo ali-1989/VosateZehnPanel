@@ -1,3 +1,4 @@
+import 'package:app/tools/app/appDirectories.dart';
 import 'package:iris_db/iris_db.dart';
 import 'package:iris_tools/api/helpers/databaseHelper.dart';
 
@@ -7,6 +8,18 @@ class AppDB {
   AppDB._();
 
   static late final DatabaseHelper db;
+
+  static Future<DatabaseHelper> init() async {
+    AppDB.db = DatabaseHelper();
+    AppDB.db.setDatabasePath(await AppDirectories.getDatabasesDir());
+    AppDB.db.setDebug(false);
+
+    await AppDB.db.openTable(AppDB.tbKv);
+    await AppDB.db.openTable(AppDB.tbLanguages);
+    await AppDB.db.openTable(AppDB.tbUserModel);
+
+    return AppDB.db;
+  }
   ///-------- tables -------------------------------------------------------------------------------------
   static String tbKv = 'KvTable';
   static String tbUserModel = 'UserModel';
@@ -14,6 +27,9 @@ class AppDB {
 
 
   static Future<bool> firstDatabasePrepare() async {
+    //await insertLanguages();
+    //await AppNotification.insertNotificationIds();
+
     return true;
   }
   ///------------------------------------------------------------------------------------------
