@@ -229,6 +229,10 @@ class _SortListItemsPageState extends StateBase<SortListItemsPage> {
       assistCtr.removeStateAndUpdate(state$fetchData);
     };
 
+    requester.httpRequestEvents.onFailState = (req) async {
+      assistCtr.removeStateAndUpdate(state$fetchData);
+    };
+
     requester.httpRequestEvents.onStatusOk = (req, data) async {
       final content = data['content'] as Map?;
       //final speaker = data['speaker'] as Map?;
@@ -254,7 +258,7 @@ class _SortListItemsPageState extends StateBase<SortListItemsPage> {
     };
 
     isInLoadData = true;
-    requester.request(context);
+    requester.request(context, false);
   }
 
   void requestSave(){

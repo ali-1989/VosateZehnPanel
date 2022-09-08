@@ -1,10 +1,10 @@
 import 'dart:async';
 
+import 'package:app/views/progressView.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
-import 'package:iris_tools/api/helpers/databaseHelper.dart';
 import 'package:iris_tools/net/trustSsl.dart';
 import 'package:responsive_framework/responsive_wrapper.dart';
 
@@ -14,7 +14,6 @@ import 'package:app/system/initialize.dart';
 import 'package:app/system/session.dart';
 import 'package:app/tools/app/appBroadcast.dart';
 import 'package:app/tools/app/appDb.dart';
-import 'package:app/tools/app/appDirectories.dart';
 import 'package:app/tools/app/appImages.dart';
 import 'package:app/tools/app/appLocale.dart';
 import 'package:app/tools/app/appRoute.dart';
@@ -47,10 +46,10 @@ class SplashScreenState extends State<SplashPage> {
         initialData: false,
         stream: AppBroadcast.materialUpdaterStream.stream,
         builder: (context, snapshot) {
-          _checkTimer();
+          splashTimer();
           init();
 
-          if (_isInLoadingSettings || _canShowSplash()) {
+          if (_isInLoadingSettings || canShowSplash()) {
             return getSplashView();
           }
           else {
@@ -62,9 +61,7 @@ class SplashScreenState extends State<SplashPage> {
   ///==================================================================================================
   Widget getSplashView() {
     if(kIsWeb){
-      return const Center(
-        child: CircularProgressIndicator(),
-      );
+      return const ProgressView();
     }
 
     return DecoratedBox(
@@ -141,13 +138,13 @@ class SplashScreenState extends State<SplashPage> {
         },
     );
   }
-
-  bool _canShowSplash(){
+  ///==================================================================================================
+  bool canShowSplash(){
     return mustShowSplash && !kIsWeb;
   }
 
-  void _checkTimer() async {
-    if(splashWaitingMil > 0 && _canShowSplash()){
+  void splashTimer() async {
+    if(splashWaitingMil > 0 && canShowSplash()){
       Timer(Duration(milliseconds: splashWaitingMil), (){
         mustShowSplash = false;
 
@@ -166,7 +163,7 @@ class SplashScreenState extends State<SplashPage> {
     _isInit = true;
 
     await InitialApplication.importantInit();
-    await prepareDatabase();
+    await AppDB.init();
 
     AppThemes.initial();
     _isInLoadingSettings = !SettingsManager.loadSettings();
@@ -195,21 +192,9 @@ class SplashScreenState extends State<SplashPage> {
     }
   }
 
-  Future<DatabaseHelper> prepareDatabase() async {
-    AppDB.db = DatabaseHelper();
-    AppDB.db.setDatabasePath(await AppDirectories.getDatabasesDir());
-    AppDB.db.setDebug(false);
-
-    await AppDB.db.openTable(AppDB.tbKv);
-    await AppDB.db.openTable(AppDB.tbLanguages);
-    await AppDB.db.openTable(AppDB.tbUserModel);
-
-    return AppDB.db;
-  }
-
   Future<void> testCodes(BuildContext context) async {
     //await AppDB.db.clearTable(AppDB.tbKv);
-    //SettingsManager.settingsModel.httpAddress = 'http://192.168.1.103:7436';
+    SettingsManager.settingsModel.httpAddress = 'http://192.168.1.103:7436';
     //SettingsManager.settingsModel.httpAddress = 'http://vosatezehn.com:7436';
   }
 }

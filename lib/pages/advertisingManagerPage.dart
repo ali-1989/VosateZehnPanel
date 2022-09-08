@@ -37,13 +37,25 @@ class _AdvertisingManagerPageState extends StateBase<AdvertisingManagerPage> {
   Requester requester = Requester();
   bool isInLoadData = true;
   String state$fetchData = 'state_fetchData';
+  TextEditingController url1Ctr = TextEditingController();
+  TextEditingController url2Ctr = TextEditingController();
+  TextEditingController url3Ctr = TextEditingController();
   AdvertisingModel ad1 = AdvertisingModel()..tag = 'avd1';
   AdvertisingModel ad2 = AdvertisingModel()..tag = 'avd2';
   AdvertisingModel ad3 = AdvertisingModel()..tag = 'avd3';
+  late InputDecoration inputDecoration;
 
   @override
   void initState(){
     super.initState();
+
+    inputDecoration = InputDecoration(
+      border: OutlineInputBorder(),
+      enabledBorder: OutlineInputBorder(),
+      focusedBorder: OutlineInputBorder(),
+      isDense: true,
+      hintText: 'url'
+    );
 
     requestAdvertising();
   }
@@ -51,6 +63,9 @@ class _AdvertisingManagerPageState extends StateBase<AdvertisingManagerPage> {
   @override
   void dispose() {
     requester.dispose();
+    url1Ctr.dispose();
+    url2Ctr.dispose();
+    url3Ctr.dispose();
 
     super.dispose();
   }
@@ -136,13 +151,23 @@ class _AdvertisingManagerPageState extends StateBase<AdvertisingManagerPage> {
 
                   return Stack(
                     children: [
-                      if(ad1.mediaModel?.url != null)
-                        Image.network(ad1.mediaModel!.url!,
-                          width: 100, height: 100, fit: BoxFit.cover,),
+                      Builder(
+                        builder: (ctx){
+                          if(ad1.mediaModel?.url != null){
+                            return Image.network(ad1.mediaModel!.url!,
+                              width: 150, height: 150, fit: BoxFit.fill
+                            );
+                          }
 
-                      if(ad1.platformFile != null)
-                        Image.memory(ad1.platformFile!.bytes!,
-                          width: 100, height: 100, fit: BoxFit.cover,),
+                          if(ad1.platformFile != null){
+                            return Image.memory(ad1.platformFile!.bytes!,
+                              width: 150, height: 150, fit: BoxFit.cover
+                            );
+                          }
+
+                          return SizedBox();
+                        },
+                      ),
 
                       Icon(
                         AppIcons.delete,
@@ -157,6 +182,25 @@ class _AdvertisingManagerPageState extends StateBase<AdvertisingManagerPage> {
                     ],
                   );
                 }
+            ),
+
+            SizedBox(height: 20),
+            Row(
+              children: [
+                ElevatedButton(
+                    onPressed: saveUrl1,
+                    child: Text('ذخیره')
+                ),
+
+                SizedBox(width: 10,),
+
+                Expanded(
+                  child: TextField(
+                    controller: url1Ctr,
+                    decoration: inputDecoration,
+                  ),
+                ),
+              ],
             ),
 
             SizedBox(height: 25),
@@ -184,11 +228,11 @@ class _AdvertisingManagerPageState extends StateBase<AdvertisingManagerPage> {
                     children: [
                       if(ad2.mediaModel?.url != null)
                         Image.network(ad2.mediaModel!.url!,
-                          width: 100, height: 100, fit: BoxFit.cover,),
+                          width: 150, height: 150, fit: BoxFit.cover,),
 
                       if(ad2.platformFile != null)
                         Image.memory(ad2.platformFile!.bytes!,
-                          width: 100, height: 100, fit: BoxFit.cover,),
+                          width: 150, height: 150, fit: BoxFit.cover,),
 
                       Icon(
                         AppIcons.delete,
@@ -203,6 +247,25 @@ class _AdvertisingManagerPageState extends StateBase<AdvertisingManagerPage> {
                     ],
                   );
                 }
+            ),
+
+            SizedBox(height: 20),
+            Row(
+              children: [
+                ElevatedButton(
+                    onPressed: saveUrl2,
+                    child: Text('ذخیره')
+                ),
+
+                SizedBox(width: 10,),
+
+                Expanded(
+                  child: TextField(
+                    controller: url2Ctr,
+                    decoration: inputDecoration,
+                  ),
+                ),
+              ],
             ),
 
             SizedBox(height: 25),
@@ -230,11 +293,11 @@ class _AdvertisingManagerPageState extends StateBase<AdvertisingManagerPage> {
                     children: [
                       if(ad3.mediaModel?.url != null)
                         Image.network(ad3.mediaModel!.url!,
-                          width: 100, height: 100, fit: BoxFit.cover,),
+                          width: 150, height: 150, fit: BoxFit.cover,),
 
                       if(ad3.platformFile != null)
                         Image.memory(ad3.platformFile!.bytes!,
-                          width: 100, height: 100, fit: BoxFit.cover,),
+                          width: 150, height: 150, fit: BoxFit.cover,),
 
                       Icon(
                         AppIcons.delete,
@@ -251,6 +314,26 @@ class _AdvertisingManagerPageState extends StateBase<AdvertisingManagerPage> {
                 }
             ),
 
+            SizedBox(height: 20),
+            Row(
+              children: [
+                ElevatedButton(
+                    onPressed: saveUrl3,
+                    child: Text('ذخیره')
+                ),
+
+                SizedBox(width: 10,),
+
+                Expanded(
+                  child: TextField(
+                    controller: url3Ctr,
+                    decoration: inputDecoration,
+                  ),
+                ),
+
+                SizedBox(height: 10),
+              ],
+            ),
           ],
         ),
       ),
@@ -279,10 +362,23 @@ class _AdvertisingManagerPageState extends StateBase<AdvertisingManagerPage> {
     advertisingModel.platformFile = null;
 
     if(advertisingModel.mediaModel != null){
-
+      requestDeleteAdvertising(advertisingModel);
     }
+    else {
+      assistCtr.updateMain();
+    }
+  }
 
-    assistCtr.updateMain();
+  void saveUrl1() async {
+    requestSaveUrl(url1Ctr.text.trim(), ad1);
+  }
+
+  void saveUrl2() async {
+    requestSaveUrl(url2Ctr.text.trim(), ad2);
+  }
+
+  void saveUrl3() async {
+    requestSaveUrl(url3Ctr.text.trim(), ad3);
   }
 
   void requestAdvertising(){
@@ -315,16 +411,19 @@ class _AdvertisingManagerPageState extends StateBase<AdvertisingManagerPage> {
         if(tag == 'avd1'){
           ad1 = AdvertisingModel.fromMap(k);
           ad1.mediaModel = MediaManager.getById(ad1.mediaId!);
+          url1Ctr.text = ad1.url?? '';
         }
 
         if(tag == 'avd2'){
           ad2 = AdvertisingModel.fromMap(k);
           ad2.mediaModel = MediaManager.getById(ad2.mediaId!);
+          url2Ctr.text = ad2.url?? '';
         }
 
         if(tag == 'avd3'){
           ad3 = AdvertisingModel.fromMap(k);
           ad3.mediaModel = MediaManager.getById(ad3.mediaId!);
+          url3Ctr.text = ad3.url?? '';
         }
       }
 
@@ -332,6 +431,62 @@ class _AdvertisingManagerPageState extends StateBase<AdvertisingManagerPage> {
     };
 
     isInLoadData = true;
+    requester.prepareUrl();
+    requester.request(context);
+  }
+
+  void requestSaveUrl(String url, AdvertisingModel model){
+    final js = <String, dynamic>{};
+    js[Keys.requestZone] = 'set_advertising_url';
+    js[Keys.requesterId] = Session.getLastLoginUser()?.userId;
+    js['tag'] = model.tag;
+    js['url'] = url.isEmpty? null : url;
+
+    requester.httpRequestEvents.onFailState = (req) async {
+      hideLoading();
+      AppSheet.showSheet$OperationFailedTryAgain(context);
+    };
+
+    requester.httpRequestEvents.onStatusError = (req, data, code, tCode) async {
+      return true;
+    };
+
+    requester.httpRequestEvents.onStatusOk = (req, data) async {
+      hideLoading();
+      AppSheet.showSheet$SuccessOperation(context);
+    };
+
+    showLoading();
+    requester.bodyJson = js;
+    requester.prepareUrl();
+    requester.request(context);
+  }
+
+  void requestDeleteAdvertising(AdvertisingModel model){
+    final js = <String, dynamic>{};
+    js[Keys.requestZone] = 'delete_advertising_image';
+    js[Keys.requesterId] = Session.getLastLoginUser()?.userId;
+    js['tag'] = model.tag;
+
+    requester.httpRequestEvents.onFailState = (req) async {
+      hideLoading();
+      AppSheet.showSheet$OperationFailedTryAgain(context);
+    };
+
+    requester.httpRequestEvents.onResponseError = (req, data) async {
+      return true;
+    };
+
+    requester.httpRequestEvents.onStatusOk = (req, data) async {
+      hideLoading();
+      model.mediaModel = null;
+
+      assistCtr.updateMain();
+      AppSheet.showSheet$SuccessOperation(context);
+    };
+
+    showLoading();
+    requester.bodyJson = js;
     requester.prepareUrl();
     requester.request(context);
   }

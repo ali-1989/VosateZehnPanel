@@ -10,6 +10,7 @@ class AdvertisingModel with DateFieldMixin {
   int? mediaId;
   String? clickUrl;
   String? tag;
+  String? url;
   //----------- local
   PlatformFile? platformFile;
   MediaModel? mediaModel;
@@ -24,6 +25,7 @@ class AdvertisingModel with DateFieldMixin {
     id = map[Keys.id];
     mediaId = map['media_id'];
     tag = map['tag'];
+    url = map['url'];
     clickUrl = map[Keys.url];
     date = DateHelper.tsToSystemDate(map[Keys.date]);
   }
@@ -33,6 +35,7 @@ class AdvertisingModel with DateFieldMixin {
     map[Keys.id] = id;
     map['media_id'] = mediaId;
     map['tag'] = tag;
+    map['url'] = url;
     map[Keys.url] = clickUrl;
     map[Keys.date] = DateHelper.toTimestampNullable(date);
 
