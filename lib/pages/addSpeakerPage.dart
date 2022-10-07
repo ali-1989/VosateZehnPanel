@@ -203,7 +203,7 @@ class _AddSpeakerPageState extends StateBase<AddSpeakerPage> {
                   width: 110,
                   child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                          primary: Colors.lightBlue
+                          backgroundColor: Colors.lightBlue
                       ),
                       onPressed: onUploadCall,
                       child: Text('ثبت')
@@ -307,7 +307,7 @@ class _AddSpeakerPageState extends StateBase<AddSpeakerPage> {
       hideLoading();
     };
 
-    requester.httpRequestEvents.onFailState = (req) async {
+    requester.httpRequestEvents.onFailState = (req, r) async {
       AppSheet.showSheet$OperationFailed(context);
     };
 

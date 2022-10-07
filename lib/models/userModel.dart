@@ -39,8 +39,6 @@ class UserModel {
     email = map['email'];
     userType = map['user_type'];
 
-    token = map[Keys.token] != null ? Token.fromMap(map[Keys.token]) : null;
-
     if(map[Keys.token] is Map) {
       token = Token.fromMap(map[Keys.token]);
     }
@@ -49,7 +47,9 @@ class UserModel {
       token = Token()..token = map[Keys.token];
     }
 
-    if(map['profile_image_model'] != null) {
+    final Map? avatarTemp = map['profile_image_model'];
+
+    if(avatarTemp != null && avatarTemp.isNotEmpty) {
       profileModel = MediaModel.fromMap(map['profile_image_model']);
     }
 

@@ -345,7 +345,7 @@ class _SpeakersManagerPageState extends StateBase<SpeakersManagerPage> {
       hideLoading();
     };
 
-    requester.httpRequestEvents.onFailState = (req) async {
+    requester.httpRequestEvents.onFailState = (req, r) async {
       assistCtr.removeStateAndUpdate(state$fetchData);
     };
 
@@ -377,7 +377,7 @@ class _SpeakersManagerPageState extends StateBase<SpeakersManagerPage> {
       isInLoadData = false;
     };
 
-    requester.httpRequestEvents.onFailState = (req) async {
+    requester.httpRequestEvents.onFailState = (req, r) async {
       assistCtr.removeStateAndUpdate(state$fetchData);
     };
 

@@ -58,6 +58,7 @@ class Keys {
   static const searchFilter = 'search_filter';
   static const nodeName = 'node_name';
   static const extraJs = 'extra_js';
+  static const sortOrder = 'sort_order';
   static const toast = 'toast';
   //----- common settings key -----------------------------------------------------------------
   static const setting$lastLoginDate = 'last_login_date';
@@ -66,12 +67,11 @@ class Keys {
   static const setting$fontThemeData = 'font_theme_data';
   static const setting$colorThemeName = 'color_theme_name';
   static const setting$patternKey = 'lock_pattern';
-  static const setting$ColorThemeName = 'color_theme_name';
-  static const setting$lastForegroundTs = 'last_foreground_ts';
+  static const setting$toBackgroundTs = 'to_background_ts';
   static const setting$confirmOnExit = 'confirm_on_exit';
   static const setting$notificationChanelKey = 'notification_chanel_key';
-  static const setting$notificationModel = 'notification_model';
   static const setting$notificationChanelGroup = 'notification_chanel_group';
+  static const setting$notificationModel = 'notification_model';
   static const setting$currentVersion = 'current_version';
   static const setting$webDeviceId = 'web_device_id';
   //----- app settings key -----------------------------------------------------------------

@@ -2,31 +2,28 @@ import 'dart:async';
 
 import 'package:app/views/progressView.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
-import 'package:iris_tools/net/trustSsl.dart';
 import 'package:responsive_framework/responsive_wrapper.dart';
 
-import 'package:app/constants.dart';
 import 'package:app/managers/settingsManager.dart';
 import 'package:app/system/initialize.dart';
 import 'package:app/system/session.dart';
 import 'package:app/tools/app/appBroadcast.dart';
 import 'package:app/tools/app/appDb.dart';
-import 'package:app/tools/app/appImages.dart';
-import 'package:app/tools/app/appLocale.dart';
-import 'package:app/tools/app/appRoute.dart';
 import 'package:app/tools/app/appThemes.dart';
 import 'package:app/tools/app/appToast.dart';
 
 bool _isInit = false;
 bool _isInLoadingSettings = true;
-bool mustShowSplash = true;
-int splashWaitingMil = 2000;
+bool _isConnectToServer = true;
+bool isInSplashTimer = true;
+int splashWaitingMil = 1000;
 
 class SplashPage extends StatefulWidget {
-  const SplashPage({super.key});
+  final Widget? firstPage;
+
+  SplashPage({this.firstPage, super.key});
 
   @override
   SplashScreenState createState() => SplashScreenState();
@@ -41,112 +38,48 @@ class SplashScreenState extends State<SplashPage> {
 
   @override
   Widget build(BuildContext context) {
-    /// ReBuild First Widgets tree, not call on Navigator pages
-    return StreamBuilder<bool>(
-        initialData: false,
-        stream: AppBroadcast.materialUpdaterStream.stream,
-        builder: (context, snapshot) {
-          splashTimer();
-          init();
+    splashWaitTimer();
+    init();
 
-          if (_isInLoadingSettings || canShowSplash()) {
-            return getSplashView();
-          }
-          else {
-            return getMaterialApp();
-          }
-        });
+    if (waitInSplash()) {
+      //System.hideBothStatusBar();
+      return getSplashView();
+    }
+    else {
+      //System.showBothStatusBar();
+      return getFirstPage();
+    }
   }
-
   ///==================================================================================================
   Widget getSplashView() {
     if(kIsWeb){
       return const ProgressView();
     }
 
-    return DecoratedBox(
-      decoration: const BoxDecoration(
-        image: DecorationImage(
-          image: AssetImage(AppImages.logoSplash),
-        )
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: const <Widget>[
-          CircularProgressIndicator(),
-        ],
-      ),
-    );
-  }
-
-  // MaterialApp/ CupertinoApp/ WidgetsApp
-  Widget getMaterialApp() {
-    return MaterialApp.router(
-        key: AppBroadcast.materialAppKey,
-        debugShowCheckedModeBanner: false,
-        routeInformationProvider: mainRouter.routeInformationProvider,
-        routeInformationParser: mainRouter.routeInformationParser,
-        routerDelegate: mainRouter.routerDelegate,
-        //navigatorObservers: [ClearFocusOnPush()],
-        //scrollBehavior: MyCustomScrollBehavior(),
-        title: Constants.appTitle,
-        theme: AppThemes.instance.themeData,
-        // ThemeData.light()
-        //darkTheme: ThemeData.dark(),
-        themeMode: AppThemes.instance.currentThemeMode,
-        scaffoldMessengerKey: AppBroadcast.rootScaffoldMessengerKey,
-        //navigatorKey: AppBroadcast.rootNavigatorStateKey,
-        localizationsDelegates: AppLocale.getLocaleDelegates(),
-        supportedLocales: AppLocale.getAssetSupportedLocales(),
-        locale: SettingsManager.settingsModel.appLocale,
-        /*localeResolutionCallback: (deviceLocale, supportedLocales) {
-        return SettingsManager.settingsModel.appLocale;
-      },*/
-        //home: const HomePage(),
-      scrollBehavior: ScrollConfiguration.of(context).copyWith(
-        dragDevices: {
-          PointerDeviceKind.mouse,
-          PointerDeviceKind.touch,
-        },
-      ),
-        builder: (context, home) {
-          AppRoute.materialContext = context;
-          final mediaQueryData = MediaQuery.of(context);
-
-          /// detect orientation change and rotate screen
-          return MediaQuery(
-            data: mediaQueryData.copyWith(textScaleFactor: 1.0),
-            child: OrientationBuilder(builder: (context, orientation) {
-              //AppLocale.detectLocaleDirection(SettingsManager.settingsModel.appLocale); //Localizations.localeOf(context)
-              testCodes(context);
-
-              return Directionality(
-                  textDirection: AppThemes.instance.textDirection,
-                  child: ResponsiveWrapper.builder(
-                      Toaster(child: home!),
-                      defaultScale: true,
-                      breakpoints: [
-                        const ResponsiveBreakpoint.resize(480, name: MOBILE),
-                        const ResponsiveBreakpoint.autoScale(800, name: TABLET),
-                        const ResponsiveBreakpoint.autoScale(1000, name: TABLET),
-                        const ResponsiveBreakpoint.resize(1200, name: DESKTOP),
-                      ]
-                  )
-              );
-            }),
-          );
-        },
-    );
+    return SizedBox.expand();
   }
   ///==================================================================================================
-  bool canShowSplash(){
-    return mustShowSplash && !kIsWeb;
+  Widget getFirstPage(){
+    return ResponsiveWrapper.builder(
+        Toaster(child: widget.firstPage?? SizedBox()),
+        defaultScale: true,
+        breakpoints: [
+          const ResponsiveBreakpoint.resize(480, name: MOBILE),
+          const ResponsiveBreakpoint.autoScale(800, name: TABLET),
+          const ResponsiveBreakpoint.autoScale(1000, name: TABLET),
+          const ResponsiveBreakpoint.resize(1200, name: DESKTOP),
+        ]
+    );
   }
 
-  void splashTimer() async {
-    if(splashWaitingMil > 0 && canShowSplash()){
+  bool waitInSplash(){
+    return !kIsWeb && (isInSplashTimer || _isInLoadingSettings || !_isConnectToServer);
+  }
+
+  void splashWaitTimer() async {
+    if(splashWaitingMil > 0){
       Timer(Duration(milliseconds: splashWaitingMil), (){
-        mustShowSplash = false;
+        isInSplashTimer = false;
 
         AppBroadcast.reBuildMaterial();
       });
@@ -162,39 +95,40 @@ class SplashScreenState extends State<SplashPage> {
 
     _isInit = true;
 
-    await InitialApplication.importantInit();
     await AppDB.init();
-
     AppThemes.initial();
-    _isInLoadingSettings = !SettingsManager.loadSettings();
+    final settingsLoad = SettingsManager.loadSettings();
 
-    if (!_isInLoadingSettings) {
+    if (settingsLoad) {
       await Session.fetchLoginUsers();
-      await InitialApplication.onceInit(context);
+      //await VersionManager.checkInstallVersion();
+      await InitialApplication.launchUpInit();
+      connectToServer();
+
+      InitialApplication.appLazyInit();
+      _isInLoadingSettings = false;
 
       AppBroadcast.reBuildMaterialBySetTheme();
-      asyncInitial(context);
     }
   }
 
-  void asyncInitial(BuildContext context) {
-    if (!InitialApplication.isLaunchOk) {
-      WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-        Timer.periodic(const Duration(milliseconds: 50), (Timer timer) {
-          if (InitialApplication.isInitialOk) {
-            timer.cancel();
+  void connectToServer() async {
+    /*final serverData = await LoginService.requestOnSplash();
 
-            TrustSsl.acceptBadCertificate();
-            InitialApplication.callOnLaunchUp();
-          }
-        });
-      });
+    if(serverData == null){
+      AppSheet.showSheetOneAction(
+        AppRoute.materialContext,
+        AppMessages.errorCommunicatingServer, (){
+        AppBroadcast.gotoSplash(2);
+        connectToServer();
+      },
+          buttonText: AppMessages.tryAgain,
+          isDismissible: false,
+      );
     }
-  }
-
-  Future<void> testCodes(BuildContext context) async {
-    //await AppDB.db.clearTable(AppDB.tbKv);
-    SettingsManager.settingsModel.httpAddress = 'http://192.168.1.103:7436';
-    //SettingsManager.settingsModel.httpAddress = 'http://vosatezehn.com:7436';
+    else {
+      _isConnectToServer = true;
+      AppBroadcast.reBuildMaterial();
+    }*/
   }
 }

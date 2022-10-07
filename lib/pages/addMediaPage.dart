@@ -140,7 +140,9 @@ class _AddMediaPageState extends StateBase<AddMediaPage> {
                                 SizedBox(
                                   width: 110,
                                   child: ElevatedButton(
-                                    style: ElevatedButton.styleFrom(primary: AppThemes.instance.currentTheme.errorColor),
+                                    style: ElevatedButton.styleFrom(
+                                        backgroundColor: AppThemes.instance.currentTheme.errorColor
+                                    ),
                                       onPressed: deleteItem,
                                       child: Text('حذف آیتم')
                                   ),
@@ -288,7 +290,7 @@ class _AddMediaPageState extends StateBase<AddMediaPage> {
                   width: 110,
                   child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                          primary: Colors.lightBlue
+                          backgroundColor: Colors.lightBlue
                       ),
                       onPressed: onUploadCall,
                       child: Text(editMode? 'ثبت': 'آپلود')
@@ -462,7 +464,7 @@ class _AddMediaPageState extends StateBase<AddMediaPage> {
       hideLoading();
     };
 
-    requester.httpRequestEvents.onFailState = (req) async {
+    requester.httpRequestEvents.onFailState = (req, r) async {
       AppSheet.showSheet$OperationFailed(context);
     };
 
@@ -508,7 +510,7 @@ class _AddMediaPageState extends StateBase<AddMediaPage> {
       hideLoading();
     };
 
-    requester.httpRequestEvents.onFailState = (req) async {
+    requester.httpRequestEvents.onFailState = (req, r) async {
       AppSheet.showSheet$OperationFailed(context);
     };
 

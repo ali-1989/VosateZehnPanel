@@ -68,7 +68,7 @@ class _BuketEditPageState extends StateBase<BuketEditPage> {
     );
 
     if(widget.injectData == null) {
-      addPostOrCall(() => AppRoute.pop(context));
+      addPostOrCall(() => AppRoute.popPage(context));
     }
     else {
       editMode = widget.injectData!.bucket != null;
@@ -142,7 +142,7 @@ class _BuketEditPageState extends StateBase<BuketEditPage> {
                                     width: 110,
                                     child: ElevatedButton(
                                       style: ElevatedButton.styleFrom(
-                                        primary: AppThemes.instance.currentTheme.successColor
+                                        backgroundColor: AppThemes.instance.currentTheme.successColor
                                       ),
                                         onPressed: onSaveBucket,
                                         child: Text('ذخیره')
@@ -154,7 +154,7 @@ class _BuketEditPageState extends StateBase<BuketEditPage> {
                                     width: 110,
                                     child: ElevatedButton(
                                         style: ElevatedButton.styleFrom(
-                                            primary: AppThemes.instance.currentTheme.errorColor
+                                            backgroundColor: AppThemes.instance.currentTheme.errorColor
                                         ),
                                         onPressed: deleteBucketCall,
                                         child: Text('حذف آیتم')
@@ -368,7 +368,7 @@ class _BuketEditPageState extends StateBase<BuketEditPage> {
       hideLoading();
     };
 
-    requester.httpRequestEvents.onFailState = (req) async {
+    requester.httpRequestEvents.onFailState = (req, r) async {
       AppSheet.showSheet$OperationFailed(context);
     };
 
@@ -376,7 +376,7 @@ class _BuketEditPageState extends StateBase<BuketEditPage> {
       PagesEventBus.getEventBus((ContentManagerPage).toString()).callEvent('update', null);
 
       AppSheet.showSheet$SuccessOperation(context, onBtn: (){
-        AppRoute.pop(context);
+        AppRoute.popPage(context);
       });
     };
 
@@ -397,7 +397,7 @@ class _BuketEditPageState extends StateBase<BuketEditPage> {
       hideLoading();
     };
 
-    requester.httpRequestEvents.onFailState = (req) async {
+    requester.httpRequestEvents.onFailState = (req, r) async {
       AppSheet.showSheet$OperationFailed(context);
     };
 
@@ -405,7 +405,7 @@ class _BuketEditPageState extends StateBase<BuketEditPage> {
       PagesEventBus.getEventBus((ContentManagerPage).toString()).callEvent('update', null);
 
       AppSheet.showSheet$SuccessOperation(context, onBtn: (){
-        AppRoute.pop(context);
+        AppRoute.popPage(context);
       });
     };
 

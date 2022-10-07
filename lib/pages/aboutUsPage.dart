@@ -195,13 +195,9 @@ class _AboutUsPageState extends StateBase<AboutUsPage> {
 
     requester.bodyJson = js;
 
-    requester.httpRequestEvents.onFailState = (req) async {
+    requester.httpRequestEvents.onFailState = (req, r) async {
       isInLoadData = false;
       assistCtr.removeStateAndUpdate(state$fetchData);
-    };
-
-    requester.httpRequestEvents.onResponseError = (req, data) async {
-      return true;
     };
 
     requester.httpRequestEvents.onStatusOk = (req, data) async {

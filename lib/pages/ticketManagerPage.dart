@@ -89,6 +89,7 @@ class _TicketManagerPageState extends StateBase<TicketManagerPage> {
       trackVisibility: true,
       thumbVisibility: true,
       child: SingleChildScrollView(
+        primary: true,
         child: MaxWidth(
           maxWidth: 500,
           child: Padding(
@@ -144,6 +145,7 @@ class _TicketManagerPageState extends StateBase<TicketManagerPage> {
                           enablePullUp: true,
                           controller: refreshController,
                           onRefresh: (){},
+                          primary: false,
                           onLoading: onLoadingMoreCall,
                           child: ListView.builder(
                             shrinkWrap: true,
@@ -186,7 +188,10 @@ class _TicketManagerPageState extends StateBase<TicketManagerPage> {
                     child: Builder(
                         builder: (ctx){
                           if(itm.senderModel?.profileModel?.url == null){
-                            return SizedBox.expand(child: ColoredBox(color: ColorHelper.textToColor(itm.senderModel?.userName?? '0')));
+                            return SizedBox.expand(
+                                child: ColoredBox(
+                                    color: ColorHelper.textToColor(itm.senderModel?.userName?? '0'))
+                            );
                           }
 
                           return Image.network(itm.senderModel?.profileModel?.url?? '');
@@ -274,7 +279,7 @@ class _TicketManagerPageState extends StateBase<TicketManagerPage> {
       isInLoadData = false;
     };
 
-    requester.httpRequestEvents.onFailState = (req) async {
+    requester.httpRequestEvents.onFailState = (req, r) async {
       assistCtr.removeStateAndUpdate(state$fetchData);
     };
 

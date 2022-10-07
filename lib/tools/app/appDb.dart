@@ -1,5 +1,6 @@
 import 'package:app/tools/app/appDirectories.dart';
 import 'package:iris_db/iris_db.dart';
+import 'package:iris_tools/api/converter.dart';
 import 'package:iris_tools/api/helpers/databaseHelper.dart';
 
 import '/system/keys.dart';
@@ -24,11 +25,11 @@ class AppDB {
   static String tbKv = 'KvTable';
   static String tbUserModel = 'UserModel';
   static String tbLanguages = 'Languages';
+  static String tbMedia = 'Media';
 
 
-  static Future<bool> firstDatabasePrepare() async {
+  static Future<bool> firstLaunch() async {
     //await insertLanguages();
-    //await AppNotification.insertNotificationIds();
 
     return true;
   }
@@ -118,7 +119,7 @@ class AppDB {
     return res.map((e) => e[Keys.value]).toList();
   }
 
-  static dynamic fetchKv(String key){
+  static T? fetchKv<T>(String key){
     final con = Conditions();
     con.add(Condition()..key = Keys.name..value = key);
 
@@ -128,7 +129,7 @@ class AppDB {
       return null;
     }
 
-    return res[0][Keys.value];
+    return res[0][Keys.value] as T;
   }
 
   static List<T> fetchAsList<T>(String key){
@@ -141,7 +142,7 @@ class AppDB {
       return [];
     }
 
-    return res[0][Keys.value] as List<T>;
+    return Converter.correctList<T>(res[0][Keys.value])!;
   }
   ///------------------------------------------------------------------------------------------
 }

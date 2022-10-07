@@ -388,13 +388,9 @@ class _AdvertisingManagerPageState extends StateBase<AdvertisingManagerPage> {
 
     requester.bodyJson = js;
 
-    requester.httpRequestEvents.onFailState = (req) async {
+    requester.httpRequestEvents.onFailState = (req, r) async {
       isInLoadData = false;
       assistCtr.removeStateAndUpdate(state$fetchData);
-    };
-
-    requester.httpRequestEvents.onResponseError = (req, data) async {
-      return true;
     };
 
     requester.httpRequestEvents.onStatusOk = (req, data) async {
@@ -442,7 +438,7 @@ class _AdvertisingManagerPageState extends StateBase<AdvertisingManagerPage> {
     js['tag'] = model.tag;
     js['url'] = url.isEmpty? null : url;
 
-    requester.httpRequestEvents.onFailState = (req) async {
+    requester.httpRequestEvents.onFailState = (req, r) async {
       hideLoading();
       AppSheet.showSheet$OperationFailedTryAgain(context);
     };
@@ -468,13 +464,9 @@ class _AdvertisingManagerPageState extends StateBase<AdvertisingManagerPage> {
     js[Keys.requesterId] = Session.getLastLoginUser()?.userId;
     js['tag'] = model.tag;
 
-    requester.httpRequestEvents.onFailState = (req) async {
+    requester.httpRequestEvents.onFailState = (req, r) async {
       hideLoading();
       AppSheet.showSheet$OperationFailedTryAgain(context);
-    };
-
-    requester.httpRequestEvents.onResponseError = (req, data) async {
-      return true;
     };
 
     requester.httpRequestEvents.onStatusOk = (req, data) async {
@@ -509,7 +501,7 @@ class _AdvertisingManagerPageState extends StateBase<AdvertisingManagerPage> {
       hideLoading();
     };
 
-    requester.httpRequestEvents.onFailState = (req) async {
+    requester.httpRequestEvents.onFailState = (req, r) async {
       model.platformFile = null;
     };
 

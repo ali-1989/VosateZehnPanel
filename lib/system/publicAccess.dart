@@ -38,21 +38,22 @@ class PublicAccess {
   static Map addAppInfo(Map src, {UserModel? curUser}) {
     final token = curUser?.token ?? Session.getLastLoginUser()?.token;
 
-    src.addAll(getAppInfo(token?.token));
+    src.addAll(getAppInfo());
+
+    if (token?.token != null) {
+      src[Keys.token] = token?.token;
+      //src['fcm_token'] = FireBaseService.token;
+    }
 
     return src;
   }
 
-  static Map<String, dynamic> getAppInfo(String? token) {
+  static Map<String, dynamic> getAppInfo() {
     final res = <String, dynamic>{};
     res[Keys.deviceId] = DeviceInfoTools.deviceId;
     res[Keys.appName] = Constants.appName;
     res['app_version_code'] = Constants.appVersionCode;
     res['app_version_name'] = Constants.appVersionName;
-
-    if (token != null) {
-      res['token'] = token;
-    }
 
     return res;
   }
@@ -88,31 +89,21 @@ class PublicAccess {
     return UpperLower()..lower = lower..upper = upper;
   }
 
-  ///----------- HowIs ----------------------------------------------------
-  static Map<String, dynamic> getHowIsMap() {
-    final howIs = <String, dynamic>{
-      'how_is': 'HowIs',
-      Keys.deviceId: DeviceInfoTools.deviceId,
-      Keys.languageIso: System.getLocalizationsLanguageCode(AppRoute.getContext()),
-      'app_version_code': Constants.appVersionCode,
-      'app_version_name': Constants.appVersionName,
-      'app_name': Constants.appName,
-    };
-
-    final users = [];
-
-    for(var um in Session.currentLoginList) {
-      users.add(um.userId);
+  static void sortList(List<DateFieldMixin> list, bool isAsc){
+    if(list.isEmpty){
+      return;
     }
 
-    howIs['users'] = users;
+    int sorter(DateFieldMixin d1, DateFieldMixin d2){
+      return DateHelper.compareDates(d1.date, d2.date, asc: isAsc);
+    }
 
-    return howIs;
+    list.sort(sorter);
   }
 
   static Map<String, dynamic> getHeartMap() {
     final heart = <String, dynamic>{
-      'heart': 'Heart',
+      'heart': 'heart',
       Keys.deviceId: DeviceInfoTools.deviceId,
       Keys.languageIso: System.getLocalizationsLanguageCode(AppRoute.getContext()),
       'app_version_code': Constants.appVersionCode,

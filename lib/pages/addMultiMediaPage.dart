@@ -155,7 +155,7 @@ class _AddMultiMediaPageState extends StateBase<AddMultiMediaPage> {
                       SizedBox(
                         width: 110,
                         child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(primary: Colors.blue),
+                            style: ElevatedButton.styleFrom(backgroundColor: Colors.blue),
                             onPressed: onSaveClick,
                             child: Text('ذخیره')
                         ),
@@ -433,7 +433,7 @@ class _AddMultiMediaPageState extends StateBase<AddMultiMediaPage> {
       isInLoadData = false;
     };
 
-    requester.httpRequestEvents.onFailState = (req) async {
+    requester.httpRequestEvents.onFailState = (req, r) async {
       assistCtr.removeStateAndUpdate(state$fetchData);
     };
 
@@ -535,7 +535,7 @@ class _AddMultiMediaPageState extends StateBase<AddMultiMediaPage> {
       hideLoading();
     };
 
-    requester.httpRequestEvents.onFailState = (req) async {
+    requester.httpRequestEvents.onFailState = (req, r) async {
       AppSheet.showSheet$OperationFailed(context);
     };
 

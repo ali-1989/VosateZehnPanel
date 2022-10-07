@@ -122,8 +122,8 @@ class DailyTextPageState extends StateBase<DailyTextPage> {
           },
           headerBuilder: (dt){
             final solar = SolarHijriDate.from(dt);
-            var d = '(${dt.year}-${GregorianDate.from(dt).getMonthName()})';
-            d += '  (${solar.getYear()}-${solar.getMonthName()})';
+            final en = '(${dt.year}-${GregorianDate.from(dt).getMonthName()})';
+            final so = '  (${solar.getYear()}-${solar.getMonthName()})';
 
             return ColoredBox(
               color: AppThemes.instance.currentTheme.accentColor,
@@ -139,7 +139,14 @@ class DailyTextPageState extends StateBase<DailyTextPage> {
                         child: Text('قبلی')
                     ),
 
-                    Text(d),
+                    RichText(
+                      text: TextSpan(
+                        children: [
+                          TextSpan(text: en),
+                          TextSpan(text: so, style: TextStyle(color: Colors.green)),
+                        ]
+                      ),
+                    ),
 
                     TextButton(
                         onPressed: (){
@@ -165,10 +172,10 @@ class DailyTextPageState extends StateBase<DailyTextPage> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(LocaleHelper.numberToEnglish('${date.day}')!,
-                            style: TextStyle(fontFamily: engFontFamily, color: Colors.black87),
+                            style: TextStyle(fontFamily: engFontFamily,),
                           ),
                           Text('${SolarHijriDate.from(date).getDay()}',
-                              style: TextStyle(color: Colors.black54)
+                              style: TextStyle(color: Colors.green)
                           ),
                         ],
                       ),
@@ -226,7 +233,7 @@ class DailyTextPageState extends StateBase<DailyTextPage> {
       isInLoadData = false;
     };
 
-    requester.httpRequestEvents.onFailState = (req) async {
+    requester.httpRequestEvents.onFailState = (req, r) async {
       assistCtr.removeStateAndUpdate(state$fetchData);
     };
 

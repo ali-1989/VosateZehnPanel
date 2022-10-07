@@ -396,7 +396,7 @@ class _ContentManagerPageState extends StateBase<ContentManagerPage> {
       isInLoadData = false;
     };
 
-    requester.httpRequestEvents.onFailState = (req) async {
+    requester.httpRequestEvents.onFailState = (req, r) async {
       assistCtr.removeStateAndUpdate(state$fetchData);
     };
 

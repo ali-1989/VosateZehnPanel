@@ -119,7 +119,7 @@ class _SetEventViewState extends StateBase<SetEventView> {
       hideLoading();
     };
 
-    requester.httpRequestEvents.onFailState = (req) async {
+    requester.httpRequestEvents.onFailState = (req, r) async {
       AppSheet.showSheet$OperationFailed(context);
     };
 
@@ -153,7 +153,7 @@ class _SetEventViewState extends StateBase<SetEventView> {
       hideLoading();
     };
 
-    requester.httpRequestEvents.onFailState = (req) async {
+    requester.httpRequestEvents.onFailState = (req, r) async {
       AppSheet.showSheet$OperationFailed(context);
     };
 

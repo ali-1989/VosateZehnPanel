@@ -57,7 +57,7 @@ class _SubBuketManagerPageState extends StateBase<SubBuketManagerPage> {
     super.initState();
 
     if(widget.injectData == null) {
-      addPostOrCall(() => AppRoute.pop(context));
+      addPostOrCall(() => AppRoute.popPage(context));
     }
     else {
       bucketModel = widget.injectData!.bucket;
@@ -436,7 +436,7 @@ class _SubBuketManagerPageState extends StateBase<SubBuketManagerPage> {
       isInLoadData = false;
     };
 
-    requester.httpRequestEvents.onFailState = (req) async {
+    requester.httpRequestEvents.onFailState = (req, r) async {
       assistCtr.removeStateAndUpdate(state$fetchData);
     };
 

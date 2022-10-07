@@ -90,6 +90,22 @@ class AppMessages {
     return AppRoute.getContext().t('logout')?? _noText;
   }
 
+  static String get exit {
+    return AppRoute.getContext().t('exit')?? _noText;
+  }
+
+  static String get search {
+    return AppRoute.getContext().t('search')?? _noText;
+  }
+
+  static String get later {
+    return AppRoute.getContext().t('later')?? _noText;
+  }
+
+  static String get update {
+    return AppRoute.getContext().t('update')?? _noText;
+  }
+
   static String get validation {
     return AppRoute.getContext().tInMap('loginSection', 'validation')?? _noText;
   }
@@ -116,6 +132,10 @@ class AppMessages {
 
   static String get doYouWantLogoutYourAccount {
     return AppRoute.getContext().tInMap('loginSection', 'doYouWantLogoutYourAccount')?? _noText;
+  }
+
+  static String get newAppVersionIsOk {
+    return AppRoute.getContext().t('newAppVersionIsOk')?? _noText;
   }
 
   static String get terms {
@@ -290,6 +310,14 @@ class AppMessages {
     return 'لطفا نام و نام خانوادگی خود را کامل وارد کنید';
   }
 
+  static String get enterName {
+    return 'لطفا نام خود را وارد کنید';
+  }
+
+  static String get enterFamily {
+    return 'لطفا نام خانوادگی خود را وارد کنید';
+  }
+
   static String get pleaseSelectAge {
     return 'لطفا سن خود را انتخاب کنید';
   }
@@ -340,6 +368,10 @@ class AppMessages {
 
   static String get contactUsEmptyPrompt {
     return 'لطفا متن خود را بنویسید';
+  }
+
+  static String get pleaseKeepOrder {
+    return 'لطفا ترتیب موارد را رعایت کنید';
   }
 
   static String get isAddToFavorite {

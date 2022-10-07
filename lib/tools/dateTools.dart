@@ -108,7 +108,7 @@ class DateTools {
     }
 
     return LocaleHelper.overrideLtr(mDate.format('${SettingsManager.settingsModel.dateFormat} HH:mm', 'en')
-        .localeNum());
+    .localeNum());
   }
 
   static String dateAndHmRelative$String(String date, {bool isUtc = true}){

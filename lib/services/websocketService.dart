@@ -12,8 +12,8 @@ import 'package:app/tools/app/appBroadcast.dart';
 import '/system/httpCodes.dart';
 import '/system/keys.dart';
 
-class AppWebsocket {
-	AppWebsocket._();
+class WebsocketService {
+	WebsocketService._();
 
 	static GetSocket? _ws;
 	static String? _uri;
@@ -32,7 +32,7 @@ class AppWebsocket {
 	static void addMessageListener(void Function(dynamic data) fun){
 		//return stream.listen(fun);
 		if(!_receiverListeners.contains(fun)) {
-		  _receiverListeners.add(fun);
+			_receiverListeners.add(fun);
 		}
 	}
 
@@ -45,8 +45,8 @@ class AppWebsocket {
 		_uri = uri;
 
 		try {
-				_isConnected = false;
-				_ws?.close(1000); //status.normalClosure
+			_isConnected = false;
+			_ws?.close(1000); //status.normalClosure
 		}
 		catch(e){/**/}
 
@@ -125,12 +125,12 @@ class AppWebsocket {
 	static void _onConnected() async {
 		_isConnected = true;
 		reconnectInterval = const Duration(seconds: 6);
-		sendData(JsonHelper.mapToJson(PublicAccess.getHowIsMap()));
+		sendData(JsonHelper.mapToJson(PublicAccess.getHeartMap()));
 
 		//NetListenerTools.onWsConnectedListener();
 
 		periodicHeartTimer?.cancel();
-		periodicHeartTimer = Timer.periodic(Duration(minutes: SettingsModel.webSocketPeriodicHeart), (timer) {
+		periodicHeartTimer = Timer.periodic(Duration(minutes: SettingsModel.webSocketPeriodicHeartMinutes), (timer) {
 			sendHeartAndUsers();
 		});
 	}
@@ -169,7 +169,7 @@ class AppWebsocket {
 			//--------------------------------------------------
 			if(section == HttpCodes.sec_command || section == 'none') {
 				switch (command) {
-					case HttpCodes.com_serverMessage: // from WsServerNs
+					case HttpCodes.com_messageForUser:
 						break;
 				}
 			}

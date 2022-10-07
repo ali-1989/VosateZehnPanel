@@ -128,7 +128,9 @@ class _AddContainerPageState extends StateBase<AddContainerPage> {
                                 SizedBox(
                                   width: 110,
                                   child: ElevatedButton(
-                                      style: ElevatedButton.styleFrom(primary: AppThemes.instance.currentTheme.errorColor),
+                                      style: ElevatedButton.styleFrom(
+                                          backgroundColor: AppThemes.instance.currentTheme.errorColor
+                                      ),
                                       onPressed: deleteItem,
                                       child: Text('حذف آیتم')
                                   ),
@@ -217,7 +219,7 @@ class _AddContainerPageState extends StateBase<AddContainerPage> {
                   width: 150,
                   child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                          primary: Colors.lightBlue
+                          backgroundColor: Colors.lightBlue
                       ),
                       onPressed: onUploadCall,
                       child: Text('ثبت')
@@ -323,7 +325,7 @@ class _AddContainerPageState extends StateBase<AddContainerPage> {
       hideLoading();
     };
 
-    requester.httpRequestEvents.onFailState = (req) async {
+    requester.httpRequestEvents.onFailState = (req, r) async {
       AppSheet.showSheet$OperationFailed(context);
     };
 
@@ -359,7 +361,7 @@ class _AddContainerPageState extends StateBase<AddContainerPage> {
       hideLoading();
     };
 
-    requester.httpRequestEvents.onFailState = (req) async {
+    requester.httpRequestEvents.onFailState = (req, r) async {
       AppSheet.showSheet$OperationFailed(context);
     };
 

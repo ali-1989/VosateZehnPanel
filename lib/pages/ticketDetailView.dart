@@ -77,6 +77,7 @@ class _TicketDetailViewState extends State<TicketDetailView> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text('موبایل: ${widget.ticketModel.senderModel?.mobile?? ''}'),
+                            SizedBox(height: 8),
                             Text('ایمیل: ${widget.ticketModel.senderModel?.email?? ''}'),
                           ],
                         ),
@@ -87,6 +88,7 @@ class _TicketDetailViewState extends State<TicketDetailView> {
                     Expanded(
                         child: SizedBox.expand(
                           child: SingleChildScrollView(
+                            padding: EdgeInsets.all(8),
                             child: Text(widget.ticketModel.data?? ''),
                           )
                         ).wrapBoxBorder(),

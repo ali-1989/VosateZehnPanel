@@ -6,18 +6,19 @@ import 'package:iris_tools/modules/stateManagers/notifyRefresh.dart';
 import 'package:iris_tools/modules/stateManagers/refresh.dart';
 
 import 'package:app/pages/splash_page.dart';
-import '/tools/app/appThemes.dart';
+import 'package:app/tools/app/appThemes.dart';
 
 class AppBroadcast {
   AppBroadcast._();
 
-  static final StreamController<bool> materialUpdaterStream = StreamController<bool>();
+  static final StreamController<bool> viewUpdaterStream = StreamController<bool>();
   static final RefreshController drawerMenuRefresher = RefreshController();
   static final NotifyBroadcast avatarNotifier = NotifyBroadcast();
+  //---------------------- keys
   static final LocalKey materialAppKey = UniqueKey();
   static final rootScaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
   static final rootNavigatorStateKey = GlobalKey<NavigatorState>();
-  //static final homeScreenKey = GlobalKey<HomePageState>();
+  //static final layoutPageKey = GlobalKey<LayoutPageState>();
 
   //static final homePageBadges = <int, int>{};
   static bool isNetConnected = true;
@@ -32,11 +33,11 @@ class AppBroadcast {
   }
 
   static void reBuildMaterial() {
-    materialUpdaterStream.sink.add(true);
+    viewUpdaterStream.sink.add(true);
   }
 
   static void gotoSplash(int waitingInSplash) {
-    mustShowSplash = true;
+    isInSplashTimer = true;
     splashWaitingMil = waitingInSplash;
     reBuildMaterial();
   }

@@ -1,5 +1,9 @@
+import 'dart:async';
+
+import 'package:app/services/websocketService.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:iris_tools/net/trustSsl.dart';
 
 import 'package:iris_download_manager/downloadManager/downloadManager.dart';
 import 'package:iris_download_manager/uploadManager/uploadManager.dart';
@@ -21,85 +25,106 @@ import 'package:app/tools/app/appImages.dart';
 import 'package:app/tools/app/appLocale.dart';
 import 'package:app/tools/app/appRoute.dart';
 import 'package:app/tools/app/appSizes.dart';
-import 'package:app/tools/app/appWebsocket.dart';
 import 'package:app/tools/deviceInfoTools.dart';
 import 'package:app/tools/userLoginTools.dart';
 
 class InitialApplication {
-	InitialApplication._();
+  InitialApplication._();
 
-	static bool isCallInit = false;
-	static bool isInitialOk = false;
-	static bool isLaunchOk = false;
+  static bool _callLaunchUpInit = false;
+  static bool _isInitialOk = false;
+  static bool _callLazyInit = false;
 
-	static Future<bool> importantInit() async {
-		if(kIsWeb){
-			AppDirectories.prepareStoragePathsWeb(Constants.appName);
-		}
-		else {
-			await AppDirectories.prepareStoragePathsOs(Constants.appName);
-		}
+  static bool isInit() {
+    return _isInitialOk;
+  }
 
-		if(!kIsWeb) {
-			PublicAccess.reporter = Reporter(AppDirectories.getAppFolderInExternalStorage(), 'report');
-		}
+  static Future<bool> importantInit() async {
+    try {
+      await AppDirectories.prepareStoragePaths(Constants.appName);
 
-		return true;
-	}
+      if (!kIsWeb) {
+        PublicAccess.reporter = Reporter(AppDirectories.getAppFolderInExternalStorage(), 'report');
+      }
 
-	static Future<bool> onceInit(BuildContext context) async {
-		if(isCallInit) {
-			return true;
-		}
+      PublicAccess.logger = Logger('${AppDirectories.getTempDir$ex()}/logs');
 
-		isCallInit = true;
-		PublicAccess.logger = Logger('${AppDirectories.getTempDir$ex()}/events.txt');
-		await DeviceInfoTools.prepareDeviceInfo();
-		await DeviceInfoTools.prepareDeviceId();
+      return true;
+    }
+    catch (e){
+      return false;
+    }
+  }
 
-		AppRoute.init();
-		await AppLocale.localeDelegate().getLocalization().setFallbackByLocale(const Locale('en', 'EE'));
+  static Future<void> launchUpInit() async {
+    if (_callLaunchUpInit) {
+      return;
+    }
 
-		AppCache.screenBack = const AssetImage(AppImages.background);
-		await precacheImage(AppCache.screenBack!, context);
-		//PlayerTools.init();
+    _callLaunchUpInit = true;
+    TrustSsl.acceptBadCertificate();
+    await DeviceInfoTools.prepareDeviceInfo();
+    await DeviceInfoTools.prepareDeviceId();
 
-		isInitialOk = true;
-		return true;
-	}
+    AppRoute.init();
+    await AppLocale.localeDelegate().getLocalization().setFallbackByLocale(const Locale('en', 'EE'));
 
-	static void callOnLaunchUp(){
-		if(isLaunchOk) {
-			return;
-		}
+    AppCache.screenBack = const AssetImage(AppImages.background);
+    await precacheImage(AppCache.screenBack!, AppRoute.getContext());
+    //PlayerTools.init();
 
-		isLaunchOk = true;
 
-		final eventListener = AppEventListener();
-		eventListener.addResumeListener(LifeCycleApplication.onResume);
-		eventListener.addPauseListener(LifeCycleApplication.onPause);
-		eventListener.addDetachListener(LifeCycleApplication.onDetach);
-		WidgetsBinding.instance.addObserver(eventListener);
+    _isInitialOk = true;
+    return;
+  }
 
-		AppWebsocket.prepareWebSocket(SettingsManager.settingsModel.wsAddress);
+  static void appLazyInit() {
+    if (!_callLazyInit) {
+      WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+        Timer.periodic(const Duration(milliseconds: 50), (Timer timer) {
+          if (_isInitialOk) {
+            timer.cancel();
+
+            _lazyInitCommands();
+          }
+        });
+      });
+    }
+  }
+
+  static void _lazyInitCommands() {
+    if (_callLazyInit) {
+      return;
+    }
+
+    _callLazyInit = true;
+
+    final eventListener = AppEventListener();
+    eventListener.addResumeListener(LifeCycleApplication.onResume);
+    eventListener.addPauseListener(LifeCycleApplication.onPause);
+    eventListener.addDetachListener(LifeCycleApplication.onDetach);
+    WidgetsBinding.instance.addObserver(eventListener);
+
+    WebsocketService.prepareWebSocket(SettingsManager.settingsModel.wsAddress);
 		//NetManager.addChangeListener(NetListenerTools.onNetListener);
 
-		DownloadUploadService.downloadManager = DownloadManager('${Constants.appName}DownloadManager');
-		DownloadUploadService.uploadManager = UploadManager('${Constants.appName}UploadManager');
+    DownloadUploadService.downloadManager = DownloadManager('${Constants.appName}DownloadManager');
+    DownloadUploadService.uploadManager = UploadManager('${Constants.appName}UploadManager');
 
-		DownloadUploadService.downloadManager.addListener(DownloadUploadService.commonDownloadListener);
-		DownloadUploadService.uploadManager.addListener(DownloadUploadService.commonUploadListener);
+    DownloadUploadService.downloadManager.addListener(DownloadUploadService.commonDownloadListener);
+    DownloadUploadService.uploadManager.addListener(DownloadUploadService.commonUploadListener);
 
-		if(System.isWeb()){
-			void onSizeCheng(oldW, oldH, newW, newH){
-				AppDialogIris.prepareDialogDecoration();
-			}
+    if (System.isWeb()) {
+      void onSizeCheng(oldW, oldH, newW, newH) {
+        AppDialogIris.prepareDialogDecoration();
+      }
 
-			AppSizes.instance.addMetricListener(onSizeCheng);
-		}
+      AppSizes.instance.addMetricListener(onSizeCheng);
+    }
 
-		Session.addLoginListener(UserLoginTools.onLogin);
-		Session.addLogoffListener(UserLoginTools.onLogoff);
-		Session.addProfileChangeListener(UserLoginTools.onProfileChange);
-	}
+    Session.addLoginListener(UserLoginTools.onLogin);
+    Session.addLogoffListener(UserLoginTools.onLogoff);
+    Session.addProfileChangeListener(UserLoginTools.onProfileChange);
+
+  }
 }

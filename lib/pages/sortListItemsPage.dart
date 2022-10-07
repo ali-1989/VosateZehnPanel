@@ -102,7 +102,7 @@ class _SortListItemsPageState extends StateBase<SortListItemsPage> {
                   SizedBox(
                     width: 110,
                     child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(primary: Colors.blue),
+                        style: ElevatedButton.styleFrom(backgroundColor: Colors.blue),
                         onPressed: onSaveClick,
                         child: Text('ذخیره')
                     ),
@@ -225,11 +225,11 @@ class _SortListItemsPageState extends StateBase<SortListItemsPage> {
       isInLoadData = false;
     };
 
-    requester.httpRequestEvents.onFailState = (req) async {
+    requester.httpRequestEvents.onFailState = (req, r) async {
       assistCtr.removeStateAndUpdate(state$fetchData);
     };
 
-    requester.httpRequestEvents.onFailState = (req) async {
+    requester.httpRequestEvents.onFailState = (req, r) async {
       assistCtr.removeStateAndUpdate(state$fetchData);
     };
 
@@ -276,7 +276,7 @@ class _SortListItemsPageState extends StateBase<SortListItemsPage> {
       hideLoading();
     };
 
-    requester.httpRequestEvents.onFailState = (req) async {
+    requester.httpRequestEvents.onFailState = (req, r) async {
       AppSheet.showSheet$OperationFailed(context);
     };
 
