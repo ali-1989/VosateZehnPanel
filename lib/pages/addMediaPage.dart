@@ -45,6 +45,7 @@ class AddMediaPage extends StatefulWidget {
 class _AddMediaPageState extends StateBase<AddMediaPage> {
   TextEditingController titleCtr = TextEditingController();
   TextEditingController descriptionCtr = TextEditingController();
+  ScrollController scrollCtr = ScrollController();
   Requester requester = Requester();
   late InputDecoration inputDecoration;
   WebViewXController? webviewController;
@@ -110,7 +111,9 @@ class _AddMediaPageState extends StateBase<AddMediaPage> {
     return Scrollbar(
       thumbVisibility: true,
       trackVisibility: true,
+      controller: scrollCtr,
       child: SingleChildScrollView(
+        controller: scrollCtr,
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
           child: Column(

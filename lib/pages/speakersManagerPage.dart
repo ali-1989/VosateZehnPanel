@@ -39,6 +39,7 @@ class _SpeakersManagerPageState extends StateBase<SpeakersManagerPage> {
   late Requester requester = Requester();
   List<SpeakerModel> speakerList = [];
   SearchFilterTool searchFilter = SearchFilterTool();
+  ScrollController scrollCtr = ScrollController();
   RefreshController refreshController = RefreshController(initialRefresh: false);
   int allCount = 0;
   bool isInLoadData = false;
@@ -82,7 +83,9 @@ class _SpeakersManagerPageState extends StateBase<SpeakersManagerPage> {
     return Scrollbar(
       trackVisibility: true,
       thumbVisibility: true,
+      controller: scrollCtr,
       child: SingleChildScrollView(
+        controller: scrollCtr,
         child: MaxWidth(
           maxWidth: 500,
           child: Padding(

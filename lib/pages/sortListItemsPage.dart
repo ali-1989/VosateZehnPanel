@@ -1,3 +1,5 @@
+import 'package:app/pages/mediaTitlePage.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'package:iris_tools/api/helpers/pathHelper.dart';
@@ -17,6 +19,7 @@ import 'package:app/system/session.dart';
 import 'package:app/tools/app/appIcons.dart';
 import 'package:app/tools/app/appSheet.dart';
 import 'package:app/views/emptyData.dart';
+import 'package:iris_tools/widgets/optionsRow/checkRow.dart';
 
 class SortListItemsPageInjectData {
   late BucketModel bucketModel;
@@ -34,6 +37,7 @@ class SortListItemsPage extends StatefulWidget {
 ///============================================================================================
 class _SortListItemsPageState extends StateBase<SortListItemsPage> {
   late Requester requester = Requester();
+  ScrollController scrollCtr = ScrollController();
   List<MediaModel> itemList = [];
   bool isInLoadData = false;
   String state$fetchData = 'state_fetchData';
@@ -79,7 +83,9 @@ class _SortListItemsPageState extends StateBase<SortListItemsPage> {
     return Scrollbar(
       trackVisibility: true,
       thumbVisibility: true,
+      controller: scrollCtr,
       child: SingleChildScrollView(
+        controller: scrollCtr,
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
           child: Column(
@@ -106,6 +112,20 @@ class _SortListItemsPageState extends StateBase<SortListItemsPage> {
                         onPressed: onSaveClick,
                         child: Text('ذخیره')
                     ),
+                  ),
+
+                  SizedBox(width: 40),
+                  Visibility(
+                    visible: !isInLoadData && widget.injectData.subBucketModel.contentModel != null,
+                      child: CheckBoxRow(
+                        value: widget.injectData.subBucketModel.contentModel?.hasOrder,
+                        description: Text('ترتیب اجباری باشد'),
+                        onChanged: (value) {
+                          widget.injectData.subBucketModel.contentModel!.hasOrder = !widget.injectData.subBucketModel.contentModel!.hasOrder;
+                          assistCtr.updateMain();
+                        },
+
+                      )
                   ),
                 ],
               ),
@@ -174,9 +194,26 @@ class _SortListItemsPageState extends StateBase<SortListItemsPage> {
                   isVideo(itm)? AppIcons.videoCamera: AppIcons.headset
                 ),
 
-                SizedBox(width: 10,),
+                SizedBox(width: 10),
+                SizedBox(
+                  width: 150,
+                  child: Text('${itm.fileName}',
+                      textAlign: TextAlign.right,
+                      textDirection: TextDirection.ltr,
+                    maxLines: 1,
+                    overflow: TextOverflow.clip,
+                  ),
+                ),
+
+                SizedBox(width: 5),
                 Expanded(
-                    child: Text('${itm.fileName}'),
+                    child: GestureDetector(
+                      onTap: (){
+                        changeMediaTitle(itm);
+                      },
+                      child: Text(itm.title?? '[عنوان]',
+                      style: TextStyle(color: Colors.blue)),
+                    ),
                 ),
               ],
             ),
@@ -184,6 +221,18 @@ class _SortListItemsPageState extends StateBase<SortListItemsPage> {
         ),
       ),
     );
+  }
+
+  void changeMediaTitle(MediaModel media) async {
+    await showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (ctx){
+          return MediaTitlePage(injectData: MediaTitlePageInjectData()..mediaModel = media);
+      }
+    );
+
+    assistCtr.updateMain();
   }
 
   void reorder(oldIndex, newIndex){
@@ -243,7 +292,6 @@ class _SortListItemsPageState extends StateBase<SortListItemsPage> {
       final contentModel = ContentModel.fromMap(content);
 
       widget.injectData.subBucketModel.contentId = contentModel.id;
-
       widget.injectData.subBucketModel.contentModel = contentModel;
 
       for(final k in contentModel.mediaIds){
@@ -269,6 +317,7 @@ class _SortListItemsPageState extends StateBase<SortListItemsPage> {
     js['parent_id'] = widget.injectData.subBucketModel.id;
     js[Keys.id] = widget.injectData.subBucketModel.contentId;
 
+    js['force_order'] = widget.injectData.subBucketModel.contentModel?.hasOrder?? true;
     js['media_ids'] = itemList.map((e) => e.id).toList();
 
 

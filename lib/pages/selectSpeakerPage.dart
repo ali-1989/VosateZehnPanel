@@ -23,6 +23,7 @@ class SelectSpeakerPage extends StatefulWidget {
 ///============================================================================================
 class _SelectSpeakerPageState extends StateBase<SelectSpeakerPage> {
   late Requester requester = Requester();
+  ScrollController scrollCtr = ScrollController();
   List<SpeakerModel> speakerList = [];
   bool isInLoadData = false;
   String state$fetchData = 'state_fetchData';
@@ -63,7 +64,9 @@ class _SelectSpeakerPageState extends StateBase<SelectSpeakerPage> {
     return Scrollbar(
       trackVisibility: true,
       thumbVisibility: true,
+      controller: scrollCtr,
       child: SingleChildScrollView(
+        controller: scrollCtr,
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
           child: Column(

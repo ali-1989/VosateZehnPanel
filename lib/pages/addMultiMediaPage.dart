@@ -45,6 +45,7 @@ class AddMultiMediaPage extends StatefulWidget {
 ///============================================================================================
 class _AddMultiMediaPageState extends StateBase<AddMultiMediaPage> {
   late Requester requester = Requester();
+  ScrollController scrollCtr = ScrollController();
   List<MediaModel> mediaList = [];
   List<PlatformFile> newAddList = [];
   List<ListItemHolder> itemList = [];
@@ -96,7 +97,9 @@ class _AddMultiMediaPageState extends StateBase<AddMultiMediaPage> {
     return Scrollbar(
       trackVisibility: true,
       thumbVisibility: true,
+      controller: scrollCtr,
       child: SingleChildScrollView(
+        controller: scrollCtr,
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
           child: Column(

@@ -49,6 +49,7 @@ class _ContentManagerPageState extends StateBase<ContentManagerPage> {
   BucketTypes levelType = BucketTypes.video;
   List<Map> typesDropdownList = [];
   List<BucketModel> bucketList = [];
+  ScrollController scrollCtr = ScrollController();
   SearchFilterTool searchFilter = SearchFilterTool();
   RefreshController refreshController = RefreshController(initialRefresh: false);
   int allCount = 0;
@@ -104,7 +105,9 @@ class _ContentManagerPageState extends StateBase<ContentManagerPage> {
     return Scrollbar(
       trackVisibility: true,
       thumbVisibility: true,
+      controller: scrollCtr,
       child: SingleChildScrollView(
+        controller: scrollCtr,
         child: MaxWidth(
           maxWidth: 500,
           child: Padding(

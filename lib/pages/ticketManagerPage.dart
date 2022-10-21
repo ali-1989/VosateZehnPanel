@@ -40,6 +40,7 @@ class _TicketManagerPageState extends StateBase<TicketManagerPage> {
   List<TicketModel> ticketList = [];
   SearchFilterTool searchFilter = SearchFilterTool();
   RefreshController refreshController = RefreshController(initialRefresh: false);
+  ScrollController scrollCtr = ScrollController();
   int allCount = 0;
   bool isInLoadData = false;
   String state$fetchData = 'state_fetchData';
@@ -88,7 +89,9 @@ class _TicketManagerPageState extends StateBase<TicketManagerPage> {
     return Scrollbar(
       trackVisibility: true,
       thumbVisibility: true,
+      controller: scrollCtr,
       child: SingleChildScrollView(
+        controller: scrollCtr,
         primary: true,
         child: MaxWidth(
           maxWidth: 500,

@@ -35,6 +35,7 @@ class AddSpeakerPage extends StatefulWidget {
 class _AddSpeakerPageState extends StateBase<AddSpeakerPage> {
   TextEditingController titleCtr = TextEditingController();
   TextEditingController descriptionCtr = TextEditingController();
+  ScrollController scrollCtr = ScrollController();
   Requester requester = Requester();
   late InputDecoration inputDecoration;
   PlatformFile? pickedImage;
@@ -94,7 +95,9 @@ class _AddSpeakerPageState extends StateBase<AddSpeakerPage> {
     return Scrollbar(
       thumbVisibility: true,
       trackVisibility: true,
+      controller: scrollCtr,
       child: SingleChildScrollView(
+        controller: scrollCtr,
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
           child: Column(

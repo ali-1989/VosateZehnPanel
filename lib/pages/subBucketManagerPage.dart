@@ -47,6 +47,7 @@ class SubBuketManagerPage extends StatefulWidget {
 ///============================================================================================
 class _SubBuketManagerPageState extends StateBase<SubBuketManagerPage> {
   late Requester requester = Requester();
+  ScrollController scrollCtr = ScrollController();
   late BucketModel bucketModel;
   List<SubBucketModel> subBucketList = [];
   bool isInLoadData = true;
@@ -98,7 +99,9 @@ class _SubBuketManagerPageState extends StateBase<SubBuketManagerPage> {
     return Scrollbar(
       thumbVisibility: true,
       trackVisibility: true,
+      controller: scrollCtr,
       child: SingleChildScrollView(
+        controller: scrollCtr,
         child: MaxWidth(
           maxWidth: 500,
           child: ColoredBox(

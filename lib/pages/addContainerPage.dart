@@ -39,6 +39,7 @@ class AddContainerPage extends StatefulWidget {
 class _AddContainerPageState extends StateBase<AddContainerPage> {
   TextEditingController titleCtr = TextEditingController();
   TextEditingController descriptionCtr = TextEditingController();
+  ScrollController scrollCtr = ScrollController();
   Requester requester = Requester();
   late InputDecoration inputDecoration;
   PlatformFile? pickedImage;
@@ -98,7 +99,9 @@ class _AddContainerPageState extends StateBase<AddContainerPage> {
     return Scrollbar(
       thumbVisibility: true,
       trackVisibility: true,
+      controller: scrollCtr,
       child: SingleChildScrollView(
+        controller: scrollCtr,
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
           child: Column(

@@ -49,6 +49,7 @@ class BuketEditPage extends StatefulWidget {
 class _BuketEditPageState extends StateBase<BuketEditPage> {
   TextEditingController titleCtr = TextEditingController();
   TextEditingController descriptionCtr = TextEditingController();
+  ScrollController scrollCtr = ScrollController();
   Requester requester = Requester();
   late InputDecoration inputDecoration;
   PlatformFile? pickedImage;
@@ -117,7 +118,9 @@ class _BuketEditPageState extends StateBase<BuketEditPage> {
     return Scrollbar(
       thumbVisibility: true,
       trackVisibility: true,
+      controller: scrollCtr,
       child: SingleChildScrollView(
+        controller: scrollCtr,
         child: MaxWidth(
           maxWidth: 500,
           child: ColoredBox(
