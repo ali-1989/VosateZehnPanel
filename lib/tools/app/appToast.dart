@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:app/tools/app/appSizes.dart';
+import 'package:app/tools/app/appThemes.dart';
 
 class AppToast {
   AppToast._();
@@ -30,7 +31,7 @@ class AppToast {
     Future.delayed(duration, () => Toaster.showToast(null));
   }
 }
-
+///=========================================================================================================
 class Toaster extends StatefulWidget {
   final Widget child;
   static late ToasterState _state;
@@ -62,11 +63,14 @@ class ToasterState extends State<Toaster> {
       children: [
         widget.child,
 
-        Padding(
-          padding: const EdgeInsets.only(bottom: 30),
-          child: Visibility(
-            visible: toast != null,
-              child: toast?? SizedBox()
+        Directionality(
+          textDirection: AppThemes.instance.textDirection,
+          child: Padding(
+            padding: const EdgeInsets.only(bottom: 40),
+            child: Visibility(
+              visible: toast != null,
+                child: toast?? SizedBox()
+            ),
           ),
         ),
       ],

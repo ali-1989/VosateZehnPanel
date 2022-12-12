@@ -62,7 +62,7 @@ class AppRoute {
     SettingsManager.settingsModel.currentRouteScreen = routeName;
     AppBroadcast.reBuildMaterial();
   }*/
-
+  ///------------------------------------------------------------
   static void backRoute() {
     final lastCtx = AppNavigator.getLastRouteContext(getLastContext()!);
     AppNavigator.backRoute(lastCtx);
@@ -82,11 +82,14 @@ class AppRoute {
   }
 
   static void popTopView(BuildContext context) {
-    AppNavigator.pop(context);
+    if(canPop(context)) {
+      AppNavigator.pop(context);
+    }
   }
 
   static void popPage(BuildContext context) {
     GoRouter.of(context).pop();
+    //AppNavigator.pop(context);
   }
 
   /*
@@ -98,7 +101,7 @@ class AppRoute {
     return Navigator.of(context).push(r);
   }*/
   
-  static void push(BuildContext context, String address, {dynamic extra}) {
+  static void pushAddress(BuildContext context, String address, {dynamic extra}) {
     if(kIsWeb){
       GoRouter.of(context).go(address, extra: extra);
     }
@@ -175,6 +178,7 @@ bool checkFreeRoute(GoRoute route, GoRouterState state){
 
 String? _mainRedirect(GoRouterState state){
   AppRoute.init();
+  
   /*if(state.subloc == HomePage.route.path){
   }*/
 
