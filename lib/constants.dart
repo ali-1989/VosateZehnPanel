@@ -6,6 +6,10 @@ class Constants {
   static const appName = 'VosateZehn Manager';
   /// used for (app title)
   static String appTitle = 'vosate zehn';
-  static String appVersionName = '0.0.2';                     //match by pubspec.yaml
-  static int appVersionCode = (0 * 1000) + (0 * 100) + (2);
+  static final _major = 0;         //match by pubspec.yaml
+  static final _minor = 1;
+  static final _patch = 0;
+
+  static String appVersionName = '$_major.$_minor.$_patch';
+  static int appVersionCode = _major *10000 + _minor *100 + _patch;
 }

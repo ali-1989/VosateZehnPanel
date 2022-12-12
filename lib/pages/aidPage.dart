@@ -6,13 +6,13 @@ import 'package:go_router/go_router.dart';
 import 'package:iris_tools/modules/stateManagers/assist.dart';
 import 'package:webviewx/webviewx.dart';
 
-import 'package:app/models/abstract/stateBase.dart';
+import 'package:app/structures/abstract/stateBase.dart';
 import 'package:app/system/extensions.dart';
 import 'package:app/system/keys.dart';
-import 'package:app/system/requester.dart';
+import 'package:app/structures/middleWare/requester.dart';
 import 'package:app/system/session.dart';
 import 'package:app/tools/app/appSheet.dart';
-import 'package:app/views/notFetchData.dart';
+import 'package:app/views/states/errorOccur.dart';
 
 class AidPage extends StatefulWidget {
   static final route = GoRoute(
@@ -151,7 +151,7 @@ class _AidPageState extends StateBase<AidPage> {
               }
 
               if(!assistCtr.hasState(state$fetchData)){
-                return NotFetchData(tryClick: tryClick,);
+                return ErrorOccur(tryClick: tryClick,);
               }
 
               return SizedBox();

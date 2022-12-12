@@ -4,7 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:iris_tools/api/helpers/colorHelper.dart';
 import 'package:iris_tools/api/system.dart';
 
-import 'package:app/models/colorTheme.dart';
+import 'package:app/structures/models/colorTheme.dart';
 import '/managers/fontManager.dart';
 
 /// hlp:
@@ -57,11 +57,19 @@ class AppThemes {
 			_instance = AppThemes._();
 
 			_instance.baseFont = Font();
-			_instance.subFont = Font();
 			_instance.boldFont = Font();
+			_instance.subFont = Font();
 
 			prepareThemes();
 			applyDefaultTheme();
+		}
+	}
+
+	static void prepareFonts(String language) {
+		if(_isInit) {
+			_instance.baseFont = FontManager.instance.defaultFontFor(language, FontUsage.normal);
+			_instance.boldFont = FontManager.instance.defaultFontFor(language, FontUsage.bold);
+			_instance.subFont = FontManager.instance.defaultFontFor(language, FontUsage.sub);
 		}
 	}
 
@@ -76,6 +84,8 @@ class AppThemes {
 			blueTheme.appBarItemColor = Colors.black.withAlpha(180);
 
 			AppThemes._instance.themeList[blueTheme.themeName] = blueTheme;
+
+			/// set default
 			AppThemes._instance.defaultTheme = blueTheme;
 		}
 	}
@@ -118,7 +128,7 @@ class AppThemes {
 			brightness: _instance.currentBrightness,
 		);
 
-		th.fontSize = _instance.baseFont.size ??  FontManager.instance.getPlatformFont().size!;
+		th.fontSize = _instance.baseFont.size ?? FontManager.instance.getPlatformFont().size!;
 
 		final raw = FontManager.instance.rawTextTheme;
 
@@ -128,12 +138,14 @@ class AppThemes {
 			height: _instance.baseFont.height,
 			color: th.textColor,
 		);
+
 		th.subTextStyle = raw.subtitle1!.copyWith(
 			fontSize: _instance.subFont.size,
 			fontFamily: _instance.subFont.family,
 			height: _instance.subFont.height,
 			color: th.textColor,
 		);
+
 		th.boldTextStyle = raw.headline1!.copyWith(
 			fontSize: _instance.boldFont.size,
 			fontFamily: _instance.boldFont.family,
@@ -310,9 +322,11 @@ class AppThemes {
 						if (states.contains(MaterialState.disabled)) {
 						  return th.inactiveBackColor;
 						}
+
 						if (states.contains(MaterialState.hovered)) {
 							return th.buttonBackColor.withAlpha(200);
 						}
+
 						if (states.contains(MaterialState.focused) ||
 								states.contains(MaterialState.pressed)) {
 						  return th.buttonBackColor;

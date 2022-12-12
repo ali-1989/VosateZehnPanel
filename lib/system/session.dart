@@ -2,7 +2,7 @@ import 'package:iris_db/iris_db.dart';
 import 'package:iris_tools/api/checker.dart';
 import 'package:iris_tools/dateSection/dateHelper.dart';
 
-import 'package:app/models/userModel.dart';
+import 'package:app/structures/models/userModel.dart';
 import 'package:app/tools/app/appDb.dart';
 import 'package:app/tools/app/appLocale.dart';
 import '/managers/settingsManager.dart';
@@ -63,6 +63,8 @@ class Session {
 
 	static void _setLastLoginUser(UserModel? newUser){
 		_lastLoginUser = newUser;
+		SettingsManager.settingsModel.lastUserId = newUser?.userId;
+
 		SettingsManager.saveSettings();
 	}
 
@@ -74,6 +76,8 @@ class Session {
 		}
 
 		final newUser = UserModel.fromMap(json);
+
+		//newUser.token?.refreshToken = json['refreshToken'];
 
 		newUser.loginDate = DateHelper.getNow().toUtc();
 
@@ -223,7 +227,8 @@ class Session {
 
 		if(currentLoginList.isNotEmpty) {
 		  _setLastLoginUser(currentLoginList.last);
-		} else {
+		}
+		else {
 		  _setLastLoginUser(null);
 		}
 
@@ -243,8 +248,11 @@ class Session {
 	}
 
 	static Future<bool> logoffAll() async{
-		//Map<String, dynamic> val = {'LastLoginDate': null};
-		//int res = await AppManager.db.updateNull(Constants.tbUserModel, {}, val);
+		final val = <String, dynamic>{};
+		val[Keys.setting$lastLoginDate] = null;
+
+		final con = Conditions().add(Condition(ConditionType.DefinedNotNull)..key = Keys.userId);
+		await AppDB.db.update(AppDB.tbUserModel, val, con);
 
 		for(var u in currentLoginList){
 			notifyLogoff(u);

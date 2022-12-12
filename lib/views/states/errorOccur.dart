@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 
 import 'package:app/tools/app/appMessages.dart';
 
-class NotFetchData extends StatelessWidget {
+class ErrorOccur extends StatelessWidget {
   final VoidCallback? tryClick;
 
-  const NotFetchData({
+  const ErrorOccur({
     this.tryClick,
     Key? key,
     }) : super(key: key);

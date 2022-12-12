@@ -21,24 +21,29 @@ import 'package:app/tools/app/appDb.dart';
 import 'package:app/tools/app/appNavigator.dart';
 
 class AppRoute {
-  static final List<GoRoute> freeRoutes = [];
+  static final List<GoRoute> _webFreeRoutes = [];
+  static BuildContext? materialContext;
+  static bool _isInit = false;
 
   AppRoute._();
 
-  static late BuildContext materialContext;
-
   static void init() {
-    freeRoutes.add(LoginPage.route);
+    if(_isInit){
+      return;
+    }
+
+    _isInit = true;
+    _webFreeRoutes.add(LoginPage.route);
   }
 
-  static BuildContext getContext() {
+  static BuildContext? getLastContext() {
     var res = WidgetsBinding.instance.focusManager.rootScope.focusedChild?.context;//deep: 50
     res ??= WidgetsBinding.instance.focusManager.primaryFocus?.context; //deep: 71
 
-    return res?? getMaterialContext();
+    return res?? getBaseContext();
   }
 
-  static BuildContext getMaterialContext() {
+  static BuildContext? getBaseContext() {
     return materialContext;
   }
 
@@ -59,7 +64,7 @@ class AppRoute {
   }*/
 
   static void backRoute() {
-    final lastCtx = AppNavigator.getLastRouteContext(getContext());
+    final lastCtx = AppNavigator.getLastRouteContext(getLastContext()!);
     AppNavigator.backRoute(lastCtx);
   }
 
@@ -84,6 +89,15 @@ class AppRoute {
     GoRouter.of(context).pop();
   }
 
+  /*
+  static Future push(BuildContext context, Widget page, {dynamic extra}) async {
+    final r = MaterialPageRoute(builder: (ctx){
+      return page;
+    });
+
+    return Navigator.of(context).push(r);
+  }*/
+  
   static void push(BuildContext context, String address, {dynamic extra}) {
     if(kIsWeb){
       GoRouter.of(context).go(address, extra: extra);
@@ -113,6 +127,10 @@ class AppRoute {
   static void replaceNamed(BuildContext context, String name, {dynamic extra}) {
     GoRouter.of(context).replaceNamed(name, params: {}, extra: extra);
   }
+
+  static void refreshRouter(BuildContext context) {
+    GoRouter.of(context).refresh();
+  }
 }
 ///============================================================================================
 final mainRouter = GoRouter(
@@ -126,7 +144,7 @@ final mainRouter = GoRouter(
   debugLogDiagnostics: false,
 );
 
-final homeRouter = <GoRoute>[
+final homePageRoutes = <GoRoute>[
   LoginPage.route,
   AboutUsPage.route,
   AidPage.route,
@@ -156,12 +174,12 @@ bool checkFreeRoute(GoRoute route, GoRouterState state){
 }
 
 String? _mainRedirect(GoRouterState state){
-
+  AppRoute.init();
   /*if(state.subloc == HomePage.route.path){
   }*/
 
   if(!Session.hasAnyLogin()){
-    if(AppRoute.freeRoutes.any((r) => checkFreeRoute(r, state))){
+    if(AppRoute._webFreeRoutes.any((r) => checkFreeRoute(r, state))){
       return null;
     }
     else {

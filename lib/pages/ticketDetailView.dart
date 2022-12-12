@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:iris_tools/api/helpers/colorHelper.dart';
 import 'package:iris_tools/widgets/maxWidth.dart';
 
-import 'package:app/models/ticketModel.dart';
+import 'package:app/structures/models/ticketModel.dart';
 import 'package:app/system/extensions.dart';
 
 class TicketDetailView extends StatefulWidget {

@@ -1,4 +1,4 @@
-import 'package:app/views/notFetchData.dart';
+import 'package:app/views/states/errorOccur.dart';
 import 'package:flutter/material.dart';
 
 import 'package:calendar_view/calendar_view.dart';
@@ -12,10 +12,10 @@ import 'package:iris_tools/modules/stateManagers/assist.dart';
 import 'package:iris_tools/widgets/maxWidth.dart';
 
 import 'package:app/managers/fontManager.dart';
-import 'package:app/models/abstract/stateBase.dart';
+import 'package:app/structures/abstract/stateBase.dart';
 import 'package:app/pages/setEventView.dart';
 import 'package:app/system/keys.dart';
-import 'package:app/system/requester.dart';
+import 'package:app/structures/middleWare/requester.dart';
 import 'package:app/system/session.dart';
 import 'package:app/tools/app/appThemes.dart';
 
@@ -86,7 +86,7 @@ class DailyTextPageState extends StateBase<DailyTextPage> {
           }
 
           if(!assistCtr.hasState(state$fetchData)){
-            return NotFetchData();
+            return ErrorOccur();
           }
 
           return buildMonthView();

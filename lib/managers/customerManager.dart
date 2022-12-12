@@ -2,7 +2,7 @@
 
 import 'dart:core';
 
-import 'package:app/models/customerModel.dart';
+import 'package:app/structures/models/customerModel.dart';
 
 class CustomerManager {
   CustomerManager._();

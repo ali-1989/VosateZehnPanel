@@ -1,18 +1,17 @@
 import 'dart:async';
 
-import 'package:app/views/progressView.dart';
+import 'package:app/managers/versionManager.dart';
+import 'package:app/structures/abstract/stateBase.dart';
+import 'package:app/views/states/waitToLoad.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import 'package:responsive_framework/responsive_wrapper.dart';
 
 import 'package:app/managers/settingsManager.dart';
-import 'package:app/system/initialize.dart';
+import 'package:app/system/applicationInitialize.dart';
 import 'package:app/system/session.dart';
 import 'package:app/tools/app/appBroadcast.dart';
-import 'package:app/tools/app/appDb.dart';
-import 'package:app/tools/app/appThemes.dart';
-import 'package:app/tools/app/appToast.dart';
 
 bool _isInit = false;
 bool _isInLoadingSettings = true;
@@ -29,7 +28,7 @@ class SplashPage extends StatefulWidget {
   SplashScreenState createState() => SplashScreenState();
 }
 ///======================================================================================================
-class SplashScreenState extends State<SplashPage> {
+class SplashScreenState extends StateBase<SplashPage> {
 
   @override
   void initState() {
@@ -42,18 +41,17 @@ class SplashScreenState extends State<SplashPage> {
     init();
 
     if (waitInSplash()) {
-      //System.hideBothStatusBar();
+      //System.hideBothStatusBarOnce();
       return getSplashView();
     }
     else {
-      //System.showBothStatusBar();
       return getFirstPage();
     }
   }
   ///==================================================================================================
   Widget getSplashView() {
     if(kIsWeb){
-      return const ProgressView();
+      return const WaitToLoad();
     }
 
     return SizedBox.expand();
@@ -61,7 +59,7 @@ class SplashScreenState extends State<SplashPage> {
   ///==================================================================================================
   Widget getFirstPage(){
     return ResponsiveWrapper.builder(
-        Toaster(child: widget.firstPage?? SizedBox()),
+        widget.firstPage?? SizedBox(),
         defaultScale: true,
         breakpoints: [
           const ResponsiveBreakpoint.resize(480, name: MOBILE),
@@ -80,8 +78,7 @@ class SplashScreenState extends State<SplashPage> {
     if(splashWaitingMil > 0){
       Timer(Duration(milliseconds: splashWaitingMil), (){
         isInSplashTimer = false;
-
-        AppBroadcast.reBuildMaterial();
+        callState();
       });
 
       splashWaitingMil = 0;
@@ -95,17 +92,16 @@ class SplashScreenState extends State<SplashPage> {
 
     _isInit = true;
 
-    await AppDB.init();
-    AppThemes.initial();
+    await ApplicationInitial.inSplashInit();
+    await ApplicationInitial.inSplashInitWithContext(context);
     final settingsLoad = SettingsManager.loadSettings();
 
     if (settingsLoad) {
       await Session.fetchLoginUsers();
-      //await VersionManager.checkInstallVersion();
-      await InitialApplication.launchUpInit();
+      await VersionManager.checkInstallVersion();
       connectToServer();
 
-      InitialApplication.appLazyInit();
+      ApplicationInitial.appLazyInit();
       _isInLoadingSettings = false;
 
       AppBroadcast.reBuildMaterialBySetTheme();
@@ -117,9 +113,9 @@ class SplashScreenState extends State<SplashPage> {
 
     if(serverData == null){
       AppSheet.showSheetOneAction(
-        AppRoute.materialContext,
+        AppRoute.materialContext!,
         AppMessages.errorCommunicatingServer, (){
-        AppBroadcast.gotoSplash(2);
+        AppBroadcast.gotoSplash(1000);
         connectToServer();
       },
           buttonText: AppMessages.tryAgain,
@@ -128,7 +124,7 @@ class SplashScreenState extends State<SplashPage> {
     }
     else {
       _isConnectToServer = true;
-      AppBroadcast.reBuildMaterial();
+      callState();
     }*/
   }
 }

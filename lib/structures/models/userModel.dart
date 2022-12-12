@@ -1,7 +1,7 @@
 import 'package:iris_tools/dateSection/dateHelper.dart';
 import 'package:iris_tools/models/dataModels/mediaModel.dart';
 
-import 'package:app/models/countryModel.dart';
+import 'package:app/structures/models/countryModel.dart';
 import 'package:app/system/keys.dart';
 import 'package:app/tools/uriTools.dart';
 
@@ -45,6 +45,7 @@ class UserModel {
 
     else if(map[Keys.token] is String) {
       token = Token()..token = map[Keys.token];
+      //token?.parseToken();
     }
 
     final Map? avatarTemp = map['profile_image_model'];
@@ -156,39 +157,40 @@ class UserModel {
 ///=======================================================================================================
 class Token {
   String? token;
-  String? expireTs;
+  String? refreshToken;
+  DateTime? expireDate;
 
   Token();
 
   Token.fromMap(Map json) {
     token = json[Keys.token];
-    expireTs = json[Keys.expire];
+    refreshToken = json['refreshToken'];
+    expireDate = DateHelper.tsToSystemDate(json[Keys.expire]);
+
+    parseToken();
   }
 
   Map<String, dynamic> toMap() {
     final data = <String, dynamic>{};
     data[Keys.token] = token;
-    data[Keys.expire] = expireTs;
+    data[Keys.expire] = DateHelper.toTimestampNullable(expireDate);
+    data['refreshToken'] = refreshToken;
 
     return data;
   }
-}
 
+  void parseToken(){
+    final jwt = {};//JwtService.decodeToken(token?? '');
+    final exp = jwt['exp'];
 
-
-/*
-
-/*final map = js['object']?? {};
-    statusServer = js['status'];
-    message = js['message'];*/
-
-
-Map<String, dynamic> toJsonServer() {
-    final map = Map<String, dynamic>();
-    map['object'] = toMap();
-    map['status'] = status;
-    map['message'] = message;
-
-    return map;
+    if(exp != null && expireDate == null){
+      expireDate = DateTime(1970, 1, 1);
+      expireDate = expireDate!.add(Duration(seconds: exp));
+    }
   }
-* */
+
+  @override
+  String toString(){
+    return 'Token: $token | refreshToken: $refreshToken | expire Date: $expireDate';
+  }
+}

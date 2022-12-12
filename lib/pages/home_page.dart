@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:iris_tools/modules/stateManagers/assist.dart';
 
-import 'package:app/models/abstract/stateBase.dart';
+import 'package:app/structures/abstract/stateBase.dart';
 import 'package:app/pages/aboutUsPage.dart';
 import 'package:app/pages/advertisingManagerPage.dart';
 import 'package:app/pages/aidDialogPage.dart';
@@ -22,7 +22,7 @@ class HomePage extends StatefulWidget {
     path: '/',
     name: (HomePage).toString().toLowerCase(),
     builder: (BuildContext context, GoRouterState state) => const HomePage(),
-    routes: homeRouter
+    routes: homePageRoutes
   );
 
   const HomePage({super.key});

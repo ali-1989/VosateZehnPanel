@@ -1,141 +1,146 @@
 import 'package:app/tools/app/appRoute.dart';
+import 'package:flutter/material.dart';
 import '/system/extensions.dart';
 
 class AppMessages {
   AppMessages._();
 
-  static const _noText = 'n_n';
+  static const _noText = 'NaT';
 
+  static BuildContext _getContext(){
+    return AppRoute.getLastContext()!;
+  }
+  
   static String httpMessage(String? cause) {
     if(cause == null){
       return errorOccur;
     }
 
-    return AppRoute.getContext().tInMap('httpCodes', cause)?? errorOccur;
+    return _getContext().tInMap('httpCodes', cause)?? errorOccur;
   }
 
   static String get ok {
-    return AppRoute.getContext().tC('ok')?? _noText;
+    return _getContext().tC('ok')?? _noText;
   }
 
   static String get yes {
-    return AppRoute.getContext().tC('yes')?? _noText;
+    return _getContext().tC('yes')?? _noText;
   }
 
   static String get no {
-    return AppRoute.getContext().tC('no')?? _noText;
+    return _getContext().tC('no')?? _noText;
   }
 
   static String get select {
-    return AppRoute.getContext().tC('select')?? _noText;
+    return _getContext().tC('select')?? _noText;
   }
 
   static String get name {
-    return AppRoute.getContext().tC('name')?? _noText;
+    return _getContext().tC('name')?? _noText;
   }
 
   static String get family {
-    return AppRoute.getContext().tC('family')?? _noText;
+    return _getContext().tC('family')?? _noText;
   }
 
   static String get age {
-    return AppRoute.getContext().tC('age')?? _noText;
+    return _getContext().tC('age')?? _noText;
   }
 
   static String get gender {
-    return AppRoute.getContext().tC('gender')?? _noText;
+    return _getContext().tC('gender')?? _noText;
   }
 
   static String get man {
-    return AppRoute.getContext().tC('man')?? _noText;
+    return _getContext().tC('man')?? _noText;
   }
 
   static String get woman {
-    return AppRoute.getContext().tC('woman')?? _noText;
+    return _getContext().tC('woman')?? _noText;
   }
 
   static String get notice {
-    return AppRoute.getContext().t('notice')?? _noText;
+    return _getContext().t('notice')?? _noText;
   }
 
   static String get send {
-    return AppRoute.getContext().t('send')?? _noText;
+    return _getContext().t('send')?? _noText;
   }
 
   static String get home {
-    return AppRoute.getContext().t('home')?? _noText;
+    return _getContext().t('home')?? _noText;
   }
 
   static String get contactUs {
-    return AppRoute.getContext().t('contactUs')?? _noText;
+    return _getContext().t('contactUs')?? _noText;
   }
 
   static String get aboutUs {
-    return AppRoute.getContext().t('aboutUs')?? _noText;
+    return _getContext().t('aboutUs')?? _noText;
   }
 
   static String get userName {
-    return AppRoute.getContext().t('userName')?? _noText;
+    return _getContext().t('userName')?? _noText;
   }
 
   static String get password {
-    return AppRoute.getContext().t('password')?? _noText;
+    return _getContext().t('password')?? _noText;
   }
 
   static String get pay {
-    return AppRoute.getContext().t('pay')?? _noText;
+    return _getContext().t('pay')?? _noText;
   }
 
   static String get logout {
-    return AppRoute.getContext().t('logout')?? _noText;
+    return _getContext().t('logout')?? _noText;
   }
 
   static String get exit {
-    return AppRoute.getContext().t('exit')?? _noText;
+    return _getContext().t('exit')?? _noText;
   }
 
   static String get search {
-    return AppRoute.getContext().t('search')?? _noText;
+    return _getContext().t('search')?? _noText;
   }
 
   static String get later {
-    return AppRoute.getContext().t('later')?? _noText;
+    return _getContext().t('later')?? _noText;
   }
 
   static String get update {
-    return AppRoute.getContext().t('update')?? _noText;
+    return _getContext().t('update')?? _noText;
   }
 
   static String get validation {
-    return AppRoute.getContext().tInMap('loginSection', 'validation')?? _noText;
+    return _getContext().tInMap('loginSection', 'validation')?? _noText;
   }
 
   static String get resendOtpCode {
-    return AppRoute.getContext().tInMap('loginSection', 'resendOtpCode')?? _noText;
+    return _getContext().tInMap('loginSection', 'resendOtpCode')?? _noText;
   }
 
   static String get otpCodeIsResend {
-    return AppRoute.getContext().tInMap('loginSection', 'otpCodeIsResend')?? _noText;
+    return _getContext().tInMap('loginSection', 'otpCodeIsResend')?? _noText;
   }
 
   static String get otpCodeIsInvalid {
-    return AppRoute.getContext().tInMap('loginSection', 'otpCodeIsInvalid')?? _noText;
+    return _getContext().tInMap('loginSection', 'otpCodeIsInvalid')?? _noText;
   }
 
   static String get pleaseWait {
-    return AppRoute.getContext().t('pleaseWait')?? _noText;
+    return _getContext().t('pleaseWait')?? _noText;
   }
 
   static String get countrySelection {
-    return AppRoute.getContext().tInMap('countrySection', 'countrySelection')?? _noText;
+    return _getContext().tInMap('countrySection', 'countrySelection')?? _noText;
   }
 
   static String get doYouWantLogoutYourAccount {
-    return AppRoute.getContext().tInMap('loginSection', 'doYouWantLogoutYourAccount')?? _noText;
+    return _getContext().tInMap('loginSection', 'doYouWantLogoutYourAccount')?? _noText;
   }
 
   static String get newAppVersionIsOk {
-    return AppRoute.getContext().t('newAppVersionIsOk')?? _noText;
+    return _getContext().t('newAppVersionIsOk')?? _noText;
   }
 
   static String get terms {
@@ -143,11 +148,11 @@ class AppMessages {
   }
 
   static String get mobileNumber {
-    return AppRoute.getContext().t('mobileNumber')?? _noText;
+    return _getContext().t('mobileNumber')?? _noText;
   }
 
   static String get loginBtn {
-    return AppRoute.getContext().t('login')?? _noText;
+    return _getContext().t('login')?? _noText;
   }
 
   static String get loginWithGoogle {
@@ -171,19 +176,23 @@ class AppMessages {
   }
 
   static String get errorOccur {
-    return AppRoute.getContext().t('errorOccur')?? _noText;
+    return _getContext().t('errorOccur')?? _noText;
+  }
+
+  static String get errorOccurTryAgain {
+    return _getContext().t('errorOccurTryAgain')?? _noText;
   }
 
   static String get wantToLeave {
-    return AppRoute.getContext().tC('wantToLeave')?? _noText;
+    return _getContext().tC('wantToLeave')?? _noText;
   }
 
   static String get e404 {
-    return AppRoute.getContext().tC('thisPageNotFound')?? _noText;
+    return _getContext().tC('thisPageNotFound')?? _noText;
   }
 
   static String get tryAgain {
-    return AppRoute.getContext().t('tryAgain')?? _noText;
+    return _getContext().t('tryAgain')?? _noText;
   }
 
   static String get requestKeyNotExist {
@@ -195,79 +204,79 @@ class AppMessages {
   }
 
   static String get tokenIsIncorrectOrExpire {
-    return AppRoute.getContext().tInMap('httpCodes', 'tokenIsIncorrectOrExpire')?? _noText;
+    return _getContext().tInMap('httpCodes', 'tokenIsIncorrectOrExpire')?? _noText;
   }
 
   static String get databaseError {
-    return AppRoute.getContext().tInMap('httpCodes', 'databaseError')?? _noText;
+    return _getContext().tInMap('httpCodes', 'databaseError')?? _noText;
   }
 
   static String get userNameOrPasswordIncorrect {
-    return AppRoute.getContext().tInMap('httpCodes', 'userNameOrPasswordIncorrect')?? _noText;
+    return _getContext().tInMap('httpCodes', 'userNameOrPasswordIncorrect')?? _noText;
   }
 
   static String get errorOccurredInSubmittedParameters {
-    return AppRoute.getContext().tInMap('httpCodes', 'errorOccurredInSubmittedParameters')?? _noText;
+    return _getContext().tInMap('httpCodes', 'errorOccurredInSubmittedParameters')?? _noText;
   }
 
   static String get dataNotFound {
-    return AppRoute.getContext().tInMap('httpCodes', 'dataNotFound')?? _noText;
+    return _getContext().tInMap('httpCodes', 'dataNotFound')?? _noText;
   }
 
   static String get thisRequestNotDefined {
-    return AppRoute.getContext().tInMap('httpCodes', 'thisRequestNotDefined')?? _noText;
+    return _getContext().tInMap('httpCodes', 'thisRequestNotDefined')?? _noText;
   }
 
   static String get informationWasSend {
-    return AppRoute.getContext().tInMap('httpCodes', 'informationWasSend')?? _noText;
+    return _getContext().tInMap('httpCodes', 'informationWasSend')?? _noText;
   }
 
   static String get errorUploadingData {
-    return AppRoute.getContext().tInMap('httpCodes', 'errorUploadingData')?? _noText;
+    return _getContext().tInMap('httpCodes', 'errorUploadingData')?? _noText;
   }
 
   static String get netConnectionIsDisconnect {
-    return AppRoute.getContext().tInMap('httpCodes', 'netConnectionIsDisconnect')?? _noText;
+    return _getContext().tInMap('httpCodes', 'netConnectionIsDisconnect')?? _noText;
   }
 
   static String get errorCommunicatingServer {
-    return AppRoute.getContext().tInMap('httpCodes', 'errorCommunicatingServer')?? _noText;
+    return _getContext().tInMap('httpCodes', 'errorCommunicatingServer')?? _noText;
   }
 
   static String get serverNotRespondProperly {
-    return AppRoute.getContext().tInMap('httpCodes', 'serverNotRespondProperly')?? _noText;
+    return _getContext().tInMap('httpCodes', 'serverNotRespondProperly')?? _noText;
   }
 
   static String get accountIsBlock {
-    return AppRoute.getContext().tInMap('httpCodes', 'accountIsBlock')?? _noText;
+    return _getContext().tInMap('httpCodes', 'accountIsBlock')?? _noText;
   }
 
   static String get operationCannotBePerformed {
-    return AppRoute.getContext().tInMap('operationSection', 'operationCannotBePerformed')?? _noText;
+    return _getContext().tInMap('operationSection', 'operationCannotBePerformed')?? _noText;
   }
 
   static String get operationSuccess {
-    return AppRoute.getContext().tInMap('operationSection', 'successOperation')?? _noText;
+    return _getContext().tInMap('operationSection', 'successOperation')?? _noText;
   }
 
   static String get operationFailed {
-    return AppRoute.getContext().tInMap('operationSection', 'operationFailed')?? _noText;
+    return _getContext().tInMap('operationSection', 'operationFailed')?? _noText;
   }
 
   static String get operationFailedTryAgain {
-    return AppRoute.getContext().tInMap('operationSection','operationFailedTryAgain')?? _noText;
+    return _getContext().tInMap('operationSection','operationFailedTryAgain')?? _noText;
   }
 
   static String get operationCanceled {
-    return AppRoute.getContext().tInMap('operationSection', 'operationCanceled')?? _noText;
+    return _getContext().tInMap('operationSection', 'operationCanceled')?? _noText;
   }
 
   static String get sorryYouDoNotHaveAccess {
-    return AppRoute.getContext().tC('sorryYouDoNotHaveAccess')?? _noText;
+    return _getContext().tC('sorryYouDoNotHaveAccess')?? _noText;
   }
 
   static String get thereAreNoResults {
-    return AppRoute.getContext().tC('thereAreNoResults')?? _noText;
+    return _getContext().tC('thereAreNoResults')?? _noText;
   }
 
   static String get appName {
@@ -275,7 +284,7 @@ class AppMessages {
   }
 
   static String get profileTitle {
-    return AppRoute.getContext().tC('profile')?? _noText;
+    return _getContext().tC('profile')?? _noText;
   }
 
   static String get loginTitle {

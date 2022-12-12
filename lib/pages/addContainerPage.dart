@@ -6,14 +6,14 @@ import 'package:iris_tools/api/helpers/jsonHelper.dart';
 import 'package:iris_tools/modules/stateManagers/assist.dart';
 import 'package:iris_tools/widgets/maxWidth.dart';
 
-import 'package:app/models/BucketModel.dart';
-import 'package:app/models/abstract/stateBase.dart';
-import 'package:app/models/subBuketModel.dart';
+import 'package:app/structures/models/BucketModel.dart';
+import 'package:app/structures/abstract/stateBase.dart';
+import 'package:app/structures/models/subBuketModel.dart';
 import 'package:app/system/enums.dart';
 import 'package:app/system/extensions.dart';
 import 'package:app/system/keys.dart';
 import 'package:app/system/publicAccess.dart';
-import 'package:app/system/requester.dart';
+import 'package:app/structures/middleWare/requester.dart';
 import 'package:app/system/session.dart';
 import 'package:app/tools/app/appIcons.dart';
 import 'package:app/tools/app/appSheet.dart';

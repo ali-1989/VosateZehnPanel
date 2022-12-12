@@ -4,15 +4,15 @@ import 'package:iris_tools/modules/stateManagers/assist.dart';
 import 'package:iris_tools/widgets/maxWidth.dart';
 
 import 'package:app/managers/mediaManager.dart';
-import 'package:app/models/abstract/stateBase.dart';
-import 'package:app/models/speakerModel.dart';
+import 'package:app/structures/abstract/stateBase.dart';
+import 'package:app/structures/models/speakerModel.dart';
 import 'package:app/system/extensions.dart';
 import 'package:app/system/keys.dart';
-import 'package:app/system/requester.dart';
+import 'package:app/structures/middleWare/requester.dart';
 import 'package:app/system/session.dart';
 import 'package:app/tools/app/appImages.dart';
-import 'package:app/views/emptyData.dart';
-import 'package:app/views/notFetchData.dart';
+import 'package:app/views/states/emptyData.dart';
+import 'package:app/views/states/errorOccur.dart';
 
 class SelectSpeakerPage extends StatefulWidget {
   const SelectSpeakerPage({Key? key}) : super(key: key);
@@ -107,7 +107,7 @@ class _SelectSpeakerPageState extends StateBase<SelectSpeakerPage> {
                   if(!assistCtr.hasState(state$fetchData)){
                     return SizedBox(
                       height: 200,
-                        child: Center(child: NotFetchData(tryClick: tryClick,))
+                        child: Center(child: ErrorOccur(tryClick: tryClick,))
                     );
                   }
 

@@ -1,7 +1,7 @@
 import 'package:iris_tools/api/helpers/jsonHelper.dart';
 
 import 'package:app/managers/settingsManager.dart';
-import 'package:app/models/userModel.dart';
+import 'package:app/structures/models/userModel.dart';
 import 'package:app/pages/login_page.dart';
 import 'package:app/system/keys.dart';
 import 'package:app/system/publicAccess.dart';
@@ -12,6 +12,12 @@ import 'package:app/tools/app/appRoute.dart';
 
 class UserLoginTools {
   UserLoginTools._();
+
+  static void init(){
+    Session.addLoginListener(UserLoginTools.onLogin);
+    Session.addLogoffListener(UserLoginTools.onLogoff);
+    Session.addProfileChangeListener(UserLoginTools.onProfileChange);
+  }
 
   static void onLogin(UserModel user){
   }
@@ -47,11 +53,11 @@ class UserLoginTools {
     final isCurrent = Session.getLastLoginUser()?.userId == userId;
     await Session.logoff(userId);
 
-    if (isCurrent) {
-      AppRoute.backToRoot(AppRoute.getContext());
+    if (isCurrent && AppRoute.materialContext != null) {
+      AppRoute.backToRoot(AppRoute.getLastContext()!);
 
       Future.delayed(Duration(milliseconds: 400), (){
-        AppRoute.replaceNamed(AppRoute.getContext(), LoginPage.route.name!);
+        AppRoute.replaceNamed(AppRoute.getLastContext()!, LoginPage.route.name!);
       });
     }
   }
@@ -59,8 +65,8 @@ class UserLoginTools {
   static Future forceLogoffAll() async {
     await Session.logoffAll();
 
-    AppRoute.backToRoot(AppRoute.getContext());
+    if (AppRoute.materialContext != null) {
+      AppRoute.backToRoot(AppRoute.getLastContext()!);
+    }
   }
-
-
 }

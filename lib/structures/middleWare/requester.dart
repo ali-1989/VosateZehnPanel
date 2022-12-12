@@ -67,23 +67,34 @@ class Requester {
     pathUrl ??= '/graph-v1';
 
     if(!_http.fullUrl.contains(pathUrl)) {
-      _http.fullUrl += pathUrl;
+      _http.fullUrl = SettingsManager.settingsModel.httpAddress + pathUrl;
     }
   }
 
   void request([BuildContext? context, bool promptErrors = true]){
     _http.debugMode = debug;
-    _http.method = methodType == MethodType.get ? 'GET': 'POST';
 
-    /*if(_requestPath != RequestPath.Others) {
-      _http.pathSection = _requestPath == RequestPath.GetData ? '/get-data' : '/set-data';
-    }*/
+    switch(methodType){
+      case MethodType.get:
+        _http.method = 'GET';
+        break;
+      case MethodType.post:
+        _http.method = 'POST';
+        break;
+      case MethodType.put:
+        _http.method = 'PUT';
+        break;
+    }
 
     if(_bodyJs != null) {
       _http.body = JsonHelper.mapToJson(_bodyJs!);
     }
 
     AppHttpDio.cancelAndClose(_httpRequester);
+
+    /*if(Session.hasAnyLogin()) {
+      _http.headers.addAll({'authorization': 'Bearer ${Session.getLastLoginUser()!.token?.token}'});
+    }*/
 
     _httpRequester = AppHttpDio.send(_http);
 
@@ -102,6 +113,17 @@ class Requester {
     });
 
     f = f.then((val) async {
+      /*if(_httpRequester.responseData?.statusCode == 401){ // token
+        final getNewToken = await JwtService.requestNewToken(Session.getLastLoginUser()!);
+
+        /// try request again
+        if(getNewToken) {
+          request(context, promptErrors);
+        }
+
+        return;
+      }*/
+
       await httpRequestEvents.onAnyState?.call(_httpRequester);
 
       if(!_httpRequester.isOk){

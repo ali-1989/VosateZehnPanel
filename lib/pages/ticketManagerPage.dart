@@ -9,18 +9,18 @@ import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 import 'package:app/managers/customerManager.dart';
 import 'package:app/managers/mediaManager.dart';
-import 'package:app/models/abstract/stateBase.dart';
-import 'package:app/models/ticketModel.dart';
+import 'package:app/structures/abstract/stateBase.dart';
+import 'package:app/structures/models/ticketModel.dart';
 import 'package:app/pages/ticketDetailView.dart';
 import 'package:app/system/extensions.dart';
 import 'package:app/system/keys.dart';
 import 'package:app/system/publicAccess.dart';
-import 'package:app/system/requester.dart';
+import 'package:app/structures/middleWare/requester.dart';
 import 'package:app/system/session.dart';
 import 'package:app/tools/dateTools.dart';
 import 'package:app/tools/searchFilterTool.dart';
-import 'package:app/views/emptyData.dart';
-import 'package:app/views/notFetchData.dart';
+import 'package:app/views/states/emptyData.dart';
+import 'package:app/views/states/errorOccur.dart';
 
 class TicketManagerPage extends StatefulWidget {
   static final route = GoRoute(
@@ -122,7 +122,7 @@ class _TicketManagerPageState extends StateBase<TicketManagerPage> {
                     if(!assistCtr.hasState(state$fetchData)){
                       return SizedBox(
                         height: 200,
-                          child: Center(child: NotFetchData(tryClick: tryClick,))
+                          child: Center(child: ErrorOccur(tryClick: tryClick,))
                       );
                     }
 

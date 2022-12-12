@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import 'package:iris_tools/modules/stateManagers/notifyRefresh.dart';
@@ -15,7 +16,7 @@ class AppBroadcast {
   static final RefreshController drawerMenuRefresher = RefreshController();
   static final NotifyBroadcast avatarNotifier = NotifyBroadcast();
   //---------------------- keys
-  static final LocalKey materialAppKey = UniqueKey();
+  static LocalKey materialAppKey = UniqueKey();
   static final rootScaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
   static final rootNavigatorStateKey = GlobalKey<NavigatorState>();
   //static final layoutPageKey = GlobalKey<LayoutPageState>();
@@ -33,6 +34,10 @@ class AppBroadcast {
   }
 
   static void reBuildMaterial() {
+    if(kIsWeb){
+      materialAppKey = UniqueKey();
+    }
+
     viewUpdaterStream.sink.add(true);
   }
 

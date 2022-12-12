@@ -8,15 +8,15 @@ import 'package:iris_tools/modules/stateManagers/assist.dart';
 import 'package:iris_tools/widgets/maxWidth.dart';
 import 'package:iris_tools/widgets/optionsRow/checkRow.dart';
 
-import 'package:app/models/BucketModel.dart';
-import 'package:app/models/abstract/stateBase.dart';
+import 'package:app/structures/models/BucketModel.dart';
+import 'package:app/structures/abstract/stateBase.dart';
 import 'package:app/pages/contentManagerPage.dart';
-import 'package:app/services/pagesEventBus.dart';
+import 'package:app/services/pages_event_service.dart';
 import 'package:app/system/enums.dart';
 import 'package:app/system/extensions.dart';
 import 'package:app/system/keys.dart';
 import 'package:app/system/publicAccess.dart';
-import 'package:app/system/requester.dart';
+import 'package:app/structures/middleWare/requester.dart';
 import 'package:app/system/session.dart';
 import 'package:app/tools/app/appIcons.dart';
 import 'package:app/tools/app/appRoute.dart';
@@ -69,7 +69,7 @@ class _BuketEditPageState extends StateBase<BuketEditPage> {
     );
 
     if(widget.injectData == null) {
-      addPostOrCall(() => AppRoute.popPage(context));
+      addPostOrCall(fn: () => AppRoute.popPage(context));
     }
     else {
       editMode = widget.injectData!.bucket != null;
@@ -376,7 +376,7 @@ class _BuketEditPageState extends StateBase<BuketEditPage> {
     };
 
     requester.httpRequestEvents.onStatusOk = (req, data) async {
-      PagesEventBus.getEventBus((ContentManagerPage).toString()).callEvent('update', null);
+      PagesEventService.getEventBus((ContentManagerPage).toString()).callEvent('update', null);
 
       AppSheet.showSheet$SuccessOperation(context, onBtn: (){
         AppRoute.popPage(context);
@@ -405,7 +405,7 @@ class _BuketEditPageState extends StateBase<BuketEditPage> {
     };
 
     requester.httpRequestEvents.onStatusOk = (req, data) async {
-      PagesEventBus.getEventBus((ContentManagerPage).toString()).callEvent('update', null);
+      PagesEventService.getEventBus((ContentManagerPage).toString()).callEvent('update', null);
 
       AppSheet.showSheet$SuccessOperation(context, onBtn: (){
         AppRoute.popPage(context);
